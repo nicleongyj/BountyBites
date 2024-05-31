@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
+import HomeContainer from './components/homeContainer'
 import LoginScreen from './screens/login.js';
 
 
@@ -27,7 +28,7 @@ export default function App() {
         </Stack.Navigator>
       
     ) : (
-      <Text>Logged in</Text>
+      <HomeContainer/>
     );
 
   }

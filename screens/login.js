@@ -5,6 +5,8 @@ import background from "../assets/loginImage.jpg";
 import emailIcon from "../assets/emailIcon.png";
 import keyIcon from "../assets/key.png";
 
+import LoginButton from "../components/loginButton";
+
 
 
 export default function LoginScreen({ navigation, route }) {
@@ -12,13 +14,11 @@ export default function LoginScreen({ navigation, route }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    function changeUsername(text) {
-        setUsername(text);
+    function submitHander() {
+        
     }
 
-    function changePassword(text) { 
-        setPassword(text);
-    }
+    // const navigatin = useNavigation();
 
     return (
         <View style = {styles.container}>
@@ -41,7 +41,7 @@ export default function LoginScreen({ navigation, route }) {
                         style={styles.textBox}
                         value={username}
                         onChangeText={setUsername}
-                        placeholder="Email"
+                        placeholder="Username"
                         placeholderTextColor={"gray"}
                     />
                 </View>
@@ -59,6 +59,8 @@ export default function LoginScreen({ navigation, route }) {
                     placeholderTextColor={"grey"}
                     ></TextInput>
                 </View>
+
+                <LoginButton onPress={submitHander}/>
 
             </View>
             

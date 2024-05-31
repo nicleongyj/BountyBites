@@ -15,14 +15,20 @@ export default function App() {
   [login, setLogin] = useState(false);
   
   function Navigate() {
-    <Stack.Navigator>
-      <Stack.Screen
-      name="Login Screen"
-      component={LoginScreen}
-      options={{ headerShown: false }}
-      initialParams={{ setState: setLogin }}
-      />
-  </Stack.Navigator>
+    return !login ? (
+      
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Login Screen"
+            component={LoginScreen}
+            options={{ headerShown: false }}
+            initialParams={{ setState: setLogin }}
+          />
+        </Stack.Navigator>
+      
+    ) : (
+      <Text>Logged in</Text>
+    );
 
   }
 
@@ -30,7 +36,6 @@ export default function App() {
   return (
     <>
       <StatusBar style="dark" />
-
       <NavigationContainer>
         <Navigate />
       </NavigationContainer>

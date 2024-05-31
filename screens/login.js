@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, ImageBackground, TextInput } from "react-native";
+import { View, Text, StyleSheet, Image, ImageBackground, TextInput, Alert } from "react-native";
 import { useState } from "react";
 
 import background from "../assets/loginImage.jpg";
@@ -14,8 +14,12 @@ export default function LoginScreen({ navigation, route }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    function submitHander() {
-        
+    function submitHandler() {
+        if (username == "admin" && password == "admin") {   
+            route.params.setState(true);
+        } else {
+            alert("Invalid Username or Password");
+        }
     }
 
     // const navigatin = useNavigation();
@@ -49,26 +53,19 @@ export default function LoginScreen({ navigation, route }) {
                 <View style={styles.inputContainer}>
                     <Image source={keyIcon} style={styles.emailIcon} />
                     <TextInput
-                    autoCapitalize="none"
-                    mode="flat"
-                    color="azure"
-                    style={styles.textBox}
-                    value={password}
-                    onChangeText={setPassword}
-                    placeholder="Password"
-                    placeholderTextColor={"grey"}
-                    ></TextInput>
+                        autoCapitalize="none"
+                        mode="flat"
+                        textColor="black"
+                        style={styles.textBox}
+                        value={password}
+                        onChangeText={setPassword}
+                        placeholder="Password"
+                        placeholderTextColor={"grey"}
+                    />
                 </View>
-
-                <LoginButton onPress={submitHander}/>
-
+                <LoginButton onPress={submitHandler}/>
             </View>
-            
-
-
-
-
-
+        
             </ImageBackground>
         </View>
     );

@@ -1,7 +1,7 @@
 import { Pressable, View, Text, StyleSheet } from "react-native";
 
 
-export default function LoginButton(onPress) {
+export default function LoginButton({onPress}) {
     return (
 
         <View style={[styles.gridItem]}>

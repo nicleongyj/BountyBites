@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
+import HomeContainer from './components/homeContainer'
 import LoginScreen from './screens/login.js';
 
 
@@ -15,14 +16,20 @@ export default function App() {
   [login, setLogin] = useState(false);
   
   function Navigate() {
-    <Stack.Navigator>
-      <Stack.Screen
-      name="Login Screen"
-      component={LoginScreen}
-      options={{ headerShown: false }}
-      initialParams={{ setState: setLogin }}
-      />
-  </Stack.Navigator>
+    return !login ? (
+      
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Login Screen"
+            component={LoginScreen}
+            options={{ headerShown: false }}
+            initialParams={{ setState: setLogin }}
+          />
+        </Stack.Navigator>
+      
+    ) : (
+      <HomeContainer/>
+    );
 
   }
 
@@ -30,7 +37,6 @@ export default function App() {
   return (
     <>
       <StatusBar style="dark" />
-
       <NavigationContainer>
         <Navigate />
       </NavigationContainer>

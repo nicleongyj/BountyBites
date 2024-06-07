@@ -36,7 +36,7 @@ export default function HomeContainer() {
                 component={MapScreen} 
                 options={{tabBarIcon: () => <Text>🗺️</Text>, 
                 headerShown:true}} />
-            {isRestaurant && (
+            {isRestaurant || (
                 <Tab.Screen 
                     name="Restaurant" 
                     component={RestaurantScreen} 

@@ -17,7 +17,7 @@ export default function HomeContainer() {
     
     return (
         <Tab.Navigator
-            initialRouteName="Map"
+            initialRouteName="Food Nearby"
             // screenOptions={{
             //     tabBarActiveTintColor: "#007D38",
             //     tabBarInactiveTintColor: "#00B14F",

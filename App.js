@@ -7,6 +7,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeContainer from './components/homeContainer'
 import LoginScreen from './screens/login.js';
 import StartScreen from './screens/start.js';
+import RegisterScreen from './screens/register.js';
 
 // import { LoginContext } from './contexts';
 
@@ -35,6 +36,11 @@ export default function App() {
         <Stack.Screen
             name="Login Screen"
             component={LoginScreen}
+            // initialParams={{ setState: setLogin }}
+          />
+        <Stack.Screen
+            name="Register Screen"
+            component={RegisterScreen}
             // initialParams={{ setState: setLogin }}
           />
           

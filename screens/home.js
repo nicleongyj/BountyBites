@@ -8,7 +8,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
-
 export default function Home(navigation) {
     const { logout } = useContext(LoginContext);
 
@@ -113,37 +112,34 @@ export default function Home(navigation) {
                 </View>
 
                 <View style={styles.cardContainer}>
-
-
                     <ScrollView contentContainerStyle={styles.scrollViewContent}>
                     {sortedRestaurants.map((restaurant, index) => (
                         <View key={index} style={styles.card}>
                             <View style={styles.textContainer}>
-                                <Text style={styles.title}>{restaurant.name}</Text>
-                                <View style={{flexDirection:"row"}}>
-                                    <Text style={{fontWeight: "bold"}}>Food Type: </Text>
-                                    <Text>{restaurant.type}</Text>
-                                </View>
-                                <View style={{flexDirection:"row"}}>
-                                    <Text style={{fontWeight: "bold"}}>Address: </Text>
-                                    <Text>{restaurant.address}</Text>
-                                </View>
-                                <View style={{flexDirection:"row"}}>
-                                    <Text style={{fontWeight: "bold"}}>Food Items Available: </Text>
-                                    <Text>{restaurant.foodItems}</Text>
-                                </View>
-                                <View style={{flexDirection:"row"}}>
-                                    <Text style={{fontWeight: "bold"}}>Discount Available: </Text>
-                                    <Text>{restaurant.discount}%</Text>
+                                <Text style={styles.cardTitle}>{restaurant.name}</Text>
+                                <View style={{paddingLeft:10}}>
+                                    <View style={{flexDirection:"row"}}>
+                                        <Text style={{fontWeight: "bold"}}>Food Type: </Text>
+                                        <Text>{restaurant.type}</Text>
+                                    </View>
+                                    <View style={{flexDirection:"row"}}>
+                                        <Text style={{fontWeight: "bold"}}>Address: </Text>
+                                        <Text>{restaurant.address}</Text>
+                                    </View>
+                                    <View style={{flexDirection:"row"}}>
+                                        <Text style={{fontWeight: "bold"}}>Food Items Available: </Text>
+                                        <Text>{restaurant.foodItems}</Text>
+                                    </View>
+                                    <View style={{flexDirection:"row"}}>
+                                        <Text style={{fontWeight: "bold"}}>Discount Available: </Text>
+                                        <Text>{restaurant.discount}%</Text>
+                                    </View>
                                 </View>
                             </View>
                             <Image source={restaurant.image} style={styles.image} />
                         </View>
                     ))}
                     </ScrollView>
-
-
-
                 </View>
 
                 {/* <Button onPress={handleLogout}>Back to start page</Button> */}
@@ -218,7 +214,14 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
       },
     title: {
-        fontSize: 25,
+        fontSize: 23,
+        padding: 10,
+        fontStyle: "normal",
+        color: "black",
+        fontWeight: "bold",
+    },
+    cardTitle: {
+        fontSize: 20,
         padding: 10,
         fontStyle: "normal",
         color: "black",
@@ -273,10 +276,10 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         width: "95%",
-        height: 130,
+        height: 140,
         backgroundColor: "white",
         marginVertical: 10,
-        padding: 10,
+        padding: 12,
         borderRadius: 10,
         shadowColor: "#000",
         shadowOffset: {

@@ -26,7 +26,6 @@ export default function App() {
             initialParams={{ setState: setLogin }}
           />
         </Stack.Navigator>
-      
     ) : (
       <HomeContainer/>
     );

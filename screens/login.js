@@ -129,9 +129,8 @@ const styles = StyleSheet.create({
         flexDirection: "column",
       },
     logo: {
-        flex: 1,
-        width: 300,
-        height: 350,
+        width: 250,
+        height: 300,
         resizeMode: "contain",
     },
     title: {

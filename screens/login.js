@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, ImageBackground, TextInput, Alert, KeyboardAvoidingView } from "react-native";
+import { View, Text, StyleSheet, Image, TextInput, Alert, KeyboardAvoidingView } from "react-native";
 import { useState } from "react";
 
 import background from "../assets/loginImage.jpg";
@@ -11,24 +11,17 @@ import LoginButton from "../components/loginButton";
 import { FIREBASE_AUTH } from "../FirebaseConfig";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Button } from "react-native-paper";
 
 
 
-export default function LoginScreen({ route }) {
+export default function LoginScreen({ navigation, route }) {
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
 
     const auth = FIREBASE_AUTH;
-
-    const submitHandler = () => {
-        if (username == "admin" && password == "admin") {   
-            route.params.setState(true);
-        } else {
-            alert("Invalid Username or Password");
-        }
-    }
 
     const signIn = async () => {
         try {
@@ -41,20 +34,6 @@ export default function LoginScreen({ route }) {
             alert("Invalid Username or Password");
         }
     }
-
-    const signUp = async () => {    
-        try {
-            setLoading(true);
-            const response = await createUserWithEmailAndPassword(auth, username, password);
-            setLoading(false);
-            route.params.setState(true);
-        } catch (error) {
-            setLoading(false);
-            alert(error.message);
-        }
-    }
-
-    // const navigatin = useNavigation();
 
     return (
         <SafeAreaView style={styles.container}>
@@ -81,7 +60,7 @@ export default function LoginScreen({ route }) {
                             style={styles.textBox}
                             value={username}
                             onChangeText={setUsername}
-                            placeholder="Username"
+                            placeholder="Email"
                             placeholderTextColor={"gray"}
                         />
                     </View>
@@ -100,8 +79,21 @@ export default function LoginScreen({ route }) {
                         />
                     </View>
                     {/* </KeyboardAvoidingView>    */}
-                    <LoginButton onPress={signIn} text={"Login"}/>
-                    <LoginButton onPress={signUp} text={"Sign up"}/>
+                    <View style={styles.buttonContainer}>
+                        <Button mode="contained" onPress={signIn} labelStyle = {styles.buttonLabel} style={styles.button}>Log In</Button>
+                    </View>
+                    <View style={styles.registerContainer}>
+                        <Text>Dont have an account?</Text>
+                        {/* <Text style={styles.registerButton}>Register here</Text> */}
+                        <Button mode="contained" onPress={()=> navigation.navigate("Register Screen")} labelStyle = {styles.registerButtonLabel} style={styles.registerButton}>Register here!</Button>
+                  
+                    </View>
+                    <View style={styles.tncContainer}>
+
+                        <Text style={styles.text1}>By continuing you agree to our</Text>
+                        <Text style={styles.text2}>Terms of Service and Privacy Policy</Text>
+
+                    </View>
                 
                 </View>
         
@@ -156,7 +148,17 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
     },
-
+    buttonContainer: {
+        marginTop: "5%",
+        flexDirection: "column",
+        alignItems: "center",
+    },
+    registerContainer: {
+        marginTop: "5%",
+        flexDirection: "row",
+        alignItems: "center",
+        paddingLeft: "5%",
+    },
     emailIcon: {
         height: 30,
         width: 30,
@@ -167,5 +169,49 @@ const styles = StyleSheet.create({
         height: 30,
         width: 300,
         fontSize: 15,
+        borderColor: '#000', 
+        borderWidth: 1,     
+        borderRadius: 7,  
+        paddingHorizontal: 10,
+    },
+    button: {
+        backgroundColor: "black",
+        width: 150,
+        height: 42,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 10,
+        marginTop: 20,
+    },
+    buttonLabel: {
+        color: "white",
+        fontSize: 15,
+        fontWeight: "bold",
+    },
+    registerButtonLabel: {
+        color: "blue",
+        fontSize: 15,
+        fontWeight: "bold",
+    },
+    registerButton: {   
+        backgroundColor: "white",
+        fontSize: 22,
+        fontWeight: "bold",
+    },
+    tncContainer: {
+        flex: 2,
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    text1: {
+        marginTop: 10,
+        color: "black",
+        fontSize: 12,
+    },
+    text2: {
+        color: "black",
+        fontSize: 12,
+        fontWeight: "bold",
     },
 });

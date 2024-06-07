@@ -3,20 +3,17 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "react-native-paper";
 import { useState, useContext } from "react";
 
-import emailIcon from "../assets/emailIcon.png";
-import keyIcon from "../assets/key.png";
 import logo from "../assets/logo.png";
-
 
 import { FIREBASE_AUTH } from "../FirebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { LoginContext } from "../App";
+import { LoginContext, RestaurantContext } from "../App";
 
 
 export default function LoginScreen({ navigation }) {
 
     const { login } = useContext(LoginContext);
-
+    const { setRestaurant } = useContext(RestaurantContext);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
@@ -29,6 +26,7 @@ export default function LoginScreen({ navigation }) {
             const response = await signInWithEmailAndPassword(auth, username, password);
             setLoading(false);  
             login();    
+            setRestaurant();
         } catch (error) {
             setLoading(false);
             alert("Invalid Username or Password");

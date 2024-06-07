@@ -5,10 +5,11 @@ import { FIREBASE_AUTH } from "../FirebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "react-native-paper";
-import { LoginContext } from "../App";
+import { LoginContext, RestaurantContext } from "../App";
 
 export default function RegisterScreen({ navigation }) {
     const { login } = useContext(LoginContext);
+    const { setRestaurant } = useContext(RestaurantContext);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
@@ -21,6 +22,7 @@ export default function RegisterScreen({ navigation }) {
             const response = await createUserWithEmailAndPassword(auth, username, password);
             setLoading(false);
             login();
+            setRestaurant();
         } catch (error) {
             setLoading(false);
             alert(error.message);

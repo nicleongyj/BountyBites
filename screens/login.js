@@ -77,7 +77,7 @@ export default function LoginScreen({ navigation }) {
                     {/* </KeyboardAvoidingView>    */}
                     <View style={styles.buttonContainer}>
                         <Button mode="contained" onPress={signIn} labelStyle = {styles.buttonLabel} style={styles.button}>Log In</Button>
-                        {loading ? <ActivityIndicator color="white" /> : null}
+                        {loading ? <ActivityIndicator color="black" /> : null}
                     </View>
                     <View style={styles.registerContainer}>
                         <Text>Dont have an account?</Text>
@@ -85,8 +85,8 @@ export default function LoginScreen({ navigation }) {
                         <Button mode="contained" onPress={()=> navigation.navigate("Register Screen")} labelStyle = {styles.registerButtonLabel} style={styles.registerButton}>Register here!</Button>
                   
                     </View>
-                    <View style={styles.tncContainer}>
 
+                    <View style={styles.tncContainer}>
                         <Text style={styles.text1}>By continuing you agree to our</Text>
                         <Text style={styles.text2}>Terms of Service and Privacy Policy</Text>
 
@@ -146,11 +146,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     buttonContainer: {
+        flex:1,
         marginTop: "5%",
         flexDirection: "column",
         alignItems: "center",
     },
     registerContainer: {
+        flex:1,
         marginTop: "5%",
         flexDirection: "row",
         alignItems: "center",
@@ -179,6 +181,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderRadius: 10,
         marginTop: 20,
+        marginBottom: 10,
     },
     buttonLabel: {
         color: "white",

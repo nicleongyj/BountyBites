@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, TextInput, KeyboardAvoidingView } from "react-native";
+import { View, Text, StyleSheet, Image, TextInput, KeyboardAvoidingView, ActivityIndicator } from "react-native";
 import { useState, useContext } from "react";
 
 import { FIREBASE_AUTH } from "../FirebaseConfig";
@@ -81,6 +81,7 @@ export default function RegisterScreen({ navigation }) {
                     {/* </KeyboardAvoidingView>    */}
                     <View style={styles.buttonContainer}>
                         <Button mode="contained" onPress={signUp} labelStyle = {styles.buttonLabel} style={styles.button}>Sign up with email</Button>
+                        {loading ? <ActivityIndicator color="black" /> : null}
                     </View>
 
                     <View style={styles.mainButtonContainer}> 
@@ -157,6 +158,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     buttonContainer: {
+        flex:1,
         marginTop: "5%",
         flexDirection: "column",
         alignItems: "center",
@@ -185,6 +187,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderRadius: 10,
         marginTop: 20,
+        marginBottom: 10,
     },
     buttonLabel: {
         color: "white",

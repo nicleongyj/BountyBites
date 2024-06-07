@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, ImageBackground, TextInput, Alert } from "react-native";
+import { View, Text, StyleSheet, Image, ImageBackground, TextInput, Alert, KeyboardAvoidingView } from "react-native";
 import { useState } from "react";
 
 import background from "../assets/loginImage.jpg";
@@ -7,6 +7,8 @@ import keyIcon from "../assets/key.png";
 import royce from "../assets/royce.jpg";
 
 import LoginButton from "../components/loginButton";
+import { FIREBASE_AUTH } from "../FirebaseConfig";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 
 
 
@@ -14,13 +16,39 @@ export default function LoginScreen({ navigation, route }) {
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    function submitHandler() {
-        route.params.setState(true);
+    const auth = FIREBASE_AUTH;
+
+    const submitHandler = () => {
         if (username == "admin" && password == "admin") {   
             route.params.setState(true);
         } else {
             alert("Invalid Username or Password");
+        }
+    }
+
+    const signIn = async () => {
+        try {
+            setLoading(true);
+            const respons = await signInWithEmailAndPassword(auth, username, password);
+            setLoading(false);
+            route.params.setState(true);
+        } catch (error) {
+            setLoading(false);
+            alert("Invalid Username or Password");
+        }
+    }
+
+    const signUp = async () => {    
+        try {
+            setLoading(true);
+            const response = await createUserWithEmailAndPassword(auth, username, password);
+            setLoading(false);
+            route.params.setState(true);
+        } catch (error) {
+            setLoading(false);
+            alert(error.message);
         }
     }
 
@@ -39,6 +67,7 @@ export default function LoginScreen({ navigation, route }) {
 
 
             <View style={styles.textContainer}> 
+                <KeyboardAvoidingView behavior="padding">
                 <View style={styles.inputContainer}>
                     <Image source={emailIcon} style={styles.emailIcon} />
                     <TextInput
@@ -66,7 +95,9 @@ export default function LoginScreen({ navigation, route }) {
                         placeholderTextColor={"grey"}
                     />
                 </View>
-                <LoginButton onPress={submitHandler}/>
+                </KeyboardAvoidingView>   
+                <LoginButton onPress={signIn} text={"Login"}/>
+                <LoginButton onPress={signUp} text={"Sign up"}/>
             </View>
         
             </ImageBackground>

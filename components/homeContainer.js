@@ -15,13 +15,13 @@ export default function HomeContainer() {
     return (
         <Tab.Navigator
             initialRouteName="Home"
-            tabBarOptions={{
-                tabBarActiveTintColor: "#007D38",
-                tabBarInactiveTintColor: "#00B14F",
-                tabBarStyle: {
-                    backgroundColor: "#00B14F",
-                },
-            }}
+            // screenOptions={{
+            //     tabBarActiveTintColor: "#007D38",
+            //     tabBarInactiveTintColor: "#00B14F",
+            //     tabBarStyle: {
+            //         backgroundColor: "#00B14F",
+            //     },
+            // }}
         >
 
             <Tab.Screen name={"Home"} component={HomeScreen} options={{tabBarIcon: () => <Text>🏠</Text>, headerShown:true}} />

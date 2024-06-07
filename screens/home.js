@@ -1,4 +1,4 @@
-import { Text, StyleSheet, Image } from "react-native";
+import { Text, StyleSheet, Image, ScrollView } from "react-native";
 import { Button, TextInput, Portal, Checkbox, Modal, RadioButton, Provider } from "react-native-paper";
 import { View } from "react-native";
 import { useContext, useState} from "react";
@@ -34,6 +34,43 @@ export default function Home(navigation) {
         setFilterValue(value);
     }
 
+    // Sample data
+    const restaurants = [
+        {
+            name: "Dunkin Donuts",
+            type: "Restaurant",
+            address: "Bukit Panjang",
+            foodItems: 4,
+            image: require('../assets/dunkin.jpeg'),
+            discount: "30"
+        },
+        {
+            name: "Bread Talk",
+            type: "Bakery",
+            address: "Bukit Batok",
+            foodItems: 15,
+            image: require('../assets/breadtalk.jpg'),
+            discount: "50"
+        },
+
+        {
+            name: "Petir Chicken Rice",
+            type: "Restaurant",
+            address: "1 Jelebu Road",
+            foodItems: 5,
+            image: require('../assets/chickenrice.jpg'),
+            discount: "60"
+        },
+        {
+            name: "NTUC Fairprice",
+            type: "Supermarket",
+            address: "Hillion Mall",
+            foodItems: 10,
+            image: require('../assets/ntuc.png'),
+            discount: "50"
+        }
+    ];
+
     return (
         <Provider>
             <SafeAreaView style={styles.container}>
@@ -61,10 +98,37 @@ export default function Home(navigation) {
 
                 <View style={styles.cardContainer}>
 
+
+                    <ScrollView contentContainerStyle={styles.scrollViewContent}>
+                    {restaurants.map((restaurant, index) => (
+                        <View key={index} style={styles.card}>
+                            <View style={styles.textContainer}>
+                                <Text style={styles.title}>{restaurant.name}</Text>
+                                <View style={{flexDirection:"row"}}>
+                                    <Text style={{fontWeight: "bold"}}>Food Type: </Text>
+                                    <Text>{restaurant.type}</Text>
+                                </View>
+                                <View style={{flexDirection:"row"}}>
+                                    <Text style={{fontWeight: "bold"}}>Address: </Text>
+                                    <Text>{restaurant.address}</Text>
+                                </View>
+                                <View style={{flexDirection:"row"}}>
+                                    <Text style={{fontWeight: "bold"}}>Food Items Available: </Text>
+                                    <Text>{restaurant.foodItems}</Text>
+                                </View>
+                                <View style={{flexDirection:"row"}}>
+                                    <Text style={{fontWeight: "bold"}}>Discount Available: </Text>
+                                    <Text>{restaurant.foodItems}%</Text>
+                                </View>
+                            </View>
+                            <Image source={restaurant.image} style={styles.image} />
+                        </View>
+                    ))}
+                    </ScrollView>
+
+
+
                 </View>
-
-
-
 
                 {/* <Button onPress={handleLogout}>Back to start page</Button> */}
 
@@ -134,7 +198,7 @@ const styles = StyleSheet.create({
         flex: 6,
         alignItems: "center",
         flexDirection: "column",
-        backgroundColor: "skyblue",
+        backgroundColor: "white",
       },
     title: {
         fontSize: 25,
@@ -185,4 +249,36 @@ const styles = StyleSheet.create({
     button: {
         marginTop: 20,
     },
+
+    // Card styles
+    card: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "95%",
+        height: 130,
+        backgroundColor: "white",
+        marginVertical: 10,
+        padding: 10,
+        borderRadius: 10,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+        borderColor: "black",
+        borderWidth: 1,
+    },
+    image: {
+        width: 100,
+        height: 100,
+        borderRadius: 10,
+    },
+    textContainer: {
+        alignContent: "center",
+    },
+
 });

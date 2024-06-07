@@ -15,19 +15,12 @@ export default function Home(navigation) {
     // Filter states
     const [search, setSearch] = useState("");
     const [visible, setVisible] = useState(false);
-    const [filterValue, setFilterValue] = useState("restaurant");
+    const [filterValue, setFilterValue] = useState("all");
     const [checkedDistance, setCheckedDistance] = useState(true);
     const [checkedDiscount, setCheckedDiscount] = useState(false);
-    const showModal = () => setVisible(true);
-    const hideModal = () => setVisible(false);
-
 
     const handleFilter = () => {
-        if (visible) {
-            hideModal();
-        } else {
-            showModal();
-        }
+        setVisible(!visible)
     };
 
     const handleFilterChange = (value) => {
@@ -42,7 +35,7 @@ export default function Home(navigation) {
             address: "Bukit Panjang",
             foodItems: 4,
             image: require('../assets/dunkin.jpeg'),
-            discount: "30"
+            discount: 30
         },
         {
             name: "Bread Talk",
@@ -50,7 +43,7 @@ export default function Home(navigation) {
             address: "Bukit Batok",
             foodItems: 15,
             image: require('../assets/breadtalk.jpg'),
-            discount: "50"
+            discount: 50
         },
 
         {
@@ -59,7 +52,7 @@ export default function Home(navigation) {
             address: "1 Jelebu Road",
             foodItems: 5,
             image: require('../assets/chickenrice.jpg'),
-            discount: "60"
+            discount: 60
         },
         {
             name: "NTUC Fairprice",
@@ -67,9 +60,32 @@ export default function Home(navigation) {
             address: "Hillion Mall",
             foodItems: 10,
             image: require('../assets/ntuc.png'),
-            discount: "50"
+            discount: 50
         }
     ];
+
+    // Filter 
+    const filteredRestaurants = restaurants.filter(restaurant => {
+        if (filterValue === "restaurant") {
+            return restaurant.type === "Restaurant";
+        } else if (filterValue === "bakery") {
+            return restaurant.type === "Bakery";
+        } else if (filterValue === "supermarket") {
+            return restaurant.type === "Supermarket";
+        }
+        return true; 
+    });
+    
+
+    // TODO Sort distance
+    const sortedRestaurants = filteredRestaurants.slice().sort((a, b) => {
+        if (checkedDistance) {
+            // distance calculation
+        } else if (checkedDiscount) {
+            return Number(b.discount) - Number(a.discount)
+        }
+        return 0; 
+    });
 
     return (
         <Provider>
@@ -100,7 +116,7 @@ export default function Home(navigation) {
 
 
                     <ScrollView contentContainerStyle={styles.scrollViewContent}>
-                    {restaurants.map((restaurant, index) => (
+                    {sortedRestaurants.map((restaurant, index) => (
                         <View key={index} style={styles.card}>
                             <View style={styles.textContainer}>
                                 <Text style={styles.title}>{restaurant.name}</Text>
@@ -118,7 +134,7 @@ export default function Home(navigation) {
                                 </View>
                                 <View style={{flexDirection:"row"}}>
                                     <Text style={{fontWeight: "bold"}}>Discount Available: </Text>
-                                    <Text>{restaurant.foodItems}%</Text>
+                                    <Text>{restaurant.discount}%</Text>
                                 </View>
                             </View>
                             <Image source={restaurant.image} style={styles.image} />
@@ -135,7 +151,7 @@ export default function Home(navigation) {
                 {/* Modal for filter and sort */}
                 <View >
                     <Portal>
-                        <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.modalContainer}>
+                        <Modal visible={visible} onDismiss={handleFilter} contentContainerStyle={styles.modalContainer}>
                             <Text style={styles.modalTitle}>Sort</Text>
                             <View style={styles.checkboxContainer}>
                                 <Checkbox.Item
@@ -157,11 +173,12 @@ export default function Home(navigation) {
                             </View>
                             <Text style={styles.modalTitle}>Filter</Text>
                             <RadioButton.Group onValueChange={handleFilterChange} value={filterValue}>
+                                <RadioButton.Item label="All" value="all" />  
                                 <RadioButton.Item label="Restaurant" value="restaurant" />
                                 <RadioButton.Item label="Bakery" value="bakery" />
                                 <RadioButton.Item label="Supermarket" value="supermarket" />
                             </RadioButton.Group>
-                            <Button mode="contained" onPress={hideModal} style={styles.button}>
+                            <Button mode="contained" onPress={handleFilter} style={styles.button}>
                                 Apply Filters
                             </Button>
                         </Modal>

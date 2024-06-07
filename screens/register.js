@@ -1,39 +1,33 @@
-import { View, Text, StyleSheet, Image, TextInput, Alert, KeyboardAvoidingView, ActivityIndicator } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Button } from "react-native-paper";
+import { View, Text, StyleSheet, Image, TextInput, KeyboardAvoidingView } from "react-native";
 import { useState, useContext } from "react";
 
-import emailIcon from "../assets/emailIcon.png";
-import keyIcon from "../assets/key.png";
-import logo from "../assets/logo.png";
-
-
 import { FIREBASE_AUTH } from "../FirebaseConfig";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Button } from "react-native-paper";
 import { LoginContext } from "../App";
 
-
-export default function LoginScreen({ navigation }) {
-
+export default function RegisterScreen({ navigation }) {
     const { login } = useContext(LoginContext);
-
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
 
     const auth = FIREBASE_AUTH;
 
-    const signIn = async () => {
-        setLoading(true);
+    const signUp = async () => {    
         try {
-            const response = await signInWithEmailAndPassword(auth, username, password);
-            setLoading(false);  
-            login();    
+            setLoading(true);
+            const response = await createUserWithEmailAndPassword(auth, username, password);
+            setLoading(false);
+            login();
         } catch (error) {
             setLoading(false);
-            alert("Invalid Username or Password");
+            alert(error.message);
         }
     }
+
+    // const navigatin = useNavigation();
 
     return (
         <SafeAreaView style={styles.container}>
@@ -42,16 +36,21 @@ export default function LoginScreen({ navigation }) {
 
                 <View style={styles.logoContainer}>
                     <Text style={styles.title}>Bounty Bites</Text>
-                    <Text style={styles.subTitle}>Save your wallet while saving the earth!</Text>
-                    
-                    <Image source={logo} style={styles.logo}/> 
+                    <Text style={styles.subTitle}>Save your wallet while saving the earth!</Text> 
+                </View>
+
+                <View style={styles.midContainer}>
+
                 </View>
 
 
 
                 <View style={styles.textContainer}> 
+                    <Text style={styles.title2}>Create an account</Text>
+                    <Text style={styles.subTitle2}>Enter your email to sign up for an account!</Text> 
                     {/* <KeyboardAvoidingView behavior="padding"> */}
                     <View style={styles.inputContainer}>
+                        {/* <Image source={emailIcon} style={styles.emailIcon} /> */}
                         <TextInput
                             autoCapitalize="none"
                             mode="flat"
@@ -59,12 +58,13 @@ export default function LoginScreen({ navigation }) {
                             style={styles.textBox}
                             value={username}
                             onChangeText={setUsername}
-                            placeholder="Email"
+                            placeholder="email@domain.com"
                             placeholderTextColor={"gray"}
                         />
                     </View>
 
                     <View style={styles.inputContainer}>
+                        {/* <Image source={keyIcon} style={styles.emailIcon} /> */}
                         <TextInput
                             autoCapitalize="none"
                             mode="flat"
@@ -78,20 +78,12 @@ export default function LoginScreen({ navigation }) {
                     </View>
                     {/* </KeyboardAvoidingView>    */}
                     <View style={styles.buttonContainer}>
-                        <Button mode="contained" onPress={signIn} labelStyle = {styles.buttonLabel} style={styles.button}>Log In</Button>
-                        {loading ? <ActivityIndicator color="white" /> : null}
+                        <Button mode="contained" onPress={signUp} labelStyle = {styles.buttonLabel} style={styles.button}>Sign up with email</Button>
                     </View>
-                    <View style={styles.registerContainer}>
-                        <Text>Dont have an account?</Text>
-                        {/* <Text style={styles.registerButton}>Register here</Text> */}
-                        <Button mode="contained" onPress={()=> navigation.navigate("Register Screen")} labelStyle = {styles.registerButtonLabel} style={styles.registerButton}>Register here!</Button>
-                  
-                    </View>
-                    <View style={styles.tncContainer}>
 
+                    <View style={styles.mainButtonContainer}> 
                         <Text style={styles.text1}>By continuing you agree to our</Text>
                         <Text style={styles.text2}>Terms of Service and Privacy Policy</Text>
-
                     </View>
                 
                 </View>
@@ -114,16 +106,14 @@ const styles = StyleSheet.create({
 
     logoContainer: {
         flex: 2,
-        paddingTop: "10%",
         alignItems: "center",
-        justifyContent: "center",
         flexDirection: "column",
       },
-    logo: {
-        width: 250,
-        height: 300,
-        resizeMode: "contain",
-    },
+    midContainer: {
+        flex: 1,
+        alignItems: "center",
+        flexDirection: "column",
+      },
     title: {
         fontSize: 35,
         fontStyle: "normal",
@@ -135,8 +125,19 @@ const styles = StyleSheet.create({
         color: "black",
         fontWeight: "bold",
     },
+    title2: {
+        fontSize: 20,
+        fontStyle: "normal",
+        fontWeight: "bold",
+        color: "black",
+    },
+    subTitle2:{
+        paddingTop: "2%",
+        fontSize: 15,
+        color: "black",
+    },
     textContainer: {
-        flex: 3,
+        flex: 7,
         flexDirection: "column",
         // justifyContent: "center",
         alignItems: "center",
@@ -145,6 +146,12 @@ const styles = StyleSheet.create({
     inputContainer: {
         marginTop: "5%",
         flexDirection: "row",
+        alignItems: "center",
+    },
+    mainButtonContainer: {
+        flex: 2,
+        flexDirection: "column",
+        paddingTop: "5%",
         alignItems: "center",
     },
     buttonContainer: {
@@ -158,12 +165,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingLeft: "5%",
     },
-    emailIcon: {
-        height: 30,
-        width: 30,
-        marginRight: "3%",
-      },
-      textBox: {
+    textBox: {
         backgroundColor: "white",
         height: 42,
         width: 350,
@@ -186,22 +188,6 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: 15,
         fontWeight: "bold",
-    },
-    registerButtonLabel: {
-        color: "blue",
-        fontSize: 15,
-        fontWeight: "bold",
-    },
-    registerButton: {   
-        backgroundColor: "white",
-        fontSize: 22,
-        fontWeight: "bold",
-    },
-    tncContainer: {
-        flex: 2,
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
     },
     text1: {
         marginTop: 10,

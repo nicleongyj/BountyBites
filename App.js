@@ -1,17 +1,18 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, createContext } from 'react';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import HomeContainer from './components/homeContainer'
 import LoginScreen from './screens/login.js';
 import StartScreen from './screens/start.js';
+import RegisterScreen from './screens/register.js';
 
 // import { LoginContext } from './contexts';
 
 
-export const LoginContext = React.createContext();
+export const LoginContext = createContext();
 
 export default function App() {
 
@@ -37,12 +38,19 @@ export default function App() {
             component={LoginScreen}
             // initialParams={{ setState: setLogin }}
           />
+        <Stack.Screen
+            name="Register Screen"
+            component={RegisterScreen}
+            // initialParams={{ setState: setLogin }}
+          />
           
 
         </Stack.Navigator>
       </LoginContext.Provider>
     ) : (
-      <HomeContainer/>
+      <LoginContext.Provider value={{ isLoggedIn, login, logout}}>
+        <HomeContainer/>  
+      </LoginContext.Provider>
     );
 
   }

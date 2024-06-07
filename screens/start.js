@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "react-native-paper";
@@ -8,7 +8,7 @@ import logo from "../assets/logo.png";
 import { LoginContext } from "../App";
 
 export default function Start({navigation, route}) {
-    const { isLoggedIn, login, logout } = React.useContext(LoginContext);
+    const { login } = useContext(LoginContext);
 
     const redirect = ({path}) => {
         if(path === "home"){

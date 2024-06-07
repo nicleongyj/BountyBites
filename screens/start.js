@@ -8,7 +8,7 @@ import logo from "../assets/logo.png";
 import { LoginContext } from "../App";
 
 export default function Start({navigation, route}) {
-    const { isLoggedIn, login, logout } = useContext(LoginContext);
+    const { login } = useContext(LoginContext);
 
     const redirect = ({path}) => {
         if(path === "home"){

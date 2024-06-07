@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, TextInput, Alert, KeyboardAvoidingView } from "react-native";
+import { View, Text, StyleSheet, Image, TextInput, KeyboardAvoidingView } from "react-native";
 import { useState, useContext } from "react";
 
 import { FIREBASE_AUTH } from "../FirebaseConfig";
@@ -165,17 +165,12 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingLeft: "5%",
     },
-    emailIcon: {
-        height: 30,
-        width: 30,
-        marginRight: "3%",
-      },
     textBox: {
         backgroundColor: "white",
         height: 42,
         width: 350,
         fontSize: 15,
-        borderColor: '#000', 
+        borderColor: 'rgba(0, 0, 0, 0.5)', 
         borderWidth: 1,     
         borderRadius: 7,  
         paddingHorizontal: 10,

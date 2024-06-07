@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, TextInput, Alert, KeyboardAvoidingView } from "react-native";
+import { View, Text, StyleSheet, Image, TextInput, Alert, KeyboardAvoidingView, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "react-native-paper";
 import { useState, useContext } from "react";
@@ -52,7 +52,6 @@ export default function LoginScreen({ navigation }) {
                 <View style={styles.textContainer}> 
                     {/* <KeyboardAvoidingView behavior="padding"> */}
                     <View style={styles.inputContainer}>
-                        <Image source={emailIcon} style={styles.emailIcon} />
                         <TextInput
                             autoCapitalize="none"
                             mode="flat"
@@ -66,7 +65,6 @@ export default function LoginScreen({ navigation }) {
                     </View>
 
                     <View style={styles.inputContainer}>
-                        <Image source={keyIcon} style={styles.emailIcon} />
                         <TextInput
                             autoCapitalize="none"
                             mode="flat"
@@ -81,6 +79,7 @@ export default function LoginScreen({ navigation }) {
                     {/* </KeyboardAvoidingView>    */}
                     <View style={styles.buttonContainer}>
                         <Button mode="contained" onPress={signIn} labelStyle = {styles.buttonLabel} style={styles.button}>Log In</Button>
+                        {loading ? <ActivityIndicator color="white" /> : null}
                     </View>
                     <View style={styles.registerContainer}>
                         <Text>Dont have an account?</Text>
@@ -114,7 +113,7 @@ const styles = StyleSheet.create({
     },
 
     logoContainer: {
-        flex: 3,
+        flex: 2,
         paddingTop: "10%",
         alignItems: "center",
         justifyContent: "center",
@@ -164,19 +163,19 @@ const styles = StyleSheet.create({
         width: 30,
         marginRight: "3%",
       },
-    textBox: {
+      textBox: {
         backgroundColor: "white",
-        height: 30,
-        width: 300,
+        height: 42,
+        width: 350,
         fontSize: 15,
-        borderColor: '#000', 
+        borderColor: 'rgba(0, 0, 0, 0.5)', 
         borderWidth: 1,     
         borderRadius: 7,  
         paddingHorizontal: 10,
     },
     button: {
         backgroundColor: "black",
-        width: 150,
+        width: 350,
         height: 42,
         justifyContent: "center",
         alignItems: "center",

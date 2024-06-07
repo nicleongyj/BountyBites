@@ -42,10 +42,10 @@ const styles = StyleSheet.create({
         opacity: 0.75,
       },
       text:{
-        color: "black",
+        color: "white",
       },
       buttonInnerContainer: {
-        backgroundColor: "#03d3fc",
+        backgroundColor: "black",
         flex: 1,
         justifyContent: "center",
         borderRadius: 15,

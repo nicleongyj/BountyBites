@@ -8,31 +8,39 @@ import HomeContainer from './components/homeContainer'
 import LoginScreen from './screens/login.js';
 import StartScreen from './screens/start.js';
 
+// import { LoginContext } from './contexts';
 
+
+export const LoginContext = React.createContext();
 
 export default function App() {
 
   const Stack = createNativeStackNavigator();
 
-  [login, setLogin] = useState(false);
+  [isLoggedIn, setIsLoggedIn] = useState(false);
+  const login = () => setIsLoggedIn(true);
+  const logout = () => setIsLoggedIn(false);
+  
   
   function Navigate() {
-    return !login ? (
-      
+    return !isLoggedIn ? (
+      <LoginContext.Provider value={{ isLoggedIn, login, logout}}>
+
         <Stack.Navigator>
             <Stack.Screen
             name="Starting Screen"
             component={StartScreen}
-            initialParams={{ setState: setLogin }}
+            // initialParams={{ setState: setLogin }}
           />
         <Stack.Screen
             name="Login Screen"
             component={LoginScreen}
-            initialParams={{ setState: setLogin }}
+            // initialParams={{ setState: setLogin }}
           />
           
 
         </Stack.Navigator>
+      </LoginContext.Provider>
     ) : (
       <HomeContainer/>
     );

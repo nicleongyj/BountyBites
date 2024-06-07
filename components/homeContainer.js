@@ -30,7 +30,7 @@ export default function HomeContainer() {
                 name={"Food Nearby"} 
                 component={HomeScreen} 
                 options={{tabBarIcon: () => <Text>🍴</Text>, 
-                headerShown:true}} />
+                headerShown:false}} />
             <Tab.Screen 
                 name={"Map"} 
                 component={MapScreen} 

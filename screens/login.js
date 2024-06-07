@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
         width: 30,
         marginRight: "3%",
       },
-      textBox: {
+    textBox: {
         backgroundColor: "white",
         height: 42,
         width: 350,

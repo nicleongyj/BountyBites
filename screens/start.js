@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     },
     restaurantButton:{
         width: 250,
-        height: 50,
+        height: 40,
         backgroundColor: '#f0f0f0', 
         borderColor: '#000000', 
         justifyContent: "center",

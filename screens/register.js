@@ -1,14 +1,15 @@
-import { View, Text, StyleSheet, Image, TextInput, KeyboardAvoidingView } from "react-native";
+import { View, Text, StyleSheet, Image, TextInput, KeyboardAvoidingView, ActivityIndicator } from "react-native";
 import { useState, useContext } from "react";
 
 import { FIREBASE_AUTH } from "../FirebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "react-native-paper";
-import { LoginContext } from "../App";
+import { LoginContext, RestaurantContext } from "../App";
 
 export default function RegisterScreen({ navigation }) {
     const { login } = useContext(LoginContext);
+    const { setRestaurant } = useContext(RestaurantContext);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
@@ -21,6 +22,7 @@ export default function RegisterScreen({ navigation }) {
             const response = await createUserWithEmailAndPassword(auth, username, password);
             setLoading(false);
             login();
+            setRestaurant();
         } catch (error) {
             setLoading(false);
             alert(error.message);
@@ -79,6 +81,7 @@ export default function RegisterScreen({ navigation }) {
                     {/* </KeyboardAvoidingView>    */}
                     <View style={styles.buttonContainer}>
                         <Button mode="contained" onPress={signUp} labelStyle = {styles.buttonLabel} style={styles.button}>Sign up with email</Button>
+                        {loading ? <ActivityIndicator color="black" /> : null}
                     </View>
 
                     <View style={styles.mainButtonContainer}> 
@@ -155,6 +158,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     buttonContainer: {
+        flex:1,
         marginTop: "5%",
         flexDirection: "column",
         alignItems: "center",
@@ -183,6 +187,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderRadius: 10,
         marginTop: 20,
+        marginBottom: 10,
     },
     buttonLabel: {
         color: "white",

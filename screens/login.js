@@ -3,20 +3,17 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "react-native-paper";
 import { useState, useContext } from "react";
 
-import emailIcon from "../assets/emailIcon.png";
-import keyIcon from "../assets/key.png";
 import logo from "../assets/logo.png";
-
 
 import { FIREBASE_AUTH } from "../FirebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { LoginContext } from "../App";
+import { LoginContext, RestaurantContext } from "../App";
 
 
 export default function LoginScreen({ navigation }) {
 
     const { login } = useContext(LoginContext);
-
+    const { setRestaurant } = useContext(RestaurantContext);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
@@ -29,6 +26,7 @@ export default function LoginScreen({ navigation }) {
             const response = await signInWithEmailAndPassword(auth, username, password);
             setLoading(false);  
             login();    
+            setRestaurant();
         } catch (error) {
             setLoading(false);
             alert("Invalid Username or Password");
@@ -79,7 +77,7 @@ export default function LoginScreen({ navigation }) {
                     {/* </KeyboardAvoidingView>    */}
                     <View style={styles.buttonContainer}>
                         <Button mode="contained" onPress={signIn} labelStyle = {styles.buttonLabel} style={styles.button}>Log In</Button>
-                        {loading ? <ActivityIndicator color="white" /> : null}
+                        {loading ? <ActivityIndicator color="black" /> : null}
                     </View>
                     <View style={styles.registerContainer}>
                         <Text>Dont have an account?</Text>
@@ -87,8 +85,8 @@ export default function LoginScreen({ navigation }) {
                         <Button mode="contained" onPress={()=> navigation.navigate("Register Screen")} labelStyle = {styles.registerButtonLabel} style={styles.registerButton}>Register here!</Button>
                   
                     </View>
-                    <View style={styles.tncContainer}>
 
+                    <View style={styles.tncContainer}>
                         <Text style={styles.text1}>By continuing you agree to our</Text>
                         <Text style={styles.text2}>Terms of Service and Privacy Policy</Text>
 
@@ -148,11 +146,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     buttonContainer: {
+        flex:1,
         marginTop: "5%",
         flexDirection: "column",
         alignItems: "center",
     },
     registerContainer: {
+        flex:1,
         marginTop: "5%",
         flexDirection: "row",
         alignItems: "center",
@@ -181,6 +181,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderRadius: 10,
         marginTop: 20,
+        marginBottom: 10,
     },
     buttonLabel: {
         color: "white",

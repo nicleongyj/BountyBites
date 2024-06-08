@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { View, Text, StyleSheet, Modal } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { Button } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native"; // Import useNavigation hook
 import { LoginContext } from "../App";
@@ -38,22 +38,52 @@ export default function Restaurant({ navigation }) {
     setModalVisible(false);
   };
 
+  const handleViewAnalytics = () => {
+    // Navigate to the Analytics screen
+    navigation.navigate("Analytics");
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Restaurant Information</Text>
       {restaurantData ? (
-        <View>
-          <Text>Username: {restaurantData.username}</Text>
-          <Text>Location: {restaurantData.location}</Text>
-          <Text>Restaurant Name: {restaurantData.restaurantName}</Text>
-          <Text>Latitude: {restaurantData.latitude}</Text>
-          <Text>Longitude: {restaurantData.longitude}</Text>
+        <View style={styles.infoContainer}>
+          <Text style={styles.infoText}>
+            Username: {restaurantData.username}
+          </Text>
+          <Text style={styles.infoText}>
+            Location: {restaurantData.location}
+          </Text>
+          <Text style={styles.infoText}>
+            Restaurant Name: {restaurantData.restaurantName}
+          </Text>
+          <Text style={styles.infoText}>
+            Latitude: {restaurantData.latitude}
+          </Text>
+          <Text style={styles.infoText}>
+            Longitude: {restaurantData.longitude}
+          </Text>
         </View>
       ) : (
-        <Text>No restaurant data found</Text>
+        <Text style={styles.noDataText}>No restaurant data found</Text>
       )}
-      <Button onPress={handleShareFood}>Share Food</Button>
-      <Button onPress={handleLogout}>Log Out</Button>
+      <Button mode="contained" onPress={handleShareFood} style={styles.button}>
+        Share Food
+      </Button>
+      <Button
+        mode="contained"
+        onPress={handleViewAnalytics}
+        style={styles.button}
+      >
+        View Analytics
+      </Button>
+      <Button
+        mode="contained"
+        onPress={handleLogout}
+        style={styles.logoutButton}
+      >
+        Log Out
+      </Button>
 
       {/* Share Food Modal */}
       <ShareFoodModal visible={modalVisible} closeModal={closeModal} />
@@ -67,10 +97,37 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
+    backgroundColor: "#f9f9f9",
   },
   heading: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: 20,
+    color: "#333",
+  },
+  infoContainer: {
+    marginBottom: 20,
+    width: "100%",
+  },
+  infoText: {
+    fontSize: 16,
+    marginBottom: 5,
+    color: "#555",
+  },
+  noDataText: {
+    fontSize: 16,
+    color: "#888",
+    marginBottom: 20,
+  },
+  button: {
+    marginTop: 10,
+    width: "80%",
+    alignSelf: "center",
+  },
+  logoutButton: {
+    marginTop: 10,
+    width: "80%",
+    alignSelf: "center",
+    backgroundColor: "#d9534f", // Red color for the logout button
   },
 });

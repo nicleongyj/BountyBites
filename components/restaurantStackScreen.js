@@ -1,7 +1,7 @@
 // Import necessary dependencies and screens
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Restaurant from "../screens/restaurant";
-import ShareFood from "../screens/ShareFoodModal";
+import ShareFood from "../screens/shareFood";
 
 // Create a stack navigator
 const MainStack = createNativeStackNavigator();
@@ -13,12 +13,12 @@ export default function MainStackNavigator() {
       <MainStack.Screen
         name="Restaurant"
         component={Restaurant}
-        options={{ headerShown: false }}
+        options={{ headerShown: true }}
       />
       <MainStack.Screen
         name="ShareFood"
         component={ShareFood}
-        options={{ title: "Share Food" }}
+        options={{ title: "Share Food"}}
       />
     </MainStack.Navigator>
   );

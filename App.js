@@ -34,18 +34,22 @@ export default function App() {
             <Stack.Screen
               name="Starting Screen"
               component={StartScreen}
+              options={{ title: "Bounty Bites"}}
             />
             <Stack.Screen
               name="Login Screen"
               component={LoginScreen}
+              options={{ title: "Login"}}
             />
             <Stack.Screen
               name="Register Screen"
               component={RegisterScreen}
+              options={{ title: "Register"}}
             />
             <Stack.Screen
               name="Terms and Condition Screen"
               component={TermsScreen}
+              options={{ title: "Terms and Conditions"}}
             /> 
           </Stack.Navigator>
           

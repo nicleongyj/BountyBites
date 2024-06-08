@@ -84,17 +84,19 @@ export default function LoginScreen({ navigation }) {
                     </View>
                     <View style={styles.registerContainer}>
                         <Text>Dont have an account? </Text>
-                        <Text>Contact royce@bountybites.com to register your restaurant!</Text>
-                        {/* <Button mode="contained" onPress={()=> navigation.navigate("Register Screen")} labelStyle = {styles.registerButtonLabel} style={styles.registerButton}>Register here!</Button> */}
+                        {/*<Text>Contact royce@bountybites.com to register your restaurant!</Text> */} 
+                        <Button mode="contained" onPress={()=> navigation.navigate("Register Screen")} labelStyle = {styles.registerButtonLabel} style={styles.registerButton}>Register here!</Button>
                     </View>
 
 
-                    <Pressable onPress={termsConditionHandler}>
+                    
                         <View style={styles.tncContainer}>
-                            <Text style={styles.text1}>By continuing you agree to our</Text>
+                            <Pressable onPress={termsConditionHandler}>
+                            <Text style={styles.text1}>By continuing, you agree to our</Text>
                             <Text style={styles.text2}>Terms of Service and Privacy Policy</Text>
+                            </Pressable>
                         </View>
-                    </Pressable>
+                    
                 
                 </View>
         
@@ -207,6 +209,7 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
+        alignContent: "center",
     },
     text1: {
         marginTop: 10,

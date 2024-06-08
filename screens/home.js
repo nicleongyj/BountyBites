@@ -1,14 +1,16 @@
-import { Text, StyleSheet, Image, ScrollView } from "react-native";
+import { Text, StyleSheet, Image, ScrollView, Pressable } from "react-native";
 import { Button, TextInput, Portal, Checkbox, Modal, RadioButton, Provider } from "react-native-paper";
 import { View } from "react-native";
 import { useContext, useState} from "react";
 
+
 import { LoginContext } from "../App";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {restaurants} from "../sample_data/restaurants"
 
 
-export default function Home(navigation) {
+export default function Home({navigation}) {
     const { logout } = useContext(LoginContext);
 
     // Filter states
@@ -26,42 +28,10 @@ export default function Home(navigation) {
         setFilterValue(value);
     }
 
-    // Sample data
-    const restaurants = [
-        {
-            name: "Dunkin Donuts",
-            type: "Restaurant",
-            address: "Bukit Panjang",
-            foodItems: 4,
-            image: require('../assets/dunkin.jpeg'),
-            discount: 30
-        },
-        {
-            name: "Bread Talk",
-            type: "Bakery",
-            address: "Bukit Batok",
-            foodItems: 15,
-            image: require('../assets/breadtalk.jpg'),
-            discount: 50
-        },
-
-        {
-            name: "Petir Chicken Rice",
-            type: "Restaurant",
-            address: "1 Jelebu Road",
-            foodItems: 5,
-            image: require('../assets/chickenrice.jpg'),
-            discount: 60
-        },
-        {
-            name: "NTUC Fairprice",
-            type: "Supermarket",
-            address: "Hillion Mall",
-            foodItems: 10,
-            image: require('../assets/ntuc.png'),
-            discount: 50
-        }
-    ];
+    const handleCardPress = (restaurant) => {
+        console.log("Card pressed")
+        navigation.navigate("ItemList", {restaurant: restaurant})
+    }
 
     // Filter 
     const filteredRestaurants = restaurants.filter(restaurant => {
@@ -114,30 +84,32 @@ export default function Home(navigation) {
                 <View style={styles.cardContainer}>
                     <ScrollView contentContainerStyle={styles.scrollViewContent}>
                     {sortedRestaurants.map((restaurant, index) => (
-                        <View key={index} style={styles.card}>
-                            <View style={styles.textContainer}>
-                                <Text style={styles.cardTitle}>{restaurant.name}</Text>
-                                <View style={{paddingLeft:10}}>
-                                    <View style={{flexDirection:"row"}}>
-                                        <Text style={{fontWeight: "bold"}}>Food Type: </Text>
-                                        <Text>{restaurant.type}</Text>
-                                    </View>
-                                    <View style={{flexDirection:"row"}}>
-                                        <Text style={{fontWeight: "bold"}}>Address: </Text>
-                                        <Text>{restaurant.address}</Text>
-                                    </View>
-                                    <View style={{flexDirection:"row"}}>
-                                        <Text style={{fontWeight: "bold"}}>Food Items Available: </Text>
-                                        <Text>{restaurant.foodItems}</Text>
-                                    </View>
-                                    <View style={{flexDirection:"row"}}>
-                                        <Text style={{fontWeight: "bold"}}>Discount Available: </Text>
-                                        <Text>{restaurant.discount}%</Text>
+                        <Pressable key={index} onPress={() => handleCardPress(restaurant)}>
+                            <View key={index} style={styles.card}>
+                                <View style={styles.textContainer}>
+                                    <Text style={styles.cardTitle}>{restaurant.name}</Text>
+                                    <View style={{paddingLeft:10}}>
+                                        <View style={{flexDirection:"row"}}>
+                                            <Text style={{fontWeight: "bold"}}>Food Type: </Text>
+                                            <Text>{restaurant.type}</Text>
+                                        </View>
+                                        <View style={{flexDirection:"row"}}>
+                                            <Text style={{fontWeight: "bold"}}>Address: </Text>
+                                            <Text>{restaurant.address}</Text>
+                                        </View>
+                                        <View style={{flexDirection:"row"}}>
+                                            <Text style={{fontWeight: "bold"}}>Food Items Available: </Text>
+                                            <Text>{restaurant.foodItems}</Text>
+                                        </View>
+                                        <View style={{flexDirection:"row"}}>
+                                            <Text style={{fontWeight: "bold"}}>Discount Available: </Text>
+                                            <Text>{restaurant.discount}%</Text>
+                                        </View>
                                     </View>
                                 </View>
+                                <Image source={restaurant.image} style={styles.image} />
                             </View>
-                            <Image source={restaurant.image} style={styles.image} />
-                        </View>
+                        </Pressable>
                     ))}
                     </ScrollView>
                 </View>
@@ -268,6 +240,7 @@ const styles = StyleSheet.create({
     },
     button: {
         marginTop: 20,
+        backgroundColor: "black",
     },
 
     // Card styles

@@ -30,15 +30,15 @@ export default function App() {
         <LoginContext.Provider value={{ isLoggedIn, login, logout}}>
 
           <Stack.Navigator>
-              <Stack.Screen
+            <Stack.Screen
               name="Starting Screen"
               component={StartScreen}
             />
-          <Stack.Screen
+            <Stack.Screen
               name="Login Screen"
               component={LoginScreen}
             />
-          <Stack.Screen
+            <Stack.Screen
               name="Register Screen"
               component={RegisterScreen}
             />

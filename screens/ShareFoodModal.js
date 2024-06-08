@@ -9,24 +9,32 @@ import {
   Dimensions,
   Alert,
 } from "react-native";
+import { storeFoodData } from "../firestoreUtils";
 
-const ShareFoodModal = ({ visible, closeModal }) => {
+const ShareFoodModal = ({ visible, closeModal, restaurantData }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [discount, setDiscount] = useState("");
   const [quantity, setQuantity] = useState("");
+  const [endTime, setEndTime] = useState("");
 
+  const userId = "hAV4EkrRuKSmWBGMwKikVsmpcCQ2"; // Replace with actual user ID
   useEffect(() => {
-    // Reset input fields when the modal is opened
     if (visible) {
       setName("");
       setDescription("");
       setPrice("");
       setDiscount("");
       setQuantity("");
+      setEndTime("");
     }
   }, [visible]);
+
+  const isValidTime = (time) => {
+    const regex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+    return regex.test(time);
+  };
 
   const renderInput = (label, value, onChangeText, returnKeyType) => (
     <View style={styles.inputContainer}>
@@ -41,8 +49,7 @@ const ShareFoodModal = ({ visible, closeModal }) => {
     </View>
   );
 
-  const handleShare = () => {
-    // Validation checks
+  const handleShare = async () => {
     if (!name.trim()) {
       Alert.alert("Error", "Please enter a name for the food item.");
       return;
@@ -74,8 +81,30 @@ const ShareFoodModal = ({ visible, closeModal }) => {
       return;
     }
 
-    // Handle sharing logic here
-    closeModal(); // Close the modal after sharing
+    if (!isValidTime(endTime)) {
+      Alert.alert("Error", "Please enter a valid end time (HH:MM).");
+      return;
+    }
+
+    const food = {
+      name: name,
+      description: description,
+      price: parsedPrice,
+      discount: parsedDiscount,
+      quantity: parsedQuantity,
+    };
+
+    const foodData = {
+      food: food,
+      endTime: endTime,
+    };
+
+    try {
+      await storeFoodData(userId, foodData);
+      closeModal(); // Close the modal after sharing
+    } catch (error) {
+      Alert.alert("Error", "Failed to share food item.");
+    }
   };
 
   return (
@@ -92,7 +121,8 @@ const ShareFoodModal = ({ visible, closeModal }) => {
           {renderInput("Description", description, setDescription, "next")}
           {renderInput("Price ($)", price, setPrice, "next")}
           {renderInput("Discount (%)", discount, setDiscount, "next")}
-          {renderInput("Quantity", quantity, setQuantity, "done")}
+          {renderInput("Quantity", quantity, setQuantity, "next")}
+          {renderInput("End Time (HH:MM)", endTime, setEndTime, "done")}
           <View style={styles.buttonContainer}>
             <Button title="Close" onPress={closeModal} color="red" />
             <Button title="Share" onPress={handleShare} />
@@ -104,7 +134,7 @@ const ShareFoodModal = ({ visible, closeModal }) => {
 };
 
 const { width } = Dimensions.get("window");
-const modalWidth = width - 40; // Subtract padding
+const modalWidth = width - 40;
 
 const styles = StyleSheet.create({
   modalContainer: {

@@ -1,5 +1,17 @@
 // firestoreUtils.js
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  addDoc,
+  updateDoc,
+  arrayUnion,
+  doc,
+  getDoc,
+  setDoc,
+} from "firebase/firestore";
+
 import { FIREBASE_DB } from "./FirebaseConfig";
 
 export const fetchRestaurantData = async (userId) => {
@@ -53,6 +65,33 @@ export const storeRestaurantData = async (restaurantData) => {
     console.log("Restaurant data stored with ID: ", docRef.id);
   } catch (error) {
     console.error("Error storing restaurant data: ", error);
+    throw error;
+  }
+};
+
+export const storeFoodData = async (userId, foodData) => {
+  try {
+    const { food, endTime } = foodData;
+
+    const docRef = doc(FIREBASE_DB, "food-today", userId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      // Document exists, update it
+      await updateDoc(docRef, {
+        foodItems: arrayUnion(food),
+      });
+    } else {
+      // Document doesn't exist, create it
+      await setDoc(docRef, {
+        endTime: endTime,
+        foodItems: [foodData],
+      });
+    }
+
+    console.log("Food data stored successfully for user: ", userId);
+  } catch (error) {
+    console.error("Error storing food data: ", error);
     throw error;
   }
 };

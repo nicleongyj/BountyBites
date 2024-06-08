@@ -43,6 +43,11 @@ export default function Restaurant({ navigation }) {
     navigation.navigate("Analytics");
   };
 
+  const handleViewFoodShared = () => {
+    // Navigate to the screen that shows the food shared currently
+    navigation.navigate("FoodShared");
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Restaurant Information</Text>
@@ -79,6 +84,13 @@ export default function Restaurant({ navigation }) {
       </Button>
       <Button
         mode="contained"
+        onPress={handleViewFoodShared}
+        style={styles.button}
+      >
+        View Food Shared
+      </Button>
+      <Button
+        mode="contained"
         onPress={handleLogout}
         style={styles.logoutButton}
       >
@@ -86,7 +98,12 @@ export default function Restaurant({ navigation }) {
       </Button>
 
       {/* Share Food Modal */}
-      <ShareFoodModal visible={modalVisible} closeModal={closeModal} />
+      <ShareFoodModal
+        visible={modalVisible}
+        closeModal={closeModal}
+        restaurantData={restaurantData}
+        userId={userId}
+      />
     </View>
   );
 }
@@ -104,25 +121,30 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
     color: "#333",
+    textAlign: "center",
   },
   infoContainer: {
     marginBottom: 20,
     width: "100%",
+    paddingHorizontal: 20,
   },
   infoText: {
     fontSize: 16,
     marginBottom: 5,
     color: "#555",
+    textAlign: "center",
   },
   noDataText: {
     fontSize: 16,
     color: "#888",
     marginBottom: 20,
+    textAlign: "center",
   },
   button: {
     marginTop: 10,
     width: "80%",
     alignSelf: "center",
+    backgroundColor: "#6200ee", // Primary button color
   },
   logoutButton: {
     marginTop: 10,

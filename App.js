@@ -8,6 +8,7 @@ import HomeContainer from './components/homeContainer'
 import LoginScreen from './screens/login.js';
 import StartScreen from './screens/start.js';
 import RegisterScreen from './screens/register.js';
+import TermsScreen from './screens/termsConditions';
 
 // Contexts
 export const LoginContext = createContext();
@@ -42,9 +43,12 @@ export default function App() {
               name="Register Screen"
               component={RegisterScreen}
             />
-            
-
+            <Stack.Screen
+              name="Terms and Condition Screen"
+              component={TermsScreen}
+            /> 
           </Stack.Navigator>
+          
         </LoginContext.Provider>
       </RestaurantContext.Provider>
     ) : (

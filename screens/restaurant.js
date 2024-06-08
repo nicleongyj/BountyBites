@@ -1,18 +1,19 @@
 import React, { useState, useContext, useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Modal } from "react-native";
 import { Button } from "react-native-paper";
+import { useNavigation } from "@react-navigation/native"; // Import useNavigation hook
 import { LoginContext } from "../App";
 import { fetchRestaurantData } from "../firestoreUtils";
+import ShareFoodModal from "./ShareFoodModal";
 
-export default function Home({ navigation }) {
+export default function Restaurant({ navigation }) {
   const { logout } = useContext(LoginContext);
   const [restaurantData, setRestaurantData] = useState(null);
-
+  const [modalVisible, setModalVisible] = useState(false); // State for modal visibility
+  const userId = "hAV4EkrRuKSmWBGMwKikVsmpcCQ2"; // Replace with actual user ID
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch restaurant data using the user ID
-        const userId = "hAV4EkrRuKSmWBGMwKikVsmpcCQ2"; // Replace with actual user ID
         const data = await fetchRestaurantData(userId);
         setRestaurantData(data);
       } catch (error) {
@@ -25,6 +26,16 @@ export default function Home({ navigation }) {
 
   const handleLogout = () => {
     logout();
+  };
+
+  const handleShareFood = () => {
+    // Show the Share Food modal
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    // Close the modal
+    setModalVisible(false);
   };
 
   return (
@@ -41,7 +52,11 @@ export default function Home({ navigation }) {
       ) : (
         <Text>No restaurant data found</Text>
       )}
-      <Button onPress={handleLogout}>Back to start page</Button>
+      <Button onPress={handleShareFood}>Share Food</Button>
+      <Button onPress={handleLogout}>Log Out</Button>
+
+      {/* Share Food Modal */}
+      <ShareFoodModal visible={modalVisible} closeModal={closeModal} />
     </View>
   );
 }

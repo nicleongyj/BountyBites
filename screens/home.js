@@ -1,4 +1,4 @@
-import { Text, StyleSheet, Image, ScrollView } from "react-native";
+import { Text, StyleSheet, Image, ScrollView, Pressable } from "react-native";
 import { Button, TextInput, Portal, Checkbox, Modal, RadioButton, Provider } from "react-native-paper";
 import { View } from "react-native";
 import { useContext, useState} from "react";
@@ -8,7 +8,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
-export default function Home(navigation) {
+export default function Home({navigation}) {
     const { logout } = useContext(LoginContext);
 
     // Filter states
@@ -26,13 +26,26 @@ export default function Home(navigation) {
         setFilterValue(value);
     }
 
+    const handleCardPress = (restaurant) => {
+        console.log("Card pressed")
+        navigation.navigate("ItemList", {restaurant: restaurant})
+    }
+
+
     // Sample data
     const restaurants = [
         {
             name: "Dunkin Donuts",
             type: "Restaurant",
-            address: "Bukit Panjang",
+            address: "17 Petir Road, Hillion Mall",
+            coordinates: { latitude: 1.3786, longitude: 103.7626 },
             foodItems: 4,
+            food: {
+                "Donut": 2,
+                "Coffee": 2,
+                "Sandwich": 2,
+                "Burger": 2
+            },
             image: require('../assets/dunkin.jpeg'),
             discount: 30
         },
@@ -41,6 +54,11 @@ export default function Home(navigation) {
             type: "Bakery",
             address: "Bukit Batok",
             foodItems: 15,
+            food: {
+                "Floss Bread": 2,
+                "Cheese Bread": 2,
+                "Pork Floss Bun": 2,
+            },
             image: require('../assets/breadtalk.jpg'),
             discount: 50
         },
@@ -50,6 +68,10 @@ export default function Home(navigation) {
             type: "Restaurant",
             address: "1 Jelebu Road",
             foodItems: 5,
+            food: {
+                "Chicken Rice": 2,
+                "Chicken Chop": 2,
+            },
             image: require('../assets/chickenrice.jpg'),
             discount: 60
         },
@@ -58,6 +80,10 @@ export default function Home(navigation) {
             type: "Supermarket",
             address: "Hillion Mall",
             foodItems: 10,
+            food: {
+                "Rice": 2,
+                "Noodles": 2,
+            },
             image: require('../assets/ntuc.png'),
             discount: 50
         }
@@ -114,30 +140,32 @@ export default function Home(navigation) {
                 <View style={styles.cardContainer}>
                     <ScrollView contentContainerStyle={styles.scrollViewContent}>
                     {sortedRestaurants.map((restaurant, index) => (
-                        <View key={index} style={styles.card}>
-                            <View style={styles.textContainer}>
-                                <Text style={styles.cardTitle}>{restaurant.name}</Text>
-                                <View style={{paddingLeft:10}}>
-                                    <View style={{flexDirection:"row"}}>
-                                        <Text style={{fontWeight: "bold"}}>Food Type: </Text>
-                                        <Text>{restaurant.type}</Text>
-                                    </View>
-                                    <View style={{flexDirection:"row"}}>
-                                        <Text style={{fontWeight: "bold"}}>Address: </Text>
-                                        <Text>{restaurant.address}</Text>
-                                    </View>
-                                    <View style={{flexDirection:"row"}}>
-                                        <Text style={{fontWeight: "bold"}}>Food Items Available: </Text>
-                                        <Text>{restaurant.foodItems}</Text>
-                                    </View>
-                                    <View style={{flexDirection:"row"}}>
-                                        <Text style={{fontWeight: "bold"}}>Discount Available: </Text>
-                                        <Text>{restaurant.discount}%</Text>
+                        <Pressable key={index} onPress={() => handleCardPress(restaurant)}>
+                            <View key={index} style={styles.card}>
+                                <View style={styles.textContainer}>
+                                    <Text style={styles.cardTitle}>{restaurant.name}</Text>
+                                    <View style={{paddingLeft:10}}>
+                                        <View style={{flexDirection:"row"}}>
+                                            <Text style={{fontWeight: "bold"}}>Food Type: </Text>
+                                            <Text>{restaurant.type}</Text>
+                                        </View>
+                                        <View style={{flexDirection:"row"}}>
+                                            <Text style={{fontWeight: "bold"}}>Address: </Text>
+                                            <Text>{restaurant.address}</Text>
+                                        </View>
+                                        <View style={{flexDirection:"row"}}>
+                                            <Text style={{fontWeight: "bold"}}>Food Items Available: </Text>
+                                            <Text>{restaurant.foodItems}</Text>
+                                        </View>
+                                        <View style={{flexDirection:"row"}}>
+                                            <Text style={{fontWeight: "bold"}}>Discount Available: </Text>
+                                            <Text>{restaurant.discount}%</Text>
+                                        </View>
                                     </View>
                                 </View>
+                                <Image source={restaurant.image} style={styles.image} />
                             </View>
-                            <Image source={restaurant.image} style={styles.image} />
-                        </View>
+                        </Pressable>
                     ))}
                     </ScrollView>
                 </View>

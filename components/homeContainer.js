@@ -6,11 +6,11 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../screens/home.js";
 import MapScreen from "../screens/map.js";
 import RestaurantScreen from "../screens/restaurant.js";
+import HomeStackScreen from "./homeStackScreen";
 
 import { RestaurantContext } from "../App.js";
 
 const Tab = createBottomTabNavigator();
-
 
 export default function HomeContainer() {
     const { isRestaurant } = useContext(RestaurantContext);
@@ -28,7 +28,7 @@ export default function HomeContainer() {
         >            
             <Tab.Screen 
                 name={"Food Nearby"} 
-                component={HomeScreen} 
+                component={HomeStackScreen} 
                 options={{tabBarIcon: () => <Text>🍴</Text>, 
                 headerShown:false}} />
             <Tab.Screen 
@@ -36,7 +36,7 @@ export default function HomeContainer() {
                 component={MapScreen} 
                 options={{tabBarIcon: () => <Text>🗺️</Text>, 
                 headerShown:true}} />
-            {isRestaurant && (
+            {isRestaurant || (
                 <Tab.Screen 
                     name="Restaurant" 
                     component={RestaurantScreen} 

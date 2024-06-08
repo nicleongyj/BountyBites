@@ -6,10 +6,11 @@ export const restaurants = [
         coordinates: { latitude: 1.3786, longitude: 103.7626 },
         foodItems: 4,
         food: [
-            { name: "Donut", price: 2, stock: 3, discount: 50 },
-            { name: "Coffee", price: 2.50, stock: 6, discount: 60 },
-            { name: "Sandwich", price: 5, stock: 3, discount: 70 },
-            { name: "Burger", price: 6, stock: 2, discount: 80 }
+            { name: "Original Glaze", price: 2, stock: 3, discount: 50 },
+            { name: "Matcha", price: 2.50, stock: 6, discount: 60 },
+            { name: "Boston Creme", price: 2.4, stock: 3, discount: 70 },
+            { name: "Black Forest", price: 2, stock: 2, discount: 80 },
+            { name: "Cookies & Cream", price: 3, stock: 2, discount: 80 }
         ],
         image: require('../assets/dunkin.jpeg'),
         discount: 30
@@ -17,7 +18,7 @@ export const restaurants = [
     {
         name: "Bread Talk",
         type: "Bakery",
-        address: "Bukit Batok",
+        address: "West Mall",
         foodItems: 15,
         food: [
             { name: "Floss Bread", price: 2, stock: 10, discount: 30 },
@@ -30,7 +31,7 @@ export const restaurants = [
     {
         name: "Petir Chicken Rice",
         type: "Restaurant",
-        address: "1 Jelebu Road",
+        address: "17 Petir Road, Hillion Mall",
         foodItems: 5,
         food: [
             { name: "Chicken Rice", price: 5, stock: 2, discount: 80 },
@@ -42,7 +43,7 @@ export const restaurants = [
     {
         name: "NTUC Fairprice",
         type: "Supermarket",
-        address: "Hillion Mall",
+        address: "Bukit Panjang Plaza",
         foodItems: 10,
         food: [
             { name: "Rice", price: 6, stock: 5, discount: 40 },

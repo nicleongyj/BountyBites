@@ -44,6 +44,9 @@ export default function Home(navigation) {
                 style={styles.map}
                 region={region}
             >
+                {/* Marker for user location */}
+            
+
             </MapView>
         </View>
         

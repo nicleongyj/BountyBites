@@ -66,7 +66,6 @@ export default function ItemList({navigation, route}) {
                     );
                 })}
                 </ScrollView>
-
             </View>
 
             <View style={styles.bottomContainer}>

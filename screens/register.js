@@ -3,17 +3,17 @@ import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   ActivityIndicator,
   ScrollView,
   KeyboardAvoidingView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button } from "react-native-paper";
+import { Button, TextInput } from "react-native-paper";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH } from "../FirebaseConfig";
 import { LoginContext, RestaurantContext } from "../App";
 import { storeRestaurantData } from "../firestoreUtils";
+import * as Location from "expo-location";
 
 export default function RegisterScreen({ navigation }) {
   const { login } = useContext(LoginContext);
@@ -28,7 +28,7 @@ export default function RegisterScreen({ navigation }) {
 
   const auth = FIREBASE_AUTH;
 
-  const signUp = async () => {
+  const signUp = async (location) => {
     try {
       setLoading(true);
       const response = await createUserWithEmailAndPassword(
@@ -58,10 +58,25 @@ export default function RegisterScreen({ navigation }) {
     }
   };
 
+  const geocodeAddress = async () => {
+    try {
+      const geoencodedLocation = await Location.geocodeAsync(location);
+    } catch (error) {
+      console.error("Error geocoding address:", error);
+      alert("Error geocoding address");
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
         <ScrollView contentContainerStyle={styles.scrollView}>
+
+        <View style={styles.titleContainer}>
+            <Text style={{fontWeight:"bold", fontSize:30}}>Create an account</Text>
+        </View>
+
+
           <View style={styles.inputContainer}>
             <TextInput
               autoCapitalize="none"
@@ -95,19 +110,6 @@ export default function RegisterScreen({ navigation }) {
               mode="flat"
               textColor="black"
               style={styles.textBox}
-              value={location}
-              onChangeText={setLocation}
-              placeholder="Location"
-              placeholderTextColor={"grey"}
-            />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <TextInput
-              autoCapitalize="none"
-              mode="flat"
-              textColor="black"
-              style={styles.textBox}
               value={restaurantName}
               onChangeText={setRestaurantName}
               placeholder="Restaurant Name"
@@ -121,10 +123,30 @@ export default function RegisterScreen({ navigation }) {
               mode="flat"
               textColor="black"
               style={styles.textBox}
+              value={location}
+              onChangeText={setLocation}
+              placeholder="Address or Postal Code"
+              placeholderTextColor={"grey"}
+            />
+           
+          </View>
+
+          <View style={{flex:1,alignItems: "center", justifyContent:'center'}}>
+            <Button mode="contained" onPress={() => geocodeAddress(location)} style={styles.locationButton} labelStyle={styles.locationButtonLabel}>Get coordinates</Button>
+            {/* <Button mode="contained" onPress={handleManualCoordinates} style={styles.locationButton} labelStyle={styles.locationButtonLabel}>Select location on map</Button> */}
+          </View>
+
+          <View style={styles.inputContainer}>
+            <TextInput
+              autoCapitalize="none"
+              mode="flat"
+              textColor="black"
+              style={styles.textBox}
               value={latitude}
-              onChangeText={setLatitude}
+            //   onChangeText={setLatitude}
               placeholder="Latitude"
               placeholderTextColor={"grey"}
+              disabled={true}
             />
           </View>
 
@@ -135,8 +157,8 @@ export default function RegisterScreen({ navigation }) {
               textColor="black"
               style={styles.textBox}
               value={longitude}
-              onChangeText={setLongitude}
-              placeholder="Longitude"
+            //   onChangeText={setLongitude}
+              placeholder={"Longitude"}
               placeholderTextColor={"grey"}
             />
           </View>
@@ -203,23 +225,28 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   inputContainer: {
+    flex:2,
     marginTop: "5%",
     alignItems: "center",
   },
+  titleContainer: {
+    flex: 1,
+    alignItems: "center",
+  },
   mainButtonContainer: {
-    flex: 2,
+    flex: 10,
     paddingTop: "5%",
     alignItems: "center",
   },
   buttonContainer: {
-    flex: 1,
+    flex: 10,
     marginTop: "5%",
     alignItems: "center",
   },
   textBox: {
     backgroundColor: "white",
     height: 42,
-    width: 350,
+    width: 320,
     fontSize: 15,
     borderColor: "rgba(0, 0, 0, 0.5)",
     borderWidth: 1,
@@ -241,6 +268,22 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "bold",
   },
+  locationButton: {
+    backgroundColor: "black",
+    width: 150,
+    height: 42,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 20,
+    marginTop: 10,
+    // marginBottom: 10,
+
+  },
+  locationButtonLabel: {
+    color: "white",
+    fontSize: 10,
+    fontWeight: "bold",
+  },
   text1: {
     marginTop: 10,
     color: "black",
@@ -252,3 +295,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, TextInput, Alert, KeyboardAvoidingView, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, Image, TextInput, Alert, KeyboardAvoidingView, ActivityIndicator, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "react-native-paper";
 import { useState, useContext } from "react";
@@ -19,6 +19,10 @@ export default function LoginScreen({ navigation }) {
     const [loading, setLoading] = useState(false);
 
     const auth = FIREBASE_AUTH;
+
+    const termsConditionHandler = () => {
+        navigation.navigate("Terms and Condition Screen")
+    }
 
     const signIn = async () => {
         setLoading(true);
@@ -48,7 +52,6 @@ export default function LoginScreen({ navigation }) {
 
 
                 <View style={styles.textContainer}> 
-                    {/* <KeyboardAvoidingView behavior="padding"> */}
                     <View style={styles.inputContainer}>
                         <TextInput
                             autoCapitalize="none"
@@ -74,23 +77,26 @@ export default function LoginScreen({ navigation }) {
                             placeholderTextColor={"grey"}
                         />
                     </View>
-                    {/* </KeyboardAvoidingView>    */}
+                    
                     <View style={styles.buttonContainer}>
                         <Button mode="contained" onPress={signIn} labelStyle = {styles.buttonLabel} style={styles.button}>Log In</Button>
                         {loading ? <ActivityIndicator color="black" /> : null}
                     </View>
                     <View style={styles.registerContainer}>
-                        <Text>Dont have an account?</Text>
-                        {/* <Text style={styles.registerButton}>Register here</Text> */}
+                        <Text>Dont have an account? </Text>
+                        {/*<Text>Contact royce@bountybites.com to register your restaurant!</Text> */} 
                         <Button mode="contained" onPress={()=> navigation.navigate("Register Screen")} labelStyle = {styles.registerButtonLabel} style={styles.registerButton}>Register here!</Button>
-                  
                     </View>
 
-                    <View style={styles.tncContainer}>
-                        <Text style={styles.text1}>By continuing you agree to our</Text>
-                        <Text style={styles.text2}>Terms of Service and Privacy Policy</Text>
 
-                    </View>
+                    
+                        <View style={styles.tncContainer}>
+                            <Pressable onPress={termsConditionHandler}>
+                            <Text style={styles.text1}>By continuing, you agree to our</Text>
+                            <Text style={styles.text2}>Terms of Service and Privacy Policy</Text>
+                            </Pressable>
+                        </View>
+                    
                 
                 </View>
         
@@ -203,6 +209,7 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
+        alignContent: "center",
     },
     text1: {
         marginTop: 10,

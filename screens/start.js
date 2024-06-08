@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "react-native-paper";
 
@@ -19,18 +19,19 @@ export default function Start({navigation, route}) {
         }
     }
 
+    const termsAndConditionHandler = () => {
+        navigation.navigate("Terms and Condition Screen")
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             {/* <View style = {styles.container}> */}
+
                 <View style={styles.logoContainer}>
-                    {/* <Text style={styles.title}>Bounty Bites</Text> */}
-                    
                     <Image source={logo} style={styles.logo}/> 
                     <Text style={styles.subTitle}>Save your wallet while saving the earth!</Text>
 
                 </View>
-
-
 
                 <View style={styles.mainButtonContainer}> 
                     <Button mode="contained" onPress={() => redirect({path: "home"})} labelStyle = {styles.buttonLabel} style={styles.button}>Food Hunt!</Button>
@@ -38,13 +39,12 @@ export default function Start({navigation, route}) {
 
                 <View style={styles.mainButtonContainer}> 
                     <Button mode="contained" onPress={() => redirect({path: "login"})} labelStyle = {styles.restaurantLabel} style={styles.restaurantButton}>Are you a restaurant?</Button>
-                    <Text style={styles.text1}>By continuing you agree to our</Text>
-                    <Text style={styles.text2}>Terms of Service and Privacy Policy</Text>
+                    <Pressable onPress={termsAndConditionHandler}>
+                        <Text style={styles.text1}>By continuing you agree to our</Text>
+                        <Text style={styles.text2}>Terms of Service and Privacy Policy</Text>
+                    </Pressable>
                 </View>
-
-
-
-        
+                
             {/* </View> */}
         </SafeAreaView>
     );

@@ -69,6 +69,8 @@ export default function Home({navigation}) {
                             mode="flat"
                             style={styles.textBox}
                             placeholder="Search for food"
+                            underlineColor="transparent"
+                            activeUnderlineColor="transparent"
                             left={<TextInput.Icon icon={() => <Icon name="search" size={20} color="black" />} />}
                             />
                         <Button
@@ -220,7 +222,7 @@ const styles = StyleSheet.create({
         fontSize: 15,
         borderColor: 'rgba(0, 0, 0, 0.5)', 
         borderWidth: 1,     
-        borderRadius: 7,  
+        borderRadius: 2,  
         paddingHorizontal: 10,
     }, modalContainer: {
         backgroundColor: 'white',
@@ -248,6 +250,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
+        alignContent: "center",
         width: "95%",
         height: 140,
         backgroundColor: "white",
@@ -269,9 +272,13 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         borderRadius: 10,
+        borderWidth:1,
+        borderColor: "black",
     },
     textContainer: {
         alignContent: "center",
+        justifyContent: "center",
+        marginBottom: 10,
     },
 
 });

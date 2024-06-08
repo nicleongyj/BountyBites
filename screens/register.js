@@ -14,6 +14,7 @@ import { FIREBASE_AUTH } from "../FirebaseConfig";
 import { LoginContext, RestaurantContext } from "../App";
 import { storeRestaurantData } from "../firestoreUtils";
 import * as Location from "expo-location";
+import DropDownPicker from "react-native-dropdown-picker";
 
 export default function RegisterScreen({ navigation }) {
   const { login } = useContext(LoginContext);
@@ -60,22 +61,32 @@ export default function RegisterScreen({ navigation }) {
 
   const geocodeAddress = async () => {
     try {
-      const geoencodedLocation = await Location.geocodeAsync(location);
+        const geoencodedLocation = await Location.geocodeAsync(location);
+        setLatitude(geoencodedLocation[0].latitude.toString());
+        setLongitude(geoencodedLocation[0].longitude.toString());
     } catch (error) {
-      console.error("Error geocoding address:", error);
-      alert("Error geocoding address");
+        console.error("Error geocoding address:", error);
+        alert("Error geocoding address");
     }
   }
+
+  const [foodType, setFoodType] = useState([
+    { label : 'Restaurant', value: 'Restaurant' },
+    { label : 'Bakery', value: 'Bakery' },
+    { label : 'Supermarket', value: 'Supermarket' },
+
+  ]);
+  const [type, setType] = useState("Select a food type");
+  const [open, setOpen] = useState(false);
 
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
         <ScrollView contentContainerStyle={styles.scrollView}>
 
-        <View style={styles.titleContainer}>
-            <Text style={{fontWeight:"bold", fontSize:30}}>Create an account</Text>
-        </View>
-
+            <View style={{flex:1, alignItems:"center"  }}>
+                <Text style={styles.title}>Create account</Text>
+            </View>
 
           <View style={styles.inputContainer}>
             <TextInput
@@ -117,6 +128,20 @@ export default function RegisterScreen({ navigation }) {
             />
           </View>
 
+          
+          <View style={{    flex:2, marginTop: "5%", alignItems: "center",zIndex:111, paddingBottom:10}}>
+            <DropDownPicker
+              open={open}
+              setOpen={setOpen}
+              items={foodType}
+              value={type}
+              setValue={setType}
+              containerStyle={{ height: 40, width: 320, zIndex: 1000}}
+              style={{     backgroundColor: 'white',borderColor: 'rgba(0, 0, 0, 0.5)', borderWidth: 1}}
+              dropDownContainerStyle={{ backgroundColor: '#fafafa' }}
+            />
+          </View>
+
           <View style={styles.inputContainer}>
             <TextInput
               autoCapitalize="none"
@@ -143,10 +168,9 @@ export default function RegisterScreen({ navigation }) {
               textColor="black"
               style={styles.textBox}
               value={latitude}
-            //   onChangeText={setLatitude}
+              onChangeText={setLatitude}
               placeholder="Latitude"
               placeholderTextColor={"grey"}
-              disabled={true}
             />
           </View>
 
@@ -157,7 +181,7 @@ export default function RegisterScreen({ navigation }) {
               textColor="black"
               style={styles.textBox}
               value={longitude}
-            //   onChangeText={setLongitude}
+              onChangeText={setLongitude}
               placeholder={"Longitude"}
               placeholderTextColor={"grey"}
             />
@@ -228,6 +252,7 @@ const styles = StyleSheet.create({
     flex:2,
     marginTop: "5%",
     alignItems: "center",
+    zIndex:1
   },
   titleContainer: {
     flex: 1,

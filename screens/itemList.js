@@ -8,9 +8,11 @@ export default function ItemList({navigation, route}) {
 
     const { restaurant } = route.params;
     const name = restaurant.name;
-    const numberOfItems = restaurant.foodItems
+    const numberOfItems = restaurant.food.length;
     const food = restaurant.food;
     const address = restaurant.address;
+    
+    
 
     const handleLocationPress = () => {
         const url = Platform.select({
@@ -18,6 +20,10 @@ export default function ItemList({navigation, route}) {
             android: `geo:0,0?q=${address}`
         });
         Linking.openURL(url);
+    }
+
+    const calculateNewPrice = (price, discount) => {
+        return price - (price * discount / 100);
     }
 
     return (
@@ -30,13 +36,31 @@ export default function ItemList({navigation, route}) {
             <View style={styles.cardContainer}>
                 <ScrollView contentContainerStyle={styles.scrollViewContent} scrollEnabled={true}>
 
-                {Object.entries(food).map(([foodItem, price], index) => {
+                {food.map(({name, price, stock, discount}, index) => {
+                    const newPrice = calculateNewPrice(price, discount);
                     return (
                         <View key={index} style={styles.card}>
-                            <Image source={Royce} style={{width: 100, height: 100}}/>
+                            <Image source={Royce} style={styles.image}/>
                             <View style={styles.textContainer}>
-                                <Text>{foodItem}</Text>
-                                <Text>{price}</Text>
+                                
+                                <View style={{flexDirection: "row"}}>
+                                    
+                                    <Text style={styles.discountLabel}>{discount}</Text>
+                                    <Text style={styles.discountLabel}>% off! </Text>
+                                </View>
+                                
+                                
+                                <Text style={styles.foodTitle}>{name}</Text>
+
+                                <View style={{flexDirection: "row"}}>
+                                    <Text style={styles.foodSubtitle}>Stock available: </Text>
+                                    <Text style={styles.foodSubtitle}>{stock}</Text>
+                                </View>          
+                            </View>
+
+                            <View style={styles.priceContainer}>
+                                <Text style={styles.oldPrice}>{price.toFixed(2)}</Text>
+                                <Text style={styles.newPrice}>{newPrice.toFixed(2)}</Text>
                             </View>
                         </View>
                     );
@@ -86,7 +110,7 @@ const styles = StyleSheet.create({
     },
     card: {
         flexDirection: "row",
-        alignItems: "center",
+        // alignItems: "center",
         width: "95%",
         height: 140,
         backgroundColor: "white",
@@ -109,7 +133,17 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     textContainer: {
+        // alignContent: "center",
+        justifyContent: "flex-start",
+        paddingLeft: 10,
+        paddingTop: 10,
+    },
+    priceContainer: {
+        flex:1,
         alignContent: "center",
+        justifyContent: "center",
+        alignItems: "center",
+        paddingLeft: "5%",
     },
     address: {
         fontSize: 15,
@@ -129,4 +163,33 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: "bold",
     },
+    image: {
+        width: 100,
+        height: 100,
+        borderRadius: 10,
+        alignSelf: "center",
+    },
+    foodTitle: {
+        fontSize: 15,
+        fontWeight: "bold",
+    },
+    foodSubtitle: {
+        fontSize: 14,
+    },
+    discountLabel: {
+        fontSize: 15,
+        color: "red",
+        fontWeight: "bold",
+    },
+    oldPrice: {
+        fontSize: 15,
+        fontWeight: "bold",
+        textDecorationLine: "line-through",
+        color: 'rgba(0, 0, 0, 0.5)'
+    },
+    newPrice: {
+        fontSize: 15,
+        fontWeight: "bold",
+        color: "red",
+    }
 });

@@ -3,9 +3,11 @@ import { Button, TextInput, Portal, Checkbox, Modal, RadioButton, Provider } fro
 import { View } from "react-native";
 import { useContext, useState} from "react";
 
+
 import { LoginContext } from "../App";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {restaurants} from "../sample_data/restaurants"
 
 
 export default function Home({navigation}) {
@@ -30,64 +32,6 @@ export default function Home({navigation}) {
         console.log("Card pressed")
         navigation.navigate("ItemList", {restaurant: restaurant})
     }
-
-
-    // Sample data
-    const restaurants = [
-        {
-            name: "Dunkin Donuts",
-            type: "Restaurant",
-            address: "17 Petir Road, Hillion Mall",
-            coordinates: { latitude: 1.3786, longitude: 103.7626 },
-            foodItems: 4,
-            food: {
-                "Donut": 2,
-                "Coffee": 2,
-                "Sandwich": 2,
-                "Burger": 2
-            },
-            image: require('../assets/dunkin.jpeg'),
-            discount: 30
-        },
-        {
-            name: "Bread Talk",
-            type: "Bakery",
-            address: "Bukit Batok",
-            foodItems: 15,
-            food: {
-                "Floss Bread": 2,
-                "Cheese Bread": 2,
-                "Pork Floss Bun": 2,
-            },
-            image: require('../assets/breadtalk.jpg'),
-            discount: 50
-        },
-
-        {
-            name: "Petir Chicken Rice",
-            type: "Restaurant",
-            address: "1 Jelebu Road",
-            foodItems: 5,
-            food: {
-                "Chicken Rice": 2,
-                "Chicken Chop": 2,
-            },
-            image: require('../assets/chickenrice.jpg'),
-            discount: 60
-        },
-        {
-            name: "NTUC Fairprice",
-            type: "Supermarket",
-            address: "Hillion Mall",
-            foodItems: 10,
-            food: {
-                "Rice": 2,
-                "Noodles": 2,
-            },
-            image: require('../assets/ntuc.png'),
-            discount: 50
-        }
-    ];
 
     // Filter 
     const filteredRestaurants = restaurants.filter(restaurant => {

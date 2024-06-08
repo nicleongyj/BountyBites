@@ -10,7 +10,7 @@ export default function Restaurant({ navigation }) {
   const { logout } = useContext(LoginContext);
   const [restaurantData, setRestaurantData] = useState(null);
   const [modalVisible, setModalVisible] = useState(false); // State for modal visibility
-  const userId = "hAV4EkrRuKSmWBGMwKikVsmpcCQ2"; // Replace with actual user ID
+  const userId = "3BUm4o5rQcQT2DchnZT8SNdbjOF2"; // Replace with actual user ID
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -31,6 +31,8 @@ export default function Restaurant({ navigation }) {
   const handleShareFood = () => {
     // Show the Share Food modal
     setModalVisible(true);
+    // navigation.navigate("ShareFood");
+
   };
 
   const closeModal = () => {

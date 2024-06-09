@@ -121,6 +121,7 @@ import {
         const link = await uploadFoodPhoto(image);
         console.log("Image downloaded: " + link)
 
+
         const foodData = {
             name: name,
             price: parsedPrice,
@@ -145,6 +146,7 @@ import {
             setSubmitting(false);
             throw error;
         }
+
     };
   
     return (

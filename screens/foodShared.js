@@ -1,10 +1,11 @@
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import {
   Text,
   View,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  TextInput,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LoginContext } from "../App";
@@ -14,6 +15,11 @@ import { useState, useEffect, useContext } from "react";
 export default function FoodShared({ navigation }) {
   const { userId } = useContext(LoginContext);
   const [foodItems, setFoodItems] = useState([]);
+  const [editingItem, setEditingItem] = useState(null);
+  const [editValues, setEditValues] = useState({
+    currentQuantity: "",
+    discount: "",
+  });
 
   const fetchFoodItems = async (userId) => {
     try {
@@ -35,36 +41,123 @@ export default function FoodShared({ navigation }) {
     }
   };
 
-  // Usage in the component
+  const handleEdit = (item) => {
+    setEditingItem(item);
+    setEditValues({
+      currentQuantity: item.currentQuantity.toString(),
+      discount: item.discount.toString(),
+    });
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      const updatedItems = foodItems.map((item) =>
+        item.id === editingItem.id
+          ? {
+              ...item,
+              ...editValues,
+              currentQuantity: parseInt(editValues.currentQuantity),
+              discount: parseFloat(editValues.discount),
+            }
+          : item
+      );
+      setFoodItems(updatedItems);
+
+      const docRef = doc(FIREBASE_DB, "food-today", userId);
+      await updateDoc(docRef, { foodItems: updatedItems });
+
+      setEditingItem(null);
+      setEditValues({ currentQuantity: "", discount: "" });
+    } catch (error) {
+      console.error("Error saving food item: ", error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const updatedItems = foodItems.filter((item) => item.id !== id);
+      setFoodItems(updatedItems);
+
+      const docRef = doc(FIREBASE_DB, "food-today", userId);
+      await updateDoc(docRef, { foodItems: updatedItems });
+    } catch (error) {
+      console.error("Error deleting food item: ", error);
+    }
+  };
+
   useEffect(() => {
     if (userId) {
       fetchFoodItems(userId);
     }
   }, [userId]);
 
-  console.log(foodItems);
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.heading}>Food Shared</Text>
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
         {foodItems.map((foodItem) => (
-          <TouchableOpacity
-            key={foodItem.id}
-            style={styles.foodCard}
-            onPress={() => {
-              // Navigate to a detailed view of the food item or perform other actions
-            }}
-          >
-            <Text style={styles.foodText}>Food Name: {foodItem.name}</Text>
-            <Text style={styles.foodText}>Price: $ {foodItem.price}</Text>
-            <Text style={styles.foodText}>Discount: {foodItem.discount}%</Text>
-            <Text style={styles.foodText}>
-              Total Quantity: {foodItem.quantity}
-            </Text>
-            <Text style={styles.foodText}>
-              Current Quantity: {foodItem.currentQuantity}
-            </Text>
-          </TouchableOpacity>
+          <View key={foodItem.id} style={styles.foodCard}>
+            {editingItem && editingItem.id === foodItem.id ? (
+              <View>
+                <Text style={styles.foodText}>Food Name: {foodItem.name}</Text>
+                <Text style={styles.foodText}>Price: $ {foodItem.price}</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Current Quantity"
+                  value={editValues.currentQuantity}
+                  onChangeText={(text) =>
+                    setEditValues({ ...editValues, currentQuantity: text })
+                  }
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Discount"
+                  value={editValues.discount}
+                  onChangeText={(text) =>
+                    setEditValues({ ...editValues, discount: text })
+                  }
+                />
+                <TouchableOpacity
+                  style={styles.saveButton}
+                  onPress={handleSaveEdit}
+                >
+                  <Text style={styles.buttonText}>Save</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.cancelButton}
+                  onPress={() => setEditingItem(null)}
+                >
+                  <Text style={styles.buttonText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View>
+                <Text style={styles.foodText}>Food Name: {foodItem.name}</Text>
+                <Text style={styles.foodText}>Price: $ {foodItem.price}</Text>
+                <Text style={styles.foodText}>
+                  Discount: {foodItem.discount}%
+                </Text>
+                <Text style={styles.foodText}>
+                  Total Quantity: {foodItem.quantity}
+                </Text>
+                <Text style={styles.foodText}>
+                  Current Quantity: {foodItem.currentQuantity}
+                </Text>
+                <TouchableOpacity
+                  style={styles.editButton}
+                  onPress={() => handleEdit(foodItem)}
+                >
+                  <Text style={styles.buttonText}>Edit</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.deleteButton}
+                  onPress={() => handleDelete(foodItem.id)}
+                >
+                  <Text style={styles.buttonText}>Delete</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
         ))}
       </ScrollView>
     </SafeAreaView>
@@ -98,10 +191,40 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 5,
   },
-  foodImage: {
-    width: "100%",
-    height: 200,
-    resizeMode: "cover",
+  editButton: {
+    backgroundColor: "blue",
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  deleteButton: {
+    backgroundColor: "red",
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  saveButton: {
+    backgroundColor: "green",
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  cancelButton: {
+    backgroundColor: "gray",
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  buttonText: {
+    color: "white",
+    textAlign: "center",
+    fontSize: 16,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "gray",
+    borderRadius: 5,
+    padding: 10,
     marginTop: 10,
   },
 });

@@ -31,7 +31,7 @@ export default function HomeContainer() {
       <Tab.Screen
         name={"Food Nearby"}
         component={HomeStackScreen}
-        options={{ tabBarIcon: () => <Text>🍴</Text>, headerShown: false }}
+        options={{ tabBarIcon: () => <Text>🍴</Text>, title: "Home"}}
       />
       <Tab.Screen
         name={"Map"}

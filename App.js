@@ -58,7 +58,7 @@ export default function App() {
           <Stack.Screen
             name="Home"
             component={HomeContainer}
-            options={{ title: "Home" }}
+            options={{ headerShown: false}}
           />
         )}
       </Stack.Navigator>

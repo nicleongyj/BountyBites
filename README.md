@@ -1,52 +1,28 @@
-# App for CodeExp
+# BountyBites
 
-Demo App for **DSTA Brainhack 2024 CODE_EXP**\
-Cat-**02**-Team-**44**
+BountyBites is an innovative mobile application designed to tackle food wastage in Singapore. This platform allows F&B establishments to list their surplus food at discounted prices or for free, making it accessible to people in need.
+
+## Tech Stack
+- React Native
+- Firebase
+- Expo
+
+## Collaborators
+- Nicholas: [Github](https://github.com/nicleongyj)
+- Ying Hao : [Github](https://github.com/calamityfalls)
+- Royce: [Github](https://github.com/spyabi) 
 
 
-## Get started
+## Features
+- Easy listing of surplus food items
+- Analytics to track & help F&B reduce their food waste
+- Accessible & affordable food options for consumers
+- Easy-to-use interface to find nearby discounted/free food
+- Contribution to a sustainable community initiative
 
-1. Install dependencies
+## Future Works
+- AI-driven recommendations for restaurants to optimize production
+- User feedback system to improve service and user experience
+- Collaborate with delivery services for last-mile food distribution
+- Partner with local charities and food banks for greater outreach
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.

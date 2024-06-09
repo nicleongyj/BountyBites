@@ -109,6 +109,7 @@ export default function ShareFood({ navigation }) {
       price: parsedPrice,
       discount: parsedDiscount,
       quantity: parsedQuantity,
+      currentQuantity: parsedQuantity,
     };
 
     try {

@@ -48,3 +48,20 @@ export const uploadRestaurantPhoto = async (image, userId) => {
         return null;
     }
 }
+
+export const fetchRestaurantLogo = async (userId) => {
+    try {
+        console.log("Fetching restaurant logo...");
+
+        // Create a reference to the storage
+        const storageRef = ref(FIREBASE_STORAGE, `restaurantLogos/${userId}`);
+
+        // Get the download URL
+        const downloadURL = await getDownloadURL(storageRef);
+        console.log("Logo fetched successfully: ", downloadURL)
+        return downloadURL;
+    } catch (error) {
+        console.error('Error fetching restaurant logo:', error);
+        return null;
+    }
+}

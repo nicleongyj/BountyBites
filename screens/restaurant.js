@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Image } from "react-native";
 import { Button } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native"; // Import useNavigation hook
 import { LoginContext } from "../App";
@@ -60,6 +60,14 @@ export default function Restaurant({ navigation }) {
       <View style={styles.middleContainer}>
         {restaurantData ? (
           <View style={styles.infoContainer}>
+
+            <View style={{    marginBottom: 20, flexDirection: "row", alignSelf:'center' }}>
+              <Image
+                source={{ uri: restaurantData.link }}
+                style={{ width: 100, height: 100, alignSelf: "center" }}
+              />
+            </View>
+
 
             <View style={styles.textContainer}>
               <Text style={styles.textTitle}>

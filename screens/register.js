@@ -27,10 +27,9 @@ export default function RegisterScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [location, setLocation] = useState("");
   const [restaurantName, setRestaurantName] = useState("");
-  const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(null);
+  const [closingTime, setClosingTime] = useState("");
 
   const auth = FIREBASE_AUTH;
 
@@ -50,24 +49,23 @@ export default function RegisterScreen({ navigation }) {
   };
 
   const signUp = async () => {
-    if (username === "" || password === "" || location === "" || restaurantName === "" || image === null) {
-        alert("Please fill in all fields");
-        setLoading(false);
-        return;
-      }
-
-    try {
-        const location = await geocodeAddress();
-    } catch {
-        alert("Please fill in a valid address");
-        setLoading(false);
-        return;
-    }
-
+    // if (username === "" || password === "" || location === "" || restaurantName === "" || image === null) {
+    //     alert("Please fill in all fields");
+    //     setLoading(false);
+    //     return;
+    //   }
 
     try {
       setLoading(true);
-      console.log("coordinates" + longitude + latitude)
+      const data = await geocodeAddress();
+      const latitude = data.latitude.toString();
+      const longitude = data.longitude.toString();
+      if (latitude === "" || longitude === "") {
+        alert("Invalid address, please try again.");
+        setLoading(false);
+        return;
+      }
+      console.log("coordinates" + latitude + ", " + longitude)
       const response = await createUserWithEmailAndPassword(
         auth,
         username,
@@ -77,8 +75,6 @@ export default function RegisterScreen({ navigation }) {
 
       const link = await uploadRestaurantPhoto(image, userId);
 
-      
-
       const restaurantData = {
         userId,
         username,
@@ -86,6 +82,9 @@ export default function RegisterScreen({ navigation }) {
         restaurantName,
         latitude,
         longitude,
+        type,
+        closingTime,
+        link
       };
 
       await storeRestaurantData(restaurantData);
@@ -103,9 +102,8 @@ export default function RegisterScreen({ navigation }) {
     try {
         console.log("Geocoding address:", location)
         const geoencodedLocation = await Location.geocodeAsync(location);
-        setLatitude(geoencodedLocation[0].latitude.toString());
-        setLongitude(geoencodedLocation[0].longitude.toString());
         console.log("Geocoded location:", geoencodedLocation);
+        return geoencodedLocation[0]
     } catch (error) {
         console.error("Error geocoding address:", error);
         alert("Error geocoding address: " + error.message);
@@ -182,6 +180,19 @@ export default function RegisterScreen({ navigation }) {
               value={restaurantName}
               onChangeText={setRestaurantName}
               placeholder="Restaurant Name"
+              placeholderTextColor={"grey"}
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <TextInput
+              autoCapitalize="none"
+              mode="flat"
+              textColor="black"
+              style={styles.textBox}
+              value={closingTime}
+              onChangeText={setClosingTime}
+              placeholder="Closing time (HH:MM)"
               placeholderTextColor={"grey"}
             />
           </View>

@@ -36,6 +36,25 @@ export const fetchRestaurantData = async (userId) => {
   }
 };
 
+export const fetchAllRestaurants = async () => {
+  try {
+    // Get the collection reference for the restaurants
+    const collectionRef = collection(FIREBASE_DB, "f&b");
+
+    // Get the snapshot of the collection
+    const collectionSnap = await getDocs(collectionRef);
+
+    // Map each document into its data
+    const restaurants = collectionSnap.docs.map(doc => doc.data());
+
+    // Return the data
+    return restaurants;
+  } catch (error) {
+    console.error("Error fetching all restaurants:", error);
+    return null; // Return null in case of error
+  }
+};
+
 export const storeRestaurantData = async (restaurantData) => {
   try {
     // Create a new document in the "restaurants" collection

@@ -6,6 +6,8 @@ import {
   ActivityIndicator,
   ScrollView,
   KeyboardAvoidingView,
+  TouchableOpacity,
+  Image
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, TextInput } from "react-native-paper";
@@ -15,37 +17,63 @@ import { LoginContext, RestaurantContext } from "../App";
 import { storeRestaurantData } from "../firestoreUtils";
 import * as Location from "expo-location";
 import DropDownPicker from "react-native-dropdown-picker";
+import * as ImagePicker from 'expo-image-picker';
+import { uploadRestaurantPhoto } from "../firestorageUtils";
 
 export default function RegisterScreen({ navigation }) {
-  const { login, setUserId } = useContext(LoginContext);
+  const { login } = useContext(LoginContext);
   const { setRestaurant } = useContext(RestaurantContext);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [location, setLocation] = useState("");
   const [restaurantName, setRestaurantName] = useState("");
-  const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
-  const [closingTime, setClosingTime] = useState("");
   const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState(null);
+  const [closingTime, setClosingTime] = useState("");
 
   const auth = FIREBASE_AUTH;
 
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+  
+    console.log(result);
+  
+    if (!result.cancelled) {
+        setImage(result.assets[0].uri);
+    }
+  };
+
   const signUp = async () => {
+    // if (username === "" || password === "" || location === "" || restaurantName === "" || image === null) {
+    //     alert("Please fill in all fields");
+    //     setLoading(false);
+    //     return;
+    //   }
+
     try {
       setLoading(true);
-      const timeRegex = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
-      if (!timeRegex.test(closingTime)) {
+      const data = await geocodeAddress();
+      const latitude = data.latitude.toString();
+      const longitude = data.longitude.toString();
+      if (latitude === "" || longitude === "") {
+        alert("Invalid address, please try again.");
         setLoading(false);
-        alert("Please enter a valid closing time (HH:MM)");
         return;
       }
+      console.log("coordinates" + latitude + ", " + longitude)
       const response = await createUserWithEmailAndPassword(
         auth,
         username,
         password
       );
       const userId = response.user.uid;
-      setUserId(userId); // Set userId in contex
+
+      const link = await uploadRestaurantPhoto(image, userId);
 
       const restaurantData = {
         userId,
@@ -56,6 +84,7 @@ export default function RegisterScreen({ navigation }) {
         longitude,
         type,
         closingTime,
+        link
       };
 
       await storeRestaurantData(restaurantData);
@@ -71,19 +100,21 @@ export default function RegisterScreen({ navigation }) {
 
   const geocodeAddress = async () => {
     try {
-      const geoencodedLocation = await Location.geocodeAsync(location);
-      setLatitude(geoencodedLocation[0].latitude.toString());
-      setLongitude(geoencodedLocation[0].longitude.toString());
+        console.log("Geocoding address:", location)
+        const geoencodedLocation = await Location.geocodeAsync(location);
+        console.log("Geocoded location:", geoencodedLocation);
+        return geoencodedLocation[0]
     } catch (error) {
-      console.error("Error geocoding address:", error);
-      alert("Error geocoding address");
+        console.error("Error geocoding address:", error);
+        alert("Error geocoding address: " + error.message);
     }
-  };
+  }
 
   const [foodType, setFoodType] = useState([
-    { label: "Restaurant", value: "Restaurant" },
-    { label: "Bakery", value: "Bakery" },
-    { label: "Supermarket", value: "Supermarket" },
+    { label : 'Restaurant', value: 'Restaurant' },
+    { label : 'Bakery', value: 'Bakery' },
+    { label : 'Supermarket', value: 'Supermarket' },
+
   ]);
   const [type, setType] = useState("Select a food type");
   const [open, setOpen] = useState(false);
@@ -91,169 +122,186 @@ export default function RegisterScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
-        <ScrollView contentContainerStyle={styles.scrollView}>
-          <View style={{ flex: 1 }}>
-            <View style={{ flex: 2, alignItems: "center" }}>
-              <Text style={styles.title}>Create account</Text>
+        {/* <ScrollView contentContainerStyle={styles.scrollView}> */}
+        <View style={{flex:1,}}>
+
+            <View style={{flex:2, alignItems:"center"  }}>
+                <Text style={styles.title}>Create account</Text>
             </View>
 
+        <View style={{ flex:2, alignItems: "center",zIndex:111, paddingBottom:20}}>
+            <DropDownPicker
+              open={open}
+              setOpen={setOpen}
+              items={foodType}
+              value={type}
+              setValue={setType}
+              containerStyle={{ height: 40, width: 320, zIndex: 1000}}
+              style={{     backgroundColor: 'white',borderColor: 'rgba(0, 0, 0, 0.5)', borderWidth: 1}}
+              dropDownContainerStyle={{ backgroundColor: '#fafafa' }}
+              defaultValue={type}
+              onChangeValue={(value) => setType(value)}
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <TextInput
+              autoCapitalize="none"
+              mode="flat"
+              textColor="black"
+              style={styles.textBox}
+              value={username}
+              onChangeText={setUsername}
+              placeholder="email@domain.com"
+              placeholderTextColor={"gray"}
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <TextInput
+              autoCapitalize="none"
+              mode="flat"
+              textColor="black"
+              style={styles.textBox}
+              value={password}
+              onChangeText={setPassword}
+              placeholder="Password"
+              placeholderTextColor={"grey"}
+              secureTextEntry
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <TextInput
+              autoCapitalize="none"
+              mode="flat"
+              textColor="black"
+              style={styles.textBox}
+              value={restaurantName}
+              onChangeText={setRestaurantName}
+              placeholder="Restaurant Name"
+              placeholderTextColor={"grey"}
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <TextInput
+              autoCapitalize="none"
+              mode="flat"
+              textColor="black"
+              style={styles.textBox}
+              value={closingTime}
+              onChangeText={setClosingTime}
+              placeholder="Closing time (HH:MM)"
+              placeholderTextColor={"grey"}
+            />
+          </View>
+
+    
+
+          <View style={styles.inputContainer}>
+            <TextInput
+              autoCapitalize="none"
+              mode="flat"
+              textColor="black"
+              style={styles.textBox}
+              value={location}
+              onChangeText={setLocation}
+              placeholder="Address or Postal Code"
+              placeholderTextColor={"grey"}
+            />
+           
+          </View>
+
+
+          {/* <View style={styles.coordinates}>
+
+ 
             <View style={styles.inputContainer}>
-              <TextInput
+                <TextInput
                 autoCapitalize="none"
                 mode="flat"
                 textColor="black"
-                style={styles.textBox}
-                value={username}
-                onChangeText={setUsername}
-                placeholder="email@domain.com"
-                placeholderTextColor={"gray"}
-              />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <TextInput
-                autoCapitalize="none"
-                mode="flat"
-                textColor="black"
-                style={styles.textBox}
-                value={password}
-                onChangeText={setPassword}
-                placeholder="Password"
-                placeholderTextColor={"grey"}
-                secureTextEntry
-              />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <TextInput
-                autoCapitalize="none"
-                mode="flat"
-                textColor="black"
-                style={styles.textBox}
-                value={restaurantName}
-                onChangeText={setRestaurantName}
-                placeholder="Restaurant Name"
-                placeholderTextColor={"grey"}
-              />
-            </View>
-
-            <View
-              style={{
-                flex: 2,
-                marginTop: "5%",
-                alignItems: "center",
-                zIndex: 111,
-                paddingBottom: 10,
-              }}
-            >
-              <DropDownPicker
-                open={open}
-                setOpen={setOpen}
-                items={foodType}
-                value={type}
-                setValue={setType}
-                containerStyle={{ height: 40, width: 320, zIndex: 1000 }}
-                style={{
-                  backgroundColor: "white",
-                  borderColor: "rgba(0, 0, 0, 0.5)",
-                  borderWidth: 1,
-                }}
-                dropDownContainerStyle={{ backgroundColor: "#fafafa" }}
-                defaultValue={type}
-                onChangeValue={(value) => setType(value)}
-              />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <TextInput
-                autoCapitalize="none"
-                mode="flat"
-                textColor="black"
-                style={styles.textBox}
-                value={location}
-                onChangeText={setLocation}
-                placeholder="Address or Postal Code"
-                placeholderTextColor={"grey"}
-              />
-            </View>
-
-            <View
-              style={{
-                flex: 3,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Button
-                mode="contained"
-                onPress={() => geocodeAddress(location)}
-                style={styles.locationButton}
-                labelStyle={styles.locationButtonLabel}
-              >
-                Get coordinates
-              </Button>
-              {/* <Button mode="contained" onPress={handleManualCoordinates} style={styles.locationButton} labelStyle={styles.locationButtonLabel}>Select location on map</Button> */}
-            </View>
-
-            <View style={styles.inputContainer}>
-              <TextInput
-                autoCapitalize="none"
-                mode="flat"
-                textColor="black"
-                style={styles.textBox}
+                style={styles.coordinateBox}
                 value={latitude}
                 onChangeText={setLatitude}
                 placeholder="Latitude"
                 placeholderTextColor={"grey"}
-              />
+                />
             </View>
 
             <View style={styles.inputContainer}>
-              <TextInput
+                <TextInput
                 autoCapitalize="none"
                 mode="flat"
                 textColor="black"
-                style={styles.textBox}
+                style={styles.coordinateBox}
                 value={longitude}
                 onChangeText={setLongitude}
                 placeholder={"Longitude"}
                 placeholderTextColor={"grey"}
-              />
+                />
             </View>
 
-            <View style={styles.inputContainer}>
-              <TextInput
-                autoCapitalize="none"
-                mode="flat"
-                textColor="black"
-                style={styles.textBox}
-                value={closingTime}
-                onChangeText={setClosingTime}
-                placeholder="Closing Time"
-                placeholderTextColor={"grey"}
-              />
+            <View style={{flex:5,alignItems: "center", justifyContent:'center'}}>
+                <Button mode="contained" onPress={() => geocodeAddress(location)} style={styles.locationButton} labelStyle={styles.locationButtonLabel}>Get coordinates</Button>
             </View>
 
-            <View style={styles.buttonContainer}>
-              <Button
-                mode="contained"
-                onPress={signUp}
-                labelStyle={styles.buttonLabel}
-                style={styles.button}
-              >
-                Sign up with email
-              </Button>
-              {loading ? <ActivityIndicator color="black" /> : null}
-            </View>
 
-            <View style={styles.mainButtonContainer}>
-              <Text style={styles.text1}>By continuing you agree to our</Text>
-              <Text style={styles.text2}>
-                Terms of Service and Privacy Policy
-              </Text>
-            </View>
+          </View> */}
+
+          <View style={styles.coordinates}>
+            {/* <Text style={{fontSize:15, fontWeight:'bold'}}t>Pick restaurant image:</Text> */}
+            <View style={{ alignItems: "center", flexDirection:'row' , paddingLeft:'10%'}}>
+                <View style={{flex:1, alignItems:'center', alignContent:'center'}}>
+                  <TouchableOpacity
+                    style={styles.cameraButton}
+                    onPress={pickImage}
+                  >
+                    <Text style={styles.cameraText}>
+                      {image == null ? "Choose a picture" : "Change image"}
+                    </Text>
+                  </TouchableOpacity>
+                  </View>
+
+
+                    <View style={{flex:1, alignItems:'center', alignContent:'center', flexDirection:'row'}}>
+                      
+                      {image != null && (
+                        <>
+                        <Text style={{ fontWeight: "bold" }}>Image: </Text>
+                      <Image
+                        source={{ uri: image }}
+                        style={{ height: 60, width: 60 }}
+                      />
+                      </>
+                    )}
+                    </View>
+            
+                </View>
           </View>
-        </ScrollView>
+
+          <View style={styles.buttonContainer}>
+            <Button
+              mode="contained"
+              onPress={signUp}
+              labelStyle={styles.buttonLabel}
+              style={styles.button}
+            >
+              Sign up with email
+            </Button>
+            {loading ? <ActivityIndicator color="black" /> : null}
+          </View>
+
+          <View style={styles.mainButtonContainer}>
+            <Text style={styles.text1}>By continuing you agree to our</Text>
+            <Text style={styles.text2}>
+              Terms of Service and Privacy Policy
+            </Text>
+          </View>
+
+          </View>
+        {/* </ScrollView> */}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -297,10 +345,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   inputContainer: {
-    flex: 3,
+    flex:3,
     marginTop: "5%",
     alignItems: "center",
-    zIndex: 1,
+    zIndex:1
+  },
+  coordinates: {
+    flex: 1,
+    paddingTop: "10%",
+    flexDirection:'row',
+    alignContent: "center",
+    justifyContent: "center",
+    alignItems: "center",
+
   },
   titleContainer: {
     flex: 1,
@@ -326,6 +383,16 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     paddingHorizontal: 10,
   },
+  coordinateBox: {
+    backgroundColor: "white",
+    height: 42,
+    width: 100,
+    fontSize: 15,
+    borderColor: "rgba(0, 0, 0, 0.5)",
+    borderWidth: 1,
+    borderRadius: 7,
+    paddingHorizontal: 5,
+  },
   button: {
     backgroundColor: "black",
     width: 350,
@@ -350,6 +417,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginTop: 10,
     // marginBottom: 10,
+
   },
   locationButtonLabel: {
     color: "white",
@@ -366,4 +434,20 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "bold",
   },
+  cameraButton: {
+    width: 130,
+    borderRadius: 4,
+    backgroundColor: "#14274e",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    height: 40,
+    marginBottom: "3%",
+  },
+  cameraText: {
+    color: "#fff",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
 });
+

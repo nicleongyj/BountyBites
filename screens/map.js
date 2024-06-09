@@ -6,6 +6,7 @@ import MapView, { Marker } from "react-native-maps";
 import * as Location from 'expo-location';
 
 import { LoginContext } from "../App";
+import UserMarker from "../assets/user.png";
 
 
 export default function Home(navigation) {
@@ -45,6 +46,15 @@ export default function Home(navigation) {
                 region={region}
             >
                 {/* Marker for user location */}
+                <Marker
+                coordinate={{
+                    latitude: region.latitude,
+                    longitude: region.longitude,
+                }}
+                title={"Your Location"}
+                image={UserMarker}
+                style={{width: 20, height: 20}}
+                />  
             
 
             </MapView>

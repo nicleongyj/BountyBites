@@ -82,9 +82,10 @@ export default function RegisterScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
-        <ScrollView contentContainerStyle={styles.scrollView}>
+        {/* <ScrollView contentContainerStyle={styles.scrollView}> */}
+        <View style={{flex:1,}}>
 
-            <View style={{flex:1, alignItems:"center"  }}>
+            <View style={{flex:2, alignItems:"center"  }}>
                 <Text style={styles.title}>Create account</Text>
             </View>
 
@@ -139,6 +140,8 @@ export default function RegisterScreen({ navigation }) {
               containerStyle={{ height: 40, width: 320, zIndex: 1000}}
               style={{     backgroundColor: 'white',borderColor: 'rgba(0, 0, 0, 0.5)', borderWidth: 1}}
               dropDownContainerStyle={{ backgroundColor: '#fafafa' }}
+              defaultValue={type}
+              onChangeValue={(value) => setType(value)}
             />
           </View>
 
@@ -156,7 +159,7 @@ export default function RegisterScreen({ navigation }) {
            
           </View>
 
-          <View style={{flex:1,alignItems: "center", justifyContent:'center'}}>
+          <View style={{flex:3,alignItems: "center", justifyContent:'center'}}>
             <Button mode="contained" onPress={() => geocodeAddress(location)} style={styles.locationButton} labelStyle={styles.locationButtonLabel}>Get coordinates</Button>
             {/* <Button mode="contained" onPress={handleManualCoordinates} style={styles.locationButton} labelStyle={styles.locationButtonLabel}>Select location on map</Button> */}
           </View>
@@ -205,7 +208,9 @@ export default function RegisterScreen({ navigation }) {
               Terms of Service and Privacy Policy
             </Text>
           </View>
-        </ScrollView>
+
+          </View>
+        {/* </ScrollView> */}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -225,7 +230,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 35,
+    fontSize: 30,
     color: "black",
     fontWeight: "bold",
   },
@@ -249,7 +254,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   inputContainer: {
-    flex:2,
+    flex:3,
     marginTop: "5%",
     alignItems: "center",
     zIndex:1
@@ -259,12 +264,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   mainButtonContainer: {
-    flex: 10,
+    flex: 4,
     paddingTop: "5%",
     alignItems: "center",
   },
   buttonContainer: {
-    flex: 10,
+    flex: 4,
     marginTop: "5%",
     alignItems: "center",
   },

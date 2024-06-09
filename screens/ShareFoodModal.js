@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
   Alert,
 } from "react-native";
 import { storeFoodData } from "../firestoreUtils";
+import { LoginContext } from "../App";
 
 const ShareFoodModal = ({ visible, closeModal, restaurantData }) => {
   const [name, setName] = useState("");
@@ -18,8 +19,8 @@ const ShareFoodModal = ({ visible, closeModal, restaurantData }) => {
   const [discount, setDiscount] = useState("");
   const [quantity, setQuantity] = useState("");
   const [endTime, setEndTime] = useState("");
+  const { userId } = useContext(LoginContext);
 
-  const userId = "hAV4EkrRuKSmWBGMwKikVsmpcCQ2"; // Replace with actual user ID
   useEffect(() => {
     if (visible) {
       setName("");
@@ -86,17 +87,11 @@ const ShareFoodModal = ({ visible, closeModal, restaurantData }) => {
       return;
     }
 
-    const food = {
+    const foodData = {
       name: name,
-      description: description,
       price: parsedPrice,
       discount: parsedDiscount,
       quantity: parsedQuantity,
-    };
-
-    const foodData = {
-      food: food,
-      endTime: endTime,
     };
 
     try {

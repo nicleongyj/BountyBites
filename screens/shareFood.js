@@ -51,7 +51,7 @@ export default function ShareFood({navigation}) {
           try {
             const data = await cameraRef.current.takePictureAsync();
             console.log("Image taken")
-            setImage(data === undefined ? "jest" : data.uri);
+            setImage(data.uri);
             console.log(data.uri)
           } catch (error) {
             alert("Error", "Please try again!", [{ text: "OK" }]);
@@ -140,7 +140,7 @@ export default function ShareFood({navigation}) {
 
                     <View style={styles.topContainer}>
                         <Text style={styles.title}>  
-                            Add a food item
+                            Add a food item 🍔
                         </Text>
                     </View>
 
@@ -277,10 +277,11 @@ const styles = StyleSheet.create({
         flexDirection: "column",
     },
     midContainer: {
-        flex: 8,
+        flex: 11,
         backgroundColor: "white",
         flexDirection: "column",
         alignItems: "center",
+        
         // padding: 10,
     },  
     bottomContainer: {
@@ -290,9 +291,8 @@ const styles = StyleSheet.create({
         paddingTop: 10,
     },
     inputContainer: {
-        flex:1,
+        flex:4,
         width: "90%",
-        paddingTop: 10,
     },  
     inputLabel: {
         fontSize: 15,

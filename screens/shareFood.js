@@ -11,7 +11,7 @@ import CameraButton from "../assets/camera.png";
 
 import { FIREBASE_STORAGE } from '../FirebaseConfig';
 import { getDownloadURL, uploadBytes, ref } from 'firebase/storage';
-import { uploadPhotoToStorage } from '../firestorageUtils';
+import { uploadFoodPhoto } from '../firestorageUtils';
 
 export default function ShareFood({navigation}) {
 
@@ -121,7 +121,7 @@ export default function ShareFood({navigation}) {
           return;
         }
 
-        const link = await uploadPhotoToStorage(image);
+        const link = await uploadFoodPhoto(image);
         console.log("Image downloaded: " + link)
     
         const food = {

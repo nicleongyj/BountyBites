@@ -9,7 +9,7 @@ const uriToBlob = async (uri) => {
     return blob;
 };
   
-export const uploadPhotoToStorage = async (image) => {
+export const uploadFoodPhoto = async (image) => {
     try {
         console.log("Uploading photo...");
         

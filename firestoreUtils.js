@@ -38,28 +38,11 @@ export const fetchRestaurantData = async (userId) => {
 
 export const storeRestaurantData = async (restaurantData) => {
   try {
-    const { userId, username, location, restaurantName, latitude, longitude } =
-      restaurantData;
-
-    // Check if latitude and longitude are within valid range
-    if (
-      latitude < -90 ||
-      latitude > 90 ||
-      longitude < -180 ||
-      longitude > 180
-    ) {
-      throw new Error("Invalid latitude or longitude");
-    }
-
     // Create a new document in the "restaurants" collection
-    const docRef = doc(FIREBASE_DB, "f&b", userId);
+    const docRef = doc(FIREBASE_DB, "f&b", restaurantData.userId);
 
     await setDoc(docRef, {
-      username,
-      location,
-      restaurantName,
-      latitude,
-      longitude,
+      ...restaurantData,
     });
 
     console.log("Restaurant data stored with ID: ", docRef.id);
@@ -71,20 +54,17 @@ export const storeRestaurantData = async (restaurantData) => {
 
 export const storeFoodData = async (userId, foodData) => {
   try {
-    const { food, endTime } = foodData;
-
     const docRef = doc(FIREBASE_DB, "food-today", userId);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
       // Document exists, update it
       await updateDoc(docRef, {
-        foodItems: arrayUnion(food),
+        foodItems: arrayUnion(foodData),
       });
     } else {
       // Document doesn't exist, create it
       await setDoc(docRef, {
-        endTime: endTime,
         foodItems: [foodData],
       });
     }
@@ -94,4 +74,39 @@ export const storeFoodData = async (userId, foodData) => {
     console.error("Error storing food data: ", error);
     throw error;
   }
+};
+
+export const getRestaurantDataFromFoodToday = async () => {
+  const restaurantDataArray = []; // Array to store restaurant data
+
+  try {
+    // Query the "food-today" collection
+    const foodTodaySnapshot = await getDocs(
+      collection(FIREBASE_DB, "food-today")
+    );
+
+    // Iterate over each document in the "food-today" collection
+    for (const doc of foodTodaySnapshot.docs) {
+      const userId = doc.id; // Get the userId from the document ID
+
+      // Query the "f&b" collection to get the restaurant data
+      const restaurantSnapshot = await getDoc(doc(FIREBASE_DB, "f&b", userId));
+
+      // Check if the restaurant data exists
+      if (restaurantSnapshot.exists()) {
+        const restaurantData = restaurantSnapshot.data();
+        // Add restaurant data to the array as a dictionary with userId as the key
+        restaurantDataArray.push({ [userId]: restaurantData });
+      } else {
+        console.log("No restaurant data found for userId:", userId);
+      }
+    }
+
+    // Log the array of restaurant data
+    console.log("Restaurant Data Array:", restaurantDataArray);
+  } catch (error) {
+    console.error("Error getting restaurant data from food-today:", error);
+  }
+
+  return restaurantDataArray; // Return the array of restaurant data
 };

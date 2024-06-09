@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import {
   View,
   Text,
@@ -10,12 +10,12 @@ import {
   Alert,
 } from "react-native";
 import { storeFoodData } from "../firestoreUtils";
+import { LoginContext } from "../App";
 
 // Camera imports
 import { Camera } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import CameraButton from "../assets/camera.png";
-
 
 const ShareFoodModal = ({ visible, closeModal, restaurantData }) => {
   const [name, setName] = useState("");
@@ -24,6 +24,7 @@ const ShareFoodModal = ({ visible, closeModal, restaurantData }) => {
   const [discount, setDiscount] = useState("");
   const [quantity, setQuantity] = useState("");
   const [endTime, setEndTime] = useState("");
+  const { userId } = useContext(LoginContext);
 
   // Camera states
   const [hasPermission, setHasPermission] = useState(null);
@@ -41,7 +42,7 @@ const ShareFoodModal = ({ visible, closeModal, restaurantData }) => {
   //     </View>
   //   );
   // }
-  
+
   const enableCamera = () => {
     setStartCamera(true);
   };
@@ -57,9 +58,7 @@ const ShareFoodModal = ({ visible, closeModal, restaurantData }) => {
       }
     }
   };
-   
 
-  const userId = "hAV4EkrRuKSmWBGMwKikVsmpcCQ2"; // Replace with actual user ID
   useEffect(() => {
     if (visible) {
       setName("");
@@ -126,17 +125,11 @@ const ShareFoodModal = ({ visible, closeModal, restaurantData }) => {
       return;
     }
 
-    const food = {
+    const foodData = {
       name: name,
-      description: description,
       price: parsedPrice,
       discount: parsedDiscount,
       quantity: parsedQuantity,
-    };
-
-    const foodData = {
-      food: food,
-      endTime: endTime,
     };
 
     try {

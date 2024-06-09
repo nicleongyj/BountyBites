@@ -10,7 +10,7 @@ export default function Restaurant({ navigation }) {
   const { logout } = useContext(LoginContext);
   const [restaurantData, setRestaurantData] = useState(null);
   const [modalVisible, setModalVisible] = useState(false); // State for modal visibility
-  const userId = "3BUm4o5rQcQT2DchnZT8SNdbjOF2"; // Replace with actual user ID
+  const { userId } = useContext(LoginContext);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -32,7 +32,6 @@ export default function Restaurant({ navigation }) {
     // Show the Share Food modal
     // setModalVisible(true);
     navigation.navigate("ShareFood");
-
   };
 
   const closeModal = () => {
@@ -69,6 +68,9 @@ export default function Restaurant({ navigation }) {
           </Text>
           <Text style={styles.infoText}>
             Longitude: {restaurantData.longitude}
+          </Text>
+          <Text style={styles.infoText}>
+            Closing Time: {restaurantData.closingTime}
           </Text>
         </View>
       ) : (

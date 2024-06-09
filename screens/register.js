@@ -48,7 +48,7 @@ export default function RegisterScreen({ navigation }) {
     }
   };
 
-  const signUp = async (location) => {
+  const signUp = async () => {
     try {
       setLoading(true);
       const response = await createUserWithEmailAndPassword(

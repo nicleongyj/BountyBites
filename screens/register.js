@@ -33,6 +33,12 @@ export default function RegisterScreen({ navigation }) {
   const signUp = async () => {
     try {
       setLoading(true);
+      const timeRegex = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
+      if (!timeRegex.test(closingTime)) {
+        setLoading(false);
+        alert("Please enter a valid closing time (HH:MM)");
+        return;
+      }
       const response = await createUserWithEmailAndPassword(
         auth,
         username,
@@ -85,165 +91,169 @@ export default function RegisterScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
-        {/* <ScrollView contentContainerStyle={styles.scrollView}> */}
-        <View style={{ flex: 1 }}>
-          <View style={{ flex: 2, alignItems: "center" }}>
-            <Text style={styles.title}>Create account</Text>
-          </View>
+        <ScrollView contentContainerStyle={styles.scrollView}>
+          <View style={{ flex: 1 }}>
+            <View style={{ flex: 2, alignItems: "center" }}>
+              <Text style={styles.title}>Create account</Text>
+            </View>
 
-          <View style={styles.inputContainer}>
-            <TextInput
-              autoCapitalize="none"
-              mode="flat"
-              textColor="black"
-              style={styles.textBox}
-              value={username}
-              onChangeText={setUsername}
-              placeholder="email@domain.com"
-              placeholderTextColor={"gray"}
-            />
-          </View>
+            <View style={styles.inputContainer}>
+              <TextInput
+                autoCapitalize="none"
+                mode="flat"
+                textColor="black"
+                style={styles.textBox}
+                value={username}
+                onChangeText={setUsername}
+                placeholder="email@domain.com"
+                placeholderTextColor={"gray"}
+              />
+            </View>
 
-          <View style={styles.inputContainer}>
-            <TextInput
-              autoCapitalize="none"
-              mode="flat"
-              textColor="black"
-              style={styles.textBox}
-              value={password}
-              onChangeText={setPassword}
-              placeholder="Password"
-              placeholderTextColor={"grey"}
-              secureTextEntry
-            />
-          </View>
+            <View style={styles.inputContainer}>
+              <TextInput
+                autoCapitalize="none"
+                mode="flat"
+                textColor="black"
+                style={styles.textBox}
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Password"
+                placeholderTextColor={"grey"}
+                secureTextEntry
+              />
+            </View>
 
-          <View style={styles.inputContainer}>
-            <TextInput
-              autoCapitalize="none"
-              mode="flat"
-              textColor="black"
-              style={styles.textBox}
-              value={restaurantName}
-              onChangeText={setRestaurantName}
-              placeholder="Restaurant Name"
-              placeholderTextColor={"grey"}
-            />
-          </View>
+            <View style={styles.inputContainer}>
+              <TextInput
+                autoCapitalize="none"
+                mode="flat"
+                textColor="black"
+                style={styles.textBox}
+                value={restaurantName}
+                onChangeText={setRestaurantName}
+                placeholder="Restaurant Name"
+                placeholderTextColor={"grey"}
+              />
+            </View>
 
-          <View
-            style={{
-              flex: 2,
-              marginTop: "5%",
-              alignItems: "center",
-              zIndex: 111,
-              paddingBottom: 10,
-            }}
-          >
-            <DropDownPicker
-              open={open}
-              setOpen={setOpen}
-              items={foodType}
-              value={type}
-              setValue={setType}
-              containerStyle={{ height: 40, width: 320, zIndex: 1000 }}
+            <View
               style={{
-                backgroundColor: "white",
-                borderColor: "rgba(0, 0, 0, 0.5)",
-                borderWidth: 1,
+                flex: 2,
+                marginTop: "5%",
+                alignItems: "center",
+                zIndex: 111,
+                paddingBottom: 10,
               }}
-              dropDownContainerStyle={{ backgroundColor: "#fafafa" }}
-              defaultValue={type}
-              onChangeValue={(value) => setType(value)}
-            />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <TextInput
-              autoCapitalize="none"
-              mode="flat"
-              textColor="black"
-              style={styles.textBox}
-              value={location}
-              onChangeText={setLocation}
-              placeholder="Address or Postal Code"
-              placeholderTextColor={"grey"}
-            />
-          </View>
-
-          <View
-            style={{ flex: 3, alignItems: "center", justifyContent: "center" }}
-          >
-            <Button
-              mode="contained"
-              onPress={() => geocodeAddress(location)}
-              style={styles.locationButton}
-              labelStyle={styles.locationButtonLabel}
             >
-              Get coordinates
-            </Button>
-            {/* <Button mode="contained" onPress={handleManualCoordinates} style={styles.locationButton} labelStyle={styles.locationButtonLabel}>Select location on map</Button> */}
-          </View>
+              <DropDownPicker
+                open={open}
+                setOpen={setOpen}
+                items={foodType}
+                value={type}
+                setValue={setType}
+                containerStyle={{ height: 40, width: 320, zIndex: 1000 }}
+                style={{
+                  backgroundColor: "white",
+                  borderColor: "rgba(0, 0, 0, 0.5)",
+                  borderWidth: 1,
+                }}
+                dropDownContainerStyle={{ backgroundColor: "#fafafa" }}
+                defaultValue={type}
+                onChangeValue={(value) => setType(value)}
+              />
+            </View>
 
-          <View style={styles.inputContainer}>
-            <TextInput
-              autoCapitalize="none"
-              mode="flat"
-              textColor="black"
-              style={styles.textBox}
-              value={latitude}
-              onChangeText={setLatitude}
-              placeholder="Latitude"
-              placeholderTextColor={"grey"}
-            />
-          </View>
+            <View style={styles.inputContainer}>
+              <TextInput
+                autoCapitalize="none"
+                mode="flat"
+                textColor="black"
+                style={styles.textBox}
+                value={location}
+                onChangeText={setLocation}
+                placeholder="Address or Postal Code"
+                placeholderTextColor={"grey"}
+              />
+            </View>
 
-          <View style={styles.inputContainer}>
-            <TextInput
-              autoCapitalize="none"
-              mode="flat"
-              textColor="black"
-              style={styles.textBox}
-              value={longitude}
-              onChangeText={setLongitude}
-              placeholder={"Longitude"}
-              placeholderTextColor={"grey"}
-            />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <TextInput
-              autoCapitalize="none"
-              mode="flat"
-              textColor="black"
-              style={styles.textBox}
-              value={closingTime}
-              onChangeText={setClosingTime}
-              placeholder="Closing Time"
-              placeholderTextColor={"grey"}
-            />
-          </View>
-
-          <View style={styles.buttonContainer}>
-            <Button
-              mode="contained"
-              onPress={signUp}
-              labelStyle={styles.buttonLabel}
-              style={styles.button}
+            <View
+              style={{
+                flex: 3,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
             >
-              Sign up with email
-            </Button>
-            {loading ? <ActivityIndicator color="black" /> : null}
-          </View>
+              <Button
+                mode="contained"
+                onPress={() => geocodeAddress(location)}
+                style={styles.locationButton}
+                labelStyle={styles.locationButtonLabel}
+              >
+                Get coordinates
+              </Button>
+              {/* <Button mode="contained" onPress={handleManualCoordinates} style={styles.locationButton} labelStyle={styles.locationButtonLabel}>Select location on map</Button> */}
+            </View>
 
-          <View style={styles.mainButtonContainer}>
-            <Text style={styles.text1}>By continuing you agree to our</Text>
-            <Text style={styles.text2}>
-              Terms of Service and Privacy Policy
-            </Text>
+            <View style={styles.inputContainer}>
+              <TextInput
+                autoCapitalize="none"
+                mode="flat"
+                textColor="black"
+                style={styles.textBox}
+                value={latitude}
+                onChangeText={setLatitude}
+                placeholder="Latitude"
+                placeholderTextColor={"grey"}
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <TextInput
+                autoCapitalize="none"
+                mode="flat"
+                textColor="black"
+                style={styles.textBox}
+                value={longitude}
+                onChangeText={setLongitude}
+                placeholder={"Longitude"}
+                placeholderTextColor={"grey"}
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <TextInput
+                autoCapitalize="none"
+                mode="flat"
+                textColor="black"
+                style={styles.textBox}
+                value={closingTime}
+                onChangeText={setClosingTime}
+                placeholder="Closing Time"
+                placeholderTextColor={"grey"}
+              />
+            </View>
+
+            <View style={styles.buttonContainer}>
+              <Button
+                mode="contained"
+                onPress={signUp}
+                labelStyle={styles.buttonLabel}
+                style={styles.button}
+              >
+                Sign up with email
+              </Button>
+              {loading ? <ActivityIndicator color="black" /> : null}
+            </View>
+
+            <View style={styles.mainButtonContainer}>
+              <Text style={styles.text1}>By continuing you agree to our</Text>
+              <Text style={styles.text2}>
+                Terms of Service and Privacy Policy
+              </Text>
+            </View>
           </View>
-        </View>
-        {/* </ScrollView> */}
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

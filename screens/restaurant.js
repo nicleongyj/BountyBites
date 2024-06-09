@@ -69,6 +69,9 @@ export default function Restaurant({ navigation }) {
           <Text style={styles.infoText}>
             Longitude: {restaurantData.longitude}
           </Text>
+          <Text style={styles.infoText}>
+            Closing Time: {restaurantData.closingTime}
+          </Text>
         </View>
       ) : (
         <Text style={styles.noDataText}>No restaurant data found</Text>

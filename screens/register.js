@@ -52,6 +52,15 @@ export default function RegisterScreen({ navigation }) {
   const signUp = async () => {
     try {
       setLoading(true);
+
+      if (username === "" || password === "" || location === "" || restaurantName === "" || image === null) {
+        alert("Please fill in all fields");
+        setLoading(false);
+        return;
+      }
+        
+      const location = await geocodeAddress();
+
       const response = await createUserWithEmailAndPassword(
         auth,
         username,
@@ -60,6 +69,8 @@ export default function RegisterScreen({ navigation }) {
       const userId = response.user.uid;
 
       const link = await uploadRestaurantPhoto(image, userId);
+
+      
 
       const restaurantData = {
         userId,
@@ -83,12 +94,13 @@ export default function RegisterScreen({ navigation }) {
 
   const geocodeAddress = async () => {
     try {
+        console.log("Geocoding address:", location)
         const geoencodedLocation = await Location.geocodeAsync(location);
         setLatitude(geoencodedLocation[0].latitude.toString());
         setLongitude(geoencodedLocation[0].longitude.toString());
     } catch (error) {
         console.error("Error geocoding address:", error);
-        alert("Error geocoding address");
+        alert("Error geocoding address: " + error.message);
     }
   }
 
@@ -111,7 +123,7 @@ export default function RegisterScreen({ navigation }) {
                 <Text style={styles.title}>Create account</Text>
             </View>
 
-        <View style={{    flex:2, marginTop: "5%", alignItems: "center",zIndex:111, paddingBottom:10}}>
+        <View style={{ flex:2, alignItems: "center",zIndex:111, paddingBottom:20}}>
             <DropDownPicker
               open={open}
               setOpen={setOpen}
@@ -183,7 +195,7 @@ export default function RegisterScreen({ navigation }) {
           </View>
 
 
-          <View style={styles.coordinates}>
+          {/* <View style={styles.coordinates}>
 
  
             <View style={styles.inputContainer}>
@@ -217,7 +229,7 @@ export default function RegisterScreen({ navigation }) {
             </View>
 
 
-          </View>
+          </View> */}
 
           <View style={styles.coordinates}>
             {/* <Text style={{fontSize:15, fontWeight:'bold'}}t>Pick restaurant image:</Text> */}
@@ -235,12 +247,15 @@ export default function RegisterScreen({ navigation }) {
 
 
                     <View style={{flex:1, alignItems:'center', alignContent:'center', flexDirection:'row'}}>
-                      <Text style={{ fontWeight: "bold" }}>Image: </Text>
+                      
                       {image != null && (
+                        <>
+                        <Text style={{ fontWeight: "bold" }}>Image: </Text>
                       <Image
                         source={{ uri: image }}
                         style={{ height: 60, width: 60 }}
                       />
+                      </>
                     )}
                     </View>
             
@@ -312,7 +327,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flex:3,
-    // marginTop: "5%",
+    marginTop: "5%",
     alignItems: "center",
     zIndex:1
   },

@@ -28,6 +28,16 @@
         "projectId": "a73a8383-002a-4738-a7ac-2a4febda55dc"
       }
     },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow BountyBites to access your camera.",
+          "photosPermission": "Allow BountyBites to access your photos.",
+          "savePhotosPermission": "Allow BountyBites to save photos."
+        }
+      ]
+    ],
     "owner": "code_exp"
   }
 }

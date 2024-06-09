@@ -28,3 +28,23 @@ export const uploadFoodPhoto = async (image) => {
         return null;
     }
 }
+
+export const uploadRestaurantPhoto = async (image, userId) => {
+    try {
+        console.log("Uploading photo...");
+        
+        // Convert the URI to Blob
+        const blob = await uriToBlob(image);
+        
+        // Create a reference to the storage
+        const storageRef = ref(FIREBASE_STORAGE, 'test');
+        
+        const snapshot = await uploadBytes(storageRef, blob);
+        
+        const downloadURL = await getDownloadURL(storageRef);
+        return downloadURL;
+    } catch (error) {
+        console.error('Error uploading a blob or file:', error);
+        return null;
+    }
+}

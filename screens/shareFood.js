@@ -16,6 +16,7 @@ import {
   import CameraButton from "../assets/camera.png";
   import { LoginContext } from "../App";
   import { storeFoodData } from "../firestoreUtils";
+  import { uploadFoodPhoto } from "../firestorageUtils";
   
   export default function ShareFood({ navigation }) {
     const [name, setName] = useState("");
@@ -81,54 +82,60 @@ import {
     );
   
     const handleShare = async () => {
-      if (!name.trim()) {
-        alert("Please enter a name for the food item.");
-        return;
-      }
-  
-      const parsedPrice = parseFloat(price);
-      if (isNaN(parsedPrice) || parsedPrice <= 0) {
-        alert("Please enter a valid price for the food item.");
-        return;
-      }
-  
-      const parsedDiscount = parseFloat(discount);
-      if (isNaN(parsedDiscount) || parsedDiscount < 0 || parsedDiscount > 100) {
-        alert("Please enter a valid discount percentage for the food item.");
-        return;
-      }
-  
-      const parsedQuantity = parseInt(quantity);
-      if (isNaN(parsedQuantity) || parsedQuantity <= 0) {
-        alert("Please enter a valid quantity for the food item.");
-        return;
-      }
 
-      const link = await uploadFoodPhoto(image);
-      console.log("Image downloaded: " + link)
-  
-      const foodData = {
-        name: name,
-        price: parsedPrice,
-        discount: parsedDiscount,
-        quantity: parsedQuantity,
-      };
-  
-      try {
-        await storeFoodData(userId, foodData);
-        // Alert the user that the food has been shared successfully
-        alert("Food item shared successfully!");
-        // Clear input fields after sharing
-        setName("");
-        setPrice("");
-        setDiscount("");
-        setQuantity("");
-        setImage(null);
-      } catch (error) {
-        console.error("Error storing food data: ", error);
-        alert("Failed to share food item. Error: " + error.message); // Log error message
-        throw error;
-      }
+        if (!name.trim()) {
+            alert("Please enter a name for the food item.");
+            return;
+        }
+    
+        const parsedPrice = parseFloat(price);
+        if (isNaN(parsedPrice) || parsedPrice <= 0) {
+            alert("Please enter a valid price for the food item.");
+            return;
+        }
+    
+        const parsedDiscount = parseFloat(discount);
+        if (isNaN(parsedDiscount) || parsedDiscount < 0 || parsedDiscount > 100) {
+            alert("Please enter a valid discount percentage for the food item.");
+            return;
+        }
+    
+        const parsedQuantity = parseInt(quantity);
+        if (isNaN(parsedQuantity) || parsedQuantity <= 0) {
+            alert("Please enter a valid quantity for the food item.");
+            return;
+        }
+
+        if (image == null) {
+            alert("Please take a picture of the food item.");
+            return;
+        }
+
+        const link = await uploadFoodPhoto(image);
+        console.log("Image downloaded: " + link)
+
+        const foodData = {
+            name: name,
+            price: parsedPrice,
+            discount: parsedDiscount,
+            quantity: parsedQuantity,
+        };
+    
+        try {
+            await storeFoodData(userId, foodData);
+            // Alert the user that the food has been shared successfully
+            alert("Food item shared successfully!");
+            // Clear input fields after sharing
+            setName("");
+            setPrice("");
+            setDiscount("");
+            setQuantity("");
+            setImage(null);
+        } catch (error) {
+            console.error("Error storing food data: ", error);
+            alert("Failed to share food item. Error: " + error.message); // Log error message
+            throw error;
+        }
     };
   
     return (

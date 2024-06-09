@@ -6,7 +6,8 @@ import {
   ActivityIndicator,
   ScrollView,
   KeyboardAvoidingView,
-  TouchableOpacity
+  TouchableOpacity,
+  Image
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, TextInput } from "react-native-paper";
@@ -17,6 +18,7 @@ import { storeRestaurantData } from "../firestoreUtils";
 import * as Location from "expo-location";
 import DropDownPicker from "react-native-dropdown-picker";
 import * as ImagePicker from 'expo-image-picker';
+import { uploadRestaurantPhoto } from "../firestorageUtils";
 
 export default function RegisterScreen({ navigation }) {
   const { login } = useContext(LoginContext);
@@ -43,8 +45,7 @@ export default function RegisterScreen({ navigation }) {
     console.log(result);
   
     if (!result.cancelled) {
-        console.log("imageset")
-        setImage(result.uri);
+        setImage(result.assets[0].uri);
     }
   };
 
@@ -57,6 +58,8 @@ export default function RegisterScreen({ navigation }) {
         password
       );
       const userId = response.user.uid;
+
+      const link = await uploadRestaurantPhoto(image, userId);
 
       const restaurantData = {
         userId,
@@ -218,29 +221,29 @@ export default function RegisterScreen({ navigation }) {
 
           <View style={styles.coordinates}>
             {/* <Text style={{fontSize:15, fontWeight:'bold'}}t>Pick restaurant image:</Text> */}
-            <View style={{ alignItems: "center" }}>
+            <View style={{ alignItems: "center", flexDirection:'row' , paddingLeft:'10%'}}>
+                <View style={{flex:1, alignItems:'center', alignContent:'center'}}>
                   <TouchableOpacity
                     style={styles.cameraButton}
                     onPress={pickImage}
                   >
                     <Text style={styles.cameraText}>
-                      {image == null ? "Choose a picture" : "View image"}
+                      {image == null ? "Choose a picture" : "Change image"}
                     </Text>
                   </TouchableOpacity>
+                  </View>
 
-                  {image != null && (
-             
-                    <View
-                      style={{ flexDirection: "row", alignItems: "center" }}
-                    >
-                        <Text>Bfsdfsf</Text>
+
+                    <View style={{flex:1, alignItems:'center', alignContent:'center', flexDirection:'row'}}>
                       <Text style={{ fontWeight: "bold" }}>Image: </Text>
+                      {image != null && (
                       <Image
                         source={{ uri: image }}
                         style={{ height: 60, width: 60 }}
                       />
+                    )}
                     </View>
-                  )}
+            
                 </View>
           </View>
 

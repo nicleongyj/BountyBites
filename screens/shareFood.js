@@ -9,7 +9,7 @@ import {
   import { SafeAreaView } from "react-native-safe-area-context";
   import { useState, useRef, useEffect, useContext } from "react";
   import { Button } from "react-native-paper";
-  import { ScrollView } from "react-native";
+  import { ScrollView, ActivityIndicator} from "react-native";
   // Camera imports
   import { Camera, CameraView } from "expo-camera";
   import * as ImagePicker from "expo-image-picker";
@@ -24,6 +24,7 @@ import {
     const [discount, setDiscount] = useState("");
     const [quantity, setQuantity] = useState("");
     const { userId } = useContext(LoginContext);
+    const [submitting, setSubmitting] = useState(false);
   
     // Camera states
     const [hasPermission, setHasPermission] = useState(null);
@@ -82,32 +83,38 @@ import {
     );
   
     const handleShare = async () => {
+        setSubmitting(true);
 
         if (!name.trim()) {
             alert("Please enter a name for the food item.");
+            setSubmitting(false);
             return;
         }
     
         const parsedPrice = parseFloat(price);
         if (isNaN(parsedPrice) || parsedPrice <= 0) {
             alert("Please enter a valid price for the food item.");
+            setSubmitting(false);
             return;
         }
     
         const parsedDiscount = parseFloat(discount);
         if (isNaN(parsedDiscount) || parsedDiscount < 0 || parsedDiscount > 100) {
             alert("Please enter a valid discount percentage for the food item.");
+            setSubmitting(false);
             return;
         }
     
         const parsedQuantity = parseInt(quantity);
         if (isNaN(parsedQuantity) || parsedQuantity <= 0) {
             alert("Please enter a valid quantity for the food item.");
+            setSubmitting(false);
             return;
         }
 
         if (image == null) {
             alert("Please take a picture of the food item.");
+            setSubmitting(false);
             return;
         }
 
@@ -131,9 +138,11 @@ import {
             setDiscount("");
             setQuantity("");
             setImage(null);
+            setSubmitting(false);
         } catch (error) {
             console.error("Error storing food data: ", error);
             alert("Failed to share food item. Error: " + error.message); // Log error message
+            setSubmitting(false);
             throw error;
         }
     };
@@ -182,9 +191,12 @@ import {
                   mode="contained"
                   style={styles.submitButton}
                   onPress={handleShare}
+                  disabled={submitting}
                 >
                   Share
                 </Button>
+                {submitting ? <ActivityIndicator color="black" /> : null}
+                
               </View>
             </ScrollView>
           </SafeAreaView>

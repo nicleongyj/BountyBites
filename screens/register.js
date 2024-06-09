@@ -50,17 +50,24 @@ export default function RegisterScreen({ navigation }) {
   };
 
   const signUp = async () => {
-    try {
-      setLoading(true);
-
-      if (username === "" || password === "" || location === "" || restaurantName === "" || image === null) {
+    if (username === "" || password === "" || location === "" || restaurantName === "" || image === null) {
         alert("Please fill in all fields");
         setLoading(false);
         return;
       }
-        
-      const location = await geocodeAddress();
 
+    try {
+        const location = await geocodeAddress();
+    } catch {
+        alert("Please fill in a valid address");
+        setLoading(false);
+        return;
+    }
+
+
+    try {
+      setLoading(true);
+      console.log("coordinates" + longitude + latitude)
       const response = await createUserWithEmailAndPassword(
         auth,
         username,
@@ -98,6 +105,7 @@ export default function RegisterScreen({ navigation }) {
         const geoencodedLocation = await Location.geocodeAsync(location);
         setLatitude(geoencodedLocation[0].latitude.toString());
         setLongitude(geoencodedLocation[0].longitude.toString());
+        console.log("Geocoded location:", geoencodedLocation);
     } catch (error) {
         console.error("Error geocoding address:", error);
         alert("Error geocoding address: " + error.message);

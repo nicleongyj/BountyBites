@@ -16,12 +16,12 @@ export const uploadFoodPhoto = async (image) => {
         // Convert the URI to Blob
         const blob = await uriToBlob(image);
         
-        // Create a reference to the storage
-        const storageRef = ref(FIREBASE_STORAGE, 'test');
-        
+        const storageRef = ref(FIREBASE_STORAGE, `foodImages/${Date.now()}-${image.split('/').pop()}`);
+
         const snapshot = await uploadBytes(storageRef, blob);
         
         const downloadURL = await getDownloadURL(storageRef);
+        console.log("Image uploaded successfully: ", downloadURL)
         return downloadURL;
     } catch (error) {
         console.error('Error uploading a blob or file:', error);
@@ -37,8 +37,8 @@ export const uploadRestaurantPhoto = async (image, userId) => {
         const blob = await uriToBlob(image);
         
         // Create a reference to the storage
-        const storageRef = ref(FIREBASE_STORAGE, 'test');
-        
+        const storageRef = ref(FIREBASE_STORAGE, `restaurantLogos/${userId}`);
+                
         const snapshot = await uploadBytes(storageRef, blob);
         
         const downloadURL = await getDownloadURL(storageRef);

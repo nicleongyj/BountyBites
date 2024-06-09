@@ -6,11 +6,13 @@ import MapView, { Marker } from "react-native-maps";
 import * as Location from 'expo-location';
 
 import { LoginContext } from "../App";
-
+import UserMarker from "../assets/user.png";
+import { fetchAllRestaurants } from "../firestoreUtils";
 
 export default function Home(navigation) {
 
     const [region, setRegion] = useState(null);
+    const [restaurantData, setRestaurantData] = useState(null);
 
     useEffect(() => {
         (async () => {
@@ -30,6 +32,20 @@ export default function Home(navigation) {
         })();
     }, []);
 
+    useEffect(() => {   
+        const fetchData = async () => {
+            try {
+                const data = await fetchAllRestaurants();
+                setRestaurantData(data);
+            } catch (error) {
+                console.error("Error fetching restaurant data:", error);
+            }
+        };
+
+        fetchData();
+    });
+
+
     if (!region) {
         return (
             <View style={styles.loadingContainer}>
@@ -45,9 +61,45 @@ export default function Home(navigation) {
                 region={region}
             >
                 {/* Marker for user location */}
+                <Marker
+                coordinate={{
+                    latitude: region.latitude,
+                    longitude: region.longitude,
+                }}
+                title={"Your Location"}
+                image={UserMarker}
+                style={{width: 20, height: 20}}
+                />  
+
+                {/* Markers for restaurants */}
+                {restaurantData && restaurantData.map((restaurant, index) => (
+                <Marker
+                    key={index}
+                    coordinate={{
+                        latitude: parseFloat(restaurant.latitude),
+                        longitude: parseFloat(restaurant.longitude),
+                    }}
+                    title={restaurant.restaurantName}
+                    description={restaurant.location}
+                    />
+                ))}
+
+
+
+
+
+
+
+
+
+
+
+        
+                </MapView>
+
             
 
-            </MapView>
+            
         </View>
         
         

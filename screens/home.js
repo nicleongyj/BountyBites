@@ -58,7 +58,8 @@ export default function Home({navigation}) {
 
     return (
         <Provider>
-            <SafeAreaView style={styles.container}>
+            {/* <SafeAreaView style={styles.container}> */}
+            <View style={styles.container}>
 
             
                 <View style={styles.topContainer}>
@@ -155,8 +156,8 @@ export default function Home({navigation}) {
                     </Portal>
                 </View>
             
-            
-            </SafeAreaView>
+            </View>
+            {/* </SafeAreaView> */}
         </Provider>
     
     );
@@ -166,6 +167,7 @@ export default function Home({navigation}) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        height: "100%",
         flexDirection: "column",
         justifyContent: "center",
         backgroundColor: "white",

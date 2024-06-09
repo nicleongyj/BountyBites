@@ -8,6 +8,11 @@ import { Camera, CameraView } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import CameraButton from "../assets/camera.png";
 
+
+import { FIREBASE_STORAGE } from '../FirebaseConfig';
+import { getDownloadURL, uploadBytes, ref } from 'firebase/storage';
+import { uploadPhotoToStorage } from '../firestorageUtils';
+
 export default function ShareFood({navigation}) {
 
     const [name, setName] = useState("");
@@ -73,26 +78,27 @@ export default function ShareFood({navigation}) {
         </View>
       );
 
-      const handleShare = async () => {
+    const handleShare = async () => {
+
         if (!name.trim()) {
-          Alert.alert("Error", "Please enter a name for the food item.");
+          alert("Error", "Please enter a name for the food item.");
           return;
         }
     
         if (!description.trim()) {
-          Alert.alert("Error", "Please enter a description for the food item.");
+          alert("Error", "Please enter a description for the food item.");
           return;
         }
     
         const parsedPrice = parseFloat(price);
         if (isNaN(parsedPrice) || parsedPrice <= 0) {
-          Alert.alert("Error", "Please enter a valid price for the food item.");
+          alert("Error", "Please enter a valid price for the food item.");
           return;
         }
     
         const parsedDiscount = parseFloat(discount);
         if (isNaN(parsedDiscount) || parsedDiscount < 0 || parsedDiscount > 100) {
-          Alert.alert(
+          alert(
             "Error",
             "Please enter a valid discount percentage for the food item."
           );
@@ -101,14 +107,22 @@ export default function ShareFood({navigation}) {
     
         const parsedQuantity = parseInt(quantity);
         if (isNaN(parsedQuantity) || parsedQuantity <= 0) {
-          Alert.alert("Error", "Please enter a valid quantity for the food item.");
+          alert("Error", "Please enter a valid quantity for the food item.");
           return;
         }
     
         if (!isValidTime(endTime)) {
-          Alert.alert("Error", "Please enter a valid end time (HH:MM).");
+          alert("Error", "Please enter a valid end time (HH:MM).");
           return;
         }
+
+        if (!image) {
+          alert("Error", "Please take a picture of the food item.");
+          return;
+        }
+
+        const link = await uploadPhotoToStorage(image);
+        console.log("Image downloaded: " + link)
     
         const food = {
           name: name,
@@ -121,13 +135,14 @@ export default function ShareFood({navigation}) {
         const foodData = {
           food: food,
           endTime: endTime,
+          imageURL: link
         };
     
         try {
           await storeFoodData(userId, foodData);
           closeModal(); // Close the modal after sharing
         } catch (error) {
-          Alert.alert("Error", "Failed to share food item.");
+          alert("Error", "Failed to share food item.");
         }
       };    
 
@@ -140,7 +155,7 @@ export default function ShareFood({navigation}) {
 
                     <View style={styles.topContainer}>
                         <Text style={styles.title}>  
-                            Add a food item 🍔
+                            Add a food item 🍔l
                         </Text>
                     </View>
 

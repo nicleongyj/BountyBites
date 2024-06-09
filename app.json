@@ -23,6 +23,16 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow BountyBites to access your camera.",
+          "photosPermission": "Allow BountyBites to access your photos.",
+          "savePhotosPermission": "Allow BountyBites to save photos."
+        }
+      ]
+    ],
     "owner": "code_exp"
   }
 }

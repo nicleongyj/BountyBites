@@ -30,8 +30,8 @@ export default function Restaurant({ navigation }) {
 
   const handleShareFood = () => {
     // Show the Share Food modal
-    setModalVisible(true);
-    // navigation.navigate("ShareFood");
+    // setModalVisible(true);
+    navigation.navigate("ShareFood");
   };
 
   const closeModal = () => {

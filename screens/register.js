@@ -85,8 +85,9 @@ export default function RegisterScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
-        <ScrollView contentContainerStyle={styles.scrollView}>
-          <View style={{ flex: 1, alignItems: "center" }}>
+        {/* <ScrollView contentContainerStyle={styles.scrollView}> */}
+        <View style={{ flex: 1 }}>
+          <View style={{ flex: 2, alignItems: "center" }}>
             <Text style={styles.title}>Create account</Text>
           </View>
 
@@ -152,6 +153,8 @@ export default function RegisterScreen({ navigation }) {
                 borderWidth: 1,
               }}
               dropDownContainerStyle={{ backgroundColor: "#fafafa" }}
+              defaultValue={type}
+              onChangeValue={(value) => setType(value)}
             />
           </View>
 
@@ -169,7 +172,7 @@ export default function RegisterScreen({ navigation }) {
           </View>
 
           <View
-            style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+            style={{ flex: 3, alignItems: "center", justifyContent: "center" }}
           >
             <Button
               mode="contained"
@@ -239,7 +242,8 @@ export default function RegisterScreen({ navigation }) {
               Terms of Service and Privacy Policy
             </Text>
           </View>
-        </ScrollView>
+        </View>
+        {/* </ScrollView> */}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -259,7 +263,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 35,
+    fontSize: 30,
     color: "black",
     fontWeight: "bold",
   },
@@ -283,7 +287,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   inputContainer: {
-    flex: 2,
+    flex: 3,
     marginTop: "5%",
     alignItems: "center",
     zIndex: 1,
@@ -293,12 +297,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   mainButtonContainer: {
-    flex: 10,
+    flex: 4,
     paddingTop: "5%",
     alignItems: "center",
   },
   buttonContainer: {
-    flex: 10,
+    flex: 4,
     marginTop: "5%",
     alignItems: "center",
   },

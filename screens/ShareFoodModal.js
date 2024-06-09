@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import {
   View,
   Text,
@@ -12,6 +12,11 @@ import {
 import { storeFoodData } from "../firestoreUtils";
 import { LoginContext } from "../App";
 
+// Camera imports
+import { Camera } from "expo-camera";
+import * as ImagePicker from "expo-image-picker";
+import CameraButton from "../assets/camera.png";
+
 const ShareFoodModal = ({ visible, closeModal, restaurantData }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -20,6 +25,39 @@ const ShareFoodModal = ({ visible, closeModal, restaurantData }) => {
   const [quantity, setQuantity] = useState("");
   const [endTime, setEndTime] = useState("");
   const { userId } = useContext(LoginContext);
+
+  // Camera states
+  const [hasPermission, setHasPermission] = useState(null);
+  const [startCamera, setStartCamera] = useState(false);
+  const [image, setImage] = useState(null);
+  const cameraRef = useRef(null);
+
+  // if (!hasPermission) {
+  //   return (
+  //     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+  //       <Text style={{ alignSelf: "center" }}>No access to camera</Text>
+  //       <Text style={{ alignSelf: "center" }}>
+  //         Allow Expo to access your camera in your settings
+  //       </Text>
+  //     </View>
+  //   );
+  // }
+
+  const enableCamera = () => {
+    setStartCamera(true);
+  };
+
+  const takePicture = async () => {
+    if (cameraRef) {
+      try {
+        const data = await cameraRef.current.takePictureAsync();
+        setImage(data === undefined ? "jest" : data.uri);
+      } catch (error) {
+        alert("Error", "Please try again!", [{ text: "OK" }]);
+        return;
+      }
+    }
+  };
 
   useEffect(() => {
     if (visible) {

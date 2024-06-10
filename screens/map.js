@@ -36,6 +36,7 @@ export default function Home(navigation) {
         const fetchData = async () => {
             try {
                 const data = await fetchAllRestaurants();
+                console.log(JSON.stringify(data, null, 2));              
                 setRestaurantData(data);
             } catch (error) {
                 console.error("Error fetching restaurant data:", error);
@@ -44,6 +45,11 @@ export default function Home(navigation) {
 
         fetchData();
     });
+
+    const navigateRestaurant = (restaurant) => {
+        console.log("Navigating to restaurant: " + restaurant.items[0].itemName);
+        
+    }
 
 
     if (!region) {
@@ -82,12 +88,12 @@ export default function Home(navigation) {
                     title={restaurant.restaurantName}
                     description={restaurant.location}>
 
-                    <Callout>
-                        <View>
-                            <Text>{restaurant.restaurantName}</Text>
+                    <Callout style={styles.calloutView}>
+                        <View style={styles.cardView}>
+                            <Text style={styles.restaurantName}>{restaurant.restaurantName}</Text>
                             <Text>{restaurant.location}</Text>
                             <Text>Number of items: {restaurant.items ? restaurant.items.length : 0}</Text>   
-                            <Button mode="contained" style={styles.button}>View</Button>                     
+                            <Button mode="contained" onPress={()=>navigateRestaurant(restaurant)} style={styles.button} labelStyle={styles.buttonLabel}>View</Button>                     
                         </View>
 
                     </Callout>
@@ -131,7 +137,30 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     button: {
-        width:40,
-        height:25,
-    }
+        width:120,
+        height:35,
+        backgroundColor: "black",
+    },
+    buttonLabel : {
+        color: "white",
+        alignSelf: "center",
+    },
+    restaurantName: {
+        fontSize: 14,
+        fontWeight: "bold",
+        alignSelf: "center",
+    },
+    calloutView: {
+        width: 160,
+        height: 100,
+        // alignItems: "center",
+        borderRadius: 30,
+    },
+    cardView: {
+        flex:1,
+        alignItems: "center",
+        justifyContent: "center",
+        alignContent: "center",
+    },
+
 });

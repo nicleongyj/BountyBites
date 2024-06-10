@@ -50,6 +50,7 @@ export const fetchAllRestaurants = async () => {
     const restaurants = await Promise.all(collectionSnap.docs.map(async doc => {
       const restaurant = doc.data();
       const items = await fetchFoodItems(doc.id);
+      console.log(items)
       return {
         ...restaurant,
         items,

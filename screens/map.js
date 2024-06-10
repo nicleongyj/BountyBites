@@ -2,7 +2,7 @@ import { Text, StyleSheet } from "react-native";
 import { Button } from "react-native-paper";
 import { View } from "react-native";
 import { useContext, useState, useEffect} from "react";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Callout, Marker } from "react-native-maps";
 import * as Location from 'expo-location';
 
 import { LoginContext } from "../App";
@@ -80,21 +80,21 @@ export default function Home(navigation) {
                         longitude: parseFloat(restaurant.longitude),
                     }}
                     title={restaurant.restaurantName}
-                    description={restaurant.location}
-                    />
+                    description={restaurant.location}>
+
+                    <Callout>
+                        <View>
+                            <Text>{restaurant.restaurantName}</Text>
+                            <Text>{restaurant.location}</Text>
+                            <Text>Number of items: {restaurant.items ? restaurant.items.length : 0}</Text>   
+                            <Button mode="contained" style={styles.button}>View</Button>                     
+                        </View>
+
+                    </Callout>
+                    
+                </Marker>
                 ))}
 
-
-
-
-
-
-
-
-
-
-
-        
                 </MapView>
 
             
@@ -129,5 +129,9 @@ const styles = StyleSheet.create({
     loading: {
         fontSize: 20,
         fontWeight: "bold",
+    },
+    button: {
+        width:40,
+        height:25,
     }
 });

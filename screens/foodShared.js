@@ -6,11 +6,13 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
+  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LoginContext } from "../App";
 import { FIREBASE_DB } from "../FirebaseConfig";
 import { useState, useEffect, useContext } from "react";
+import {fetchFoodItems} from "../firestoreUtils";
 
 export default function FoodShared({ navigation }) {
   const { userId } = useContext(LoginContext);
@@ -21,24 +23,8 @@ export default function FoodShared({ navigation }) {
     discount: "",
   });
 
-  const fetchFoodItems = async (userId) => {
-    try {
-      const docRef = doc(FIREBASE_DB, "food-today", userId);
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        const foodItemsArray = docSnap.data().foodItems;
-        setFoodItems(foodItemsArray);
-      } else {
-        console.log("No such document!");
-      }
-    } catch (error) {
-      console.error("Error fetching food items: ", error);
-    }
-  };
-
-  const handleEdit = (item, index) => {
-    setEditingItem(index);
+  const handleEdit = (item) => {
+    setEditingItem(item);
     setEditValues({
       currentQuantity: item.currentQuantity.toString(),
       discount: item.discount.toString(),
@@ -80,14 +66,14 @@ export default function FoodShared({ navigation }) {
     }
   };
 
-  useEffect(() => {
-    if (userId) {
-      fetchFoodItems(userId);
-    }
-  }, [userId]);
+    useEffect(() => {
+      if (userId) {
+        fetchFoodItems(userId).then(items => setFoodItems(items));
+      }
+    }, [userId]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <Text style={styles.heading}>Food Shared</Text>
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
         {foodItems.map((foodItem, index) => (
@@ -127,17 +113,34 @@ export default function FoodShared({ navigation }) {
               </View>
             ) : (
               <View>
-                <Text style={styles.foodText}>Food Name: {foodItem.name}</Text>
-                <Text style={styles.foodText}>Price: $ {foodItem.price}</Text>
-                <Text style={styles.foodText}>
-                  Discount: {foodItem.discount}%
-                </Text>
-                <Text style={styles.foodText}>
-                  Total Quantity: {foodItem.quantity}
-                </Text>
-                <Text style={styles.foodText}>
-                  Current Quantity: {foodItem.currentQuantity}
-                </Text>
+                <View style={styles.outerContainer}>
+                  <View style={styles.leftContainer}>
+
+                    <Text style={styles.foodText}>Food Name: {foodItem.name}</Text>
+                    <Text style={styles.foodText}>Price: $ {foodItem.price}</Text>
+                    <Text style={styles.foodText}>
+                      Discount: {foodItem.discount}%
+                    </Text>
+                    <Text style={styles.foodText}>
+                      Total Quantity: {foodItem.quantity}
+                    </Text>
+                    <Text style={styles.foodText}>
+                      Current Quantity: {foodItem.currentQuantity}
+                    </Text>
+
+                  </View>
+
+                <View style={styles.rightContainer}>
+                  <Image
+                    source={{ uri: foodItem.link }}
+                    style={{ width: 100, height: 100 }}
+                  />
+
+                </View>
+
+                </View>
+
+                <View style={{flexDirection:'row', width:'100%',justifyContent:'space-between', alignContent:'center' }}>
                 <TouchableOpacity
                   style={styles.editButton}
                   onPress={() => handleEdit(foodItem, index)}
@@ -150,12 +153,14 @@ export default function FoodShared({ navigation }) {
                 >
                   <Text style={styles.buttonText}>Delete</Text>
                 </TouchableOpacity>
+                </View>
               </View>
             )}
           </View>
         ))}
       </ScrollView>
-    </SafeAreaView>
+
+      </View>
   );
 }
 
@@ -181,22 +186,36 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 20,
     backgroundColor: "whitesmoke",
+    borderWidth: 1,
+    borderColor: "black",
+  },
+  outerContainer: {
+    flexDirection: "row",
+  },
+  leftContainer: {
+    flex: 1,
+  },
+  rightContainer: {
+    flex: 1,
+    alignItems: "flex-end",
   },
   foodText: {
     fontSize: 16,
     marginBottom: 5,
   },
   editButton: {
-    backgroundColor: "blue",
+    backgroundColor: "#72ba76",
     padding: 10,
     borderRadius: 5,
     marginTop: 10,
+    width: '45%',
   },
   deleteButton: {
-    backgroundColor: "red",
+    backgroundColor: "#db254a",
     padding: 10,
     borderRadius: 5,
     marginTop: 10,
+    width: '45%',
   },
   saveButton: {
     backgroundColor: "green",

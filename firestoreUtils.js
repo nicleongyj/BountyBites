@@ -36,6 +36,8 @@ export const fetchRestaurantData = async (userId) => {
   }
 };
 
+
+
 export const fetchAllRestaurants = async () => {
   try {
     // Get the collection reference for the restaurants
@@ -44,8 +46,15 @@ export const fetchAllRestaurants = async () => {
     // Get the snapshot of the collection
     const collectionSnap = await getDocs(collectionRef);
 
-    // Map each document into its data
-    const restaurants = collectionSnap.docs.map(doc => doc.data());
+    // Map each document into its data and fetch items for each restaurant
+    const restaurants = await Promise.all(collectionSnap.docs.map(async doc => {
+      const restaurant = doc.data();
+      const items = await fetchFoodItems(doc.id);
+      return {
+        ...restaurant,
+        items,
+      };
+    }));
 
     // Return the data
     return restaurants;
@@ -128,4 +137,23 @@ export const getRestaurantDataFromFoodToday = async () => {
   }
 
   return restaurantDataArray; // Return the array of restaurant data
+};
+
+export const fetchFoodItems = async (userId) => {
+  try {
+    const docRef = doc(FIREBASE_DB, "food-today", userId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const foodItemsArray = docSnap.data().foodItems;
+      return foodItemsArray.map((foodItem, index) => ({
+        id: `${userId}-${index}`, // Unique key for each food item
+        ...foodItem,
+      }));
+    } else {
+      console.log("No such document!");
+    }
+  } catch (error) {
+    console.error("Error fetching food items: ", error);
+  }
 };

@@ -84,12 +84,14 @@ import {
   
     const handleShare = async () => {
         setSubmitting(true);
+        console.log("1")
 
         if (!name.trim()) {
             alert("Please enter a name for the food item.");
             setSubmitting(false);
             return;
         }
+        console.log("2")
     
         const parsedPrice = parseFloat(price);
         if (isNaN(parsedPrice) || parsedPrice <= 0) {
@@ -97,6 +99,7 @@ import {
             setSubmitting(false);
             return;
         }
+        console.log("3")
     
         const parsedDiscount = parseFloat(discount);
         if (isNaN(parsedDiscount) || parsedDiscount < 0 || parsedDiscount > 100) {
@@ -104,6 +107,7 @@ import {
             setSubmitting(false);
             return;
         }
+        console.log("4")
     
         const parsedQuantity = parseInt(quantity);
         if (isNaN(parsedQuantity) || parsedQuantity <= 0) {
@@ -111,12 +115,14 @@ import {
             setSubmitting(false);
             return;
         }
+        console.log("5")
 
         if (image == null) {
             alert("Please take a picture of the food item.");
             setSubmitting(false);
             return;
         }
+        console.log("6")
 
         const link = await uploadFoodPhoto(image);
         console.log("Image downloaded: " + link)
@@ -127,10 +133,12 @@ import {
             price: parsedPrice,
             discount: parsedDiscount,
             quantity: parsedQuantity,
+            link: link,
         };
     
         try {
             await storeFoodData(userId, foodData);
+            
             // Alert the user that the food has been shared successfully
             alert("Food item shared successfully!");
             // Clear input fields after sharing

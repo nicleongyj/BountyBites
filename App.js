@@ -1,3 +1,4 @@
+import { LogBox } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import React, { useState, createContext, useContext } from "react";
@@ -14,7 +15,10 @@ import TermsScreen from "./screens/termsConditions";
 export const LoginContext = createContext();
 export const RestaurantContext = createContext();
 
+
 export default function App() {
+  LogBox.ignoreLogs(['Require cycle:']); 
+  LogBox.ignoreAllLogs(['Require cycle:']);
   const Stack = createNativeStackNavigator();
 
   const [isRestaurant, setIsRestaurant] = useState(false);

@@ -1,4 +1,4 @@
-import { Text, StyleSheet, Image, ScrollView, Pressable } from "react-native";
+import { Text, StyleSheet, Image, ScrollView, Pressable, ImageBackground } from "react-native";
 import { Button, TextInput, Portal, Checkbox, Modal, RadioButton, Provider } from "react-native-paper";
 import { View } from "react-native";
 import { useContext, useState, useEffect, useRef} from "react";
@@ -171,8 +171,8 @@ export default function Home({navigation}) {
 
     return (
         <Provider>
-            {/* <SafeAreaView style={styles.container}> */}
-            <View style={styles.container}>
+            <SafeAreaView style={styles.container}>
+            {/* <View style={styles.container}> */}
 
                 { !restaurantWithLocation && !refresh ? ( 
 
@@ -194,7 +194,9 @@ export default function Home({navigation}) {
                 ) : (
 
                     <>
+                    {/* <ImageBackground source={require("../assets/background.jpg")} style={{flex: 1, resizeMode: "cover", justifyContent: "center"}}> */}
                     <View style={styles.topContainer}>
+                        
                         <Text style={styles.title}>Available Food Nearby</Text>
 
                         <View style={styles.searchContainer}>
@@ -307,13 +309,13 @@ export default function Home({navigation}) {
                             </Modal>
                         </Portal>
                     </View>
+                {/* </ImageBackground> */}
                 </>
 
 
                 )}
-            
-            </View>
-            {/* </SafeAreaView> */}
+            {/* </View> */}
+            </SafeAreaView>
         </Provider>
     
     );
@@ -327,6 +329,8 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         justifyContent: "center",
         backgroundColor: "white",
+        paddingTop: 10,
+        
     },
     topContainer: {
         flex: 1,
@@ -343,7 +347,7 @@ const styles = StyleSheet.create({
         flex: 6,
         alignItems: "center",
         flexDirection: "column",
-        backgroundColor: "white",
+        // backgroundColor: "white",
       },
     title: {
         fontSize: 23,

@@ -1,13 +1,14 @@
 import { Text, StyleSheet, Image, ScrollView, Pressable } from "react-native";
 import { Button, TextInput, Portal, Checkbox, Modal, RadioButton, Provider } from "react-native-paper";
 import { View } from "react-native";
-import { useContext, useState} from "react";
+import { useContext, useState, useEffect} from "react";
 
 
 import { LoginContext } from "../App";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {restaurants} from "../sample_data/restaurants"
+import { fetchAllRestaurants } from "../firestoreUtils";
 
 
 export default function Home({navigation}) {
@@ -19,6 +20,7 @@ export default function Home({navigation}) {
     const [filterValue, setFilterValue] = useState("all");
     const [checkedDistance, setCheckedDistance] = useState(true);
     const [checkedDiscount, setCheckedDiscount] = useState(false);
+    const [restaurantData, setRestaurantData] = useState(null);
 
     const handleFilter = () => {
         setVisible(!visible)
@@ -32,6 +34,22 @@ export default function Home({navigation}) {
         console.log("Card pressed")
         navigation.navigate("ItemList", {restaurant: restaurant})
     }
+
+
+    useEffect(() => {   
+        const fetchData = async () => {
+            try {
+                const data = await fetchAllRestaurants();
+                console.log("Fetching restaurants...")             
+                setRestaurantData(data);
+                console.log("Restaurant data fetched")
+                console.log(restaurantData)
+            } catch (error) {
+                console.error("Error fetching restaurant data:", error);
+            }
+        };
+        fetchData();
+    });
 
     // Filter 
     const filteredRestaurants = restaurants.filter(restaurant => {
@@ -61,100 +79,116 @@ export default function Home({navigation}) {
             {/* <SafeAreaView style={styles.container}> */}
             <View style={styles.container}>
 
-            
-                <View style={styles.topContainer}>
-                    <Text style={styles.title}>Available Food Nearby</Text>
+                { !restaurantData ? ( 
 
-                    <View style={styles.searchContainer}>
-                        <TextInput
-                            mode="flat"
-                            style={styles.textBox}
-                            placeholder="Search for food"
-                            underlineColor="transparent"
-                            activeUnderlineColor="transparent"
-                            left={<TextInput.Icon icon={() => <Icon name="search" size={20} color="black" />} />}
-                            />
-                        <Button
-                            mode="contained"
-                            style={styles.filterButton}
-                            labelStyle={styles.filterButtonLabel}
-                            onPress={handleFilter}
-                        >Filter</Button>
-                        
+                    <View>
+                        <Text>Loading...</Text>
                     </View>
-                </View>
 
-                <View style={styles.cardContainer}>
-                    <ScrollView contentContainerStyle={styles.scrollViewContent}>
-                    {sortedRestaurants.map((restaurant, index) => (
-                        <Pressable key={index} onPress={() => handleCardPress(restaurant)}>
-                            <View key={index} style={styles.card}>
-                                <View style={styles.textContainer}>
-                                    <Text style={styles.cardTitle}>{restaurant.name}</Text>
-                                    <View style={{paddingLeft:10}}>
-                                        <View style={{flexDirection:"row"}}>
-                                            <Text style={{fontWeight: "bold"}}>Food Type: </Text>
-                                            <Text>{restaurant.type}</Text>
-                                        </View>
-                                        <View style={{flexDirection:"row"}}>
-                                            <Text style={{fontWeight: "bold"}}>Address: </Text>
-                                            <Text>{restaurant.address}</Text>
-                                        </View>
-                                        <View style={{flexDirection:"row"}}>
-                                            <Text style={{fontWeight: "bold"}}>Food Items Available: </Text>
-                                            <Text>{restaurant.foodItems}</Text>
-                                        </View>
-                                        <View style={{flexDirection:"row"}}>
-                                            <Text style={{fontWeight: "bold"}}>Discount Available: </Text>
-                                            <Text>{restaurant.discount}%</Text>
+
+
+                ) : (
+
+                    <>
+                    <View style={styles.topContainer}>
+                        <Text style={styles.title}>Available Food Nearby</Text>
+
+                        <View style={styles.searchContainer}>
+                            <TextInput
+                                mode="flat"
+                                style={styles.textBox}
+                                placeholder="Search for food"
+                                underlineColor="transparent"
+                                activeUnderlineColor="transparent"
+                                left={<TextInput.Icon icon={() => <Icon name="search" size={20} color="black" />} />}
+                                />
+                            <Button
+                                mode="contained"
+                                style={styles.filterButton}
+                                labelStyle={styles.filterButtonLabel}
+                                onPress={handleFilter}
+                            >Filter</Button>
+                            
+                        </View>
+                    </View>
+
+                    <View style={styles.cardContainer}>
+                        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+                        {restaurantData.map((restaurant, index) => (
+                            <Pressable key={index} onPress={() => handleCardPress(restaurant)}>
+                                <View key={index} style={styles.card}>
+                                    <View style={styles.textContainer}>
+                                        <Text style={styles.cardTitle}>{restaurant.restaurantName}</Text>
+                                        <View style={{paddingLeft:10}}>
+                                            <View style={{flexDirection:"row"}}>
+                                                <Text style={{fontWeight: "bold"}}>Food Type: </Text>
+                                                <Text>{restaurant.type}</Text>
+                                            </View>
+                                            <View style={{flexDirection:"row"}}>
+                                                <Text style={{fontWeight: "bold"}}>Address: </Text>
+                                                <Text>{restaurant.location}</Text>
+                                            </View>
+
+                                            <View style={{flexDirection:"row"}}>
+                                                <Text style={{fontWeight: "bold"}}>Food Items Available: </Text>
+                                                <Text>{restaurant.totalQuantity}</Text>
+                                            </View>
+                   
+                                            <View style={{flexDirection:"row"}}>
+                                                <Text style={{fontWeight: "bold"}}>Discount Available: </Text>
+                                                <Text>{restaurant.discount}%</Text>
+                                            </View>
                                         </View>
                                     </View>
+                                    <Image source={{uri: restaurant.link}} style={styles.image} />
                                 </View>
-                                <Image source={restaurant.image} style={styles.image} />
-                            </View>
-                        </Pressable>
-                    ))}
-                    </ScrollView>
-                </View>
+                            </Pressable>
+                        ))}
+                        </ScrollView>
+                    </View>
 
-                {/* <Button onPress={handleLogout}>Back to start page</Button> */}
+                    {/* <Button onPress={handleLogout}>Back to start page</Button> */}
 
-                {/* Modal for filter and sort */}
-                <View >
-                    <Portal>
-                        <Modal visible={visible} onDismiss={handleFilter} contentContainerStyle={styles.modalContainer}>
-                            <Text style={styles.modalTitle}>Sort</Text>
-                            <View style={styles.checkboxContainer}>
-                                <Checkbox.Item
-                                    label="Distance (default)"
-                                    status={checkedDistance ? 'checked' : 'unchecked'}
-                                    onPress={() => {
-                                        setCheckedDistance(true);
-                                        setCheckedDiscount(false);
-                                    }}
-                                />
-                                <Checkbox.Item
-                                    label="Discount level"
-                                    status={checkedDiscount ? 'checked' : 'unchecked'}
-                                    onPress={() => {
-                                        setCheckedDistance(false);
-                                        setCheckedDiscount(true);
-                                    }}
-                                />
-                            </View>
-                            <Text style={styles.modalTitle}>Filter</Text>
-                            <RadioButton.Group onValueChange={handleFilterChange} value={filterValue}>
-                                <RadioButton.Item label="All" value="all" />  
-                                <RadioButton.Item label="Restaurant" value="restaurant" />
-                                <RadioButton.Item label="Bakery" value="bakery" />
-                                <RadioButton.Item label="Supermarket" value="supermarket" />
-                            </RadioButton.Group>
-                            <Button mode="contained" onPress={handleFilter} style={styles.button}>
-                                Apply Filters
-                            </Button>
-                        </Modal>
-                    </Portal>
-                </View>
+                    {/* Modal for filter and sort */}
+                    <View >
+                        <Portal>
+                            <Modal visible={visible} onDismiss={handleFilter} contentContainerStyle={styles.modalContainer}>
+                                <Text style={styles.modalTitle}>Sort</Text>
+                                <View style={styles.checkboxContainer}>
+                                    <Checkbox.Item
+                                        label="Distance (default)"
+                                        status={checkedDistance ? 'checked' : 'unchecked'}
+                                        onPress={() => {
+                                            setCheckedDistance(true);
+                                            setCheckedDiscount(false);
+                                        }}
+                                    />
+                                    <Checkbox.Item
+                                        label="Discount level"
+                                        status={checkedDiscount ? 'checked' : 'unchecked'}
+                                        onPress={() => {
+                                            setCheckedDistance(false);
+                                            setCheckedDiscount(true);
+                                        }}
+                                    />
+                                </View>
+                                <Text style={styles.modalTitle}>Filter</Text>
+                                <RadioButton.Group onValueChange={handleFilterChange} value={filterValue}>
+                                    <RadioButton.Item label="All" value="all" />  
+                                    <RadioButton.Item label="Restaurant" value="restaurant" />
+                                    <RadioButton.Item label="Bakery" value="bakery" />
+                                    <RadioButton.Item label="Supermarket" value="supermarket" />
+                                </RadioButton.Group>
+                                <Button mode="contained" onPress={handleFilter} style={styles.button}>
+                                    Apply Filters
+                                </Button>
+                            </Modal>
+                        </Portal>
+                    </View>
+                </>
+
+
+                )}
             
             </View>
             {/* </SafeAreaView> */}

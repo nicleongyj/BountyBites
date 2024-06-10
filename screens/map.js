@@ -36,7 +36,7 @@ export default function Home(navigation) {
         const fetchData = async () => {
             try {
                 const data = await fetchAllRestaurants();
-                console.log(JSON.stringify(data, null, 2));              
+                // console.log(JSON.stringify(data, null, 2));              
                 setRestaurantData(data);
             } catch (error) {
                 console.error("Error fetching restaurant data:", error);

@@ -84,7 +84,8 @@ export default function RegisterScreen({ navigation }) {
         longitude,
         type,
         closingTime,
-        link
+        link,
+        items: [],
       };
 
       await storeRestaurantData(restaurantData);

@@ -50,14 +50,33 @@ export const fetchAllRestaurants = async () => {
     const restaurants = await Promise.all(collectionSnap.docs.map(async doc => {
       const restaurant = doc.data();
       const items = await fetchFoodItems(doc.id);
-      console.log(items)
-      return {
+
+      // Calculate the maximum discount for the restaurant
+      let discount = 0;
+      if (items && items.length > 0) {
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].discount && items[i].discount > discount) {
+            discount = items[i].discount;
+          }
+        }
+      }
+
+      let totalQuantity = 0;
+      if (items && items.length > 0) {
+        for (let i = 0; i < items.length; i++) {
+          totalQuantity += items[i].currentQuantity;
+        }
+      }
+
+
+      const result = {
         ...restaurant,
         items,
+        discount,
+        totalQuantity,
       };
+      return result;
     }));
-
-    // Return the data
     return restaurants;
   } catch (error) {
     console.error("Error fetching all restaurants:", error);

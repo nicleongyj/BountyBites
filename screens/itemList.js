@@ -7,10 +7,10 @@ import Royce from '../assets/royce.jpg';
 export default function ItemList({navigation, route}) {
 
     const { restaurant } = route.params;
-    const name = restaurant.name;
-    const numberOfItems = restaurant.food.length;
-    const food = restaurant.food;
-    const address = restaurant.address;
+    const name = restaurant.restaurantName;
+    const numberOfItems = restaurant.totalQuantity;
+    const food = restaurant.items;
+    const address = restaurant.location;
     
     
 
@@ -36,11 +36,11 @@ export default function ItemList({navigation, route}) {
             <View style={styles.cardContainer}>
                 <ScrollView contentContainerStyle={styles.scrollViewContent} scrollEnabled={true}>
 
-                {food.map(({name, price, stock, discount}, index) => {
+                {food.map(({name, price, currentQuantity, discount, link}, index) => {
                     const newPrice = calculateNewPrice(price, discount);
                     return (
                         <View key={index} style={styles.card}>
-                            <Image source={Royce} style={styles.image}/>
+                            <Image source={{uri: link}} style={styles.image}/>
                             <View style={styles.textContainer}>
                                 
                                 <View style={{flexDirection: "row"}}>
@@ -53,8 +53,8 @@ export default function ItemList({navigation, route}) {
                                 <Text style={styles.foodTitle}>{name}</Text>
 
                                 <View style={{flexDirection: "row"}}>
-                                    <Text style={styles.foodSubtitle}>Stock available: </Text>
-                                    <Text style={styles.foodSubtitle}>{stock}</Text>
+                                    <Text style={styles.foodSubtitle}>Quantity available: </Text>
+                                    <Text style={styles.foodSubtitle}>{currentQuantity}</Text>
                                 </View>          
                             </View>
 

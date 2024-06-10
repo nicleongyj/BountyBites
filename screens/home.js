@@ -72,7 +72,7 @@ export default function Home({navigation}) {
             }
         };
         fetchData();
-    }, []);
+    }, );
 
     useEffect(() => {
         console.log("User location: ", userLatitude, userLongitude)

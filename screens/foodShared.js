@@ -13,13 +13,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LoginContext } from "../App";
 import { FIREBASE_DB } from "../FirebaseConfig";
 import { useState, useEffect, useContext } from "react";
-import {fetchFoodItems} from "../firestoreUtils";
+import { fetchFoodItems } from "../firestoreUtils";
 
 export default function FoodShared({ navigation }) {
   const { userId } = useContext(LoginContext);
   const [foodItems, setFoodItems] = useState([]);
   const [editingItem, setEditingItem] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [editValues, setEditValues] = useState({
     currentQuantity: "",
     discount: "",
@@ -54,7 +54,6 @@ export default function FoodShared({ navigation }) {
       setEditingItem(null);
       setEditValues({ currentQuantity: "", discount: "" });
       alert("Food item updated successfully!");
-      
     } catch (error) {
       setLoading(false);
       console.error("Error saving food item: ", error);
@@ -73,124 +72,150 @@ export default function FoodShared({ navigation }) {
     }
   };
 
-    useEffect(() => {
-      if (userId) {
-        fetchFoodItems(userId).then(items => setFoodItems(items));
-      }
-    }, [userId]);
+  useEffect(() => {
+    if (userId) {
+      fetchFoodItems(userId)
+        .then((items) => {
+          setFoodItems(items || []);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching food items: ", error);
+          setLoading(false);
+        });
+    }
+  }, [userId]);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Food Shared</Text>
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-        {foodItems.map((foodItem, index) => (
-          <View key={index} style={styles.foodCard}>
-            {editingItem === index ? (
-              <View>
-                <Text style={styles.foodText}>Food Name: {foodItem.name}</Text>
-                <Text style={styles.foodText}>Price: $ {foodItem.price}</Text>
-                <View style={{flexDirection:'row', flex:1, alignItems:'center'}}>
-
-                  <Text>Quantity:  </Text>
-
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Current Quantity"
-                    value={editValues.currentQuantity}
-                    onChangeText={(text) =>
-                      setEditValues({ ...editValues, currentQuantity: text })
-                    }
-                  />
-
-                </View>
-
-                <View style={{flexDirection:'row', flex:1, alignItems:'center'}}>
-
-                  <Text>Discount: </Text>
-
-                  <TextInput
-                  style={styles.input}
-                  placeholder="Discount"
-                  value={editValues.discount}
-                  onChangeText={(text) =>
-                    setEditValues({ ...editValues, discount: text })
-                  }
-                />
-
-                </View>
-
-
-              <TouchableOpacity
-                style={styles.saveButton}
-                onPress={handleSaveEdit}
-                disabled={loading} 
-              >
-                {loading ? (
-                  <ActivityIndicator size="small" color="#fff" /> 
-                ) : (
-                  <Text style={styles.buttonText}>Save</Text> 
-                )}
-              </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.cancelButton}
-                  onPress={() => setEditingItem(null)}
-                >
-                  <Text style={styles.buttonText}>Cancel</Text>
-                </TouchableOpacity>
-              </View>
-            ) : !foodItems ? (
-              <Text style={styles.foodText}>Loading...</Text>
-            ) : (
-              <View>
-                <View style={styles.outerContainer}>
-                  <View style={styles.leftContainer}>
-
-                    <Text style={styles.foodText}>Food Name: {foodItem.name}</Text>
-                    <Text style={styles.foodText}>Price: $ {foodItem.price}</Text>
-                    <Text style={styles.foodText}>
-                      Discount: {foodItem.discount}%
-                    </Text>
-                    <Text style={styles.foodText}>
-                      Total Quantity: {foodItem.quantity}
-                    </Text>
-                    <Text style={styles.foodText}>
-                      Current Quantity: {foodItem.currentQuantity}
-                    </Text>
-
+        {foodItems.length > 0 ? (
+          foodItems.map((foodItem, index) => (
+            <View key={index} style={styles.foodCard}>
+              {editingItem === index ? (
+                <View>
+                  <Text style={styles.foodText}>
+                    Food Name: {foodItem.name}
+                  </Text>
+                  <Text style={styles.foodText}>Price: $ {foodItem.price}</Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      flex: 1,
+                      alignItems: "center",
+                    }}
+                  >
+                    <Text>Quantity: </Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Current Quantity"
+                      value={editValues.currentQuantity}
+                      onChangeText={(text) =>
+                        setEditValues({ ...editValues, currentQuantity: text })
+                      }
+                    />
                   </View>
-
-                <View style={styles.rightContainer}>
-                  <Image
-                    source={{ uri: foodItem.link }}
-                    style={{ width: 100, height: 100 }}
-                  />
-
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      flex: 1,
+                      alignItems: "center",
+                    }}
+                  >
+                    <Text>Discount: </Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Discount"
+                      value={editValues.discount}
+                      onChangeText={(text) =>
+                        setEditValues({ ...editValues, discount: text })
+                      }
+                    />
+                  </View>
+                  <TouchableOpacity
+                    style={styles.saveButton}
+                    onPress={handleSaveEdit}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <ActivityIndicator size="small" color="#fff" />
+                    ) : (
+                      <Text style={styles.buttonText}>Save</Text>
+                    )}
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.cancelButton}
+                    onPress={() => setEditingItem(null)}
+                  >
+                    <Text style={styles.buttonText}>Cancel</Text>
+                  </TouchableOpacity>
                 </View>
-
+              ) : (
+                <View>
+                  <View style={styles.outerContainer}>
+                    <View style={styles.leftContainer}>
+                      <Text style={styles.foodText}>
+                        Food Name: {foodItem.name}
+                      </Text>
+                      <Text style={styles.foodText}>
+                        Price: $ {foodItem.price}
+                      </Text>
+                      <Text style={styles.foodText}>
+                        Discount: {foodItem.discount}%
+                      </Text>
+                      <Text style={styles.foodText}>
+                        Total Quantity: {foodItem.quantity}
+                      </Text>
+                      <Text style={styles.foodText}>
+                        Current Quantity: {foodItem.currentQuantity}
+                      </Text>
+                    </View>
+                    <View style={styles.rightContainer}>
+                      <Image
+                        source={{ uri: foodItem.link }}
+                        style={{ width: 100, height: 100 }}
+                      />
+                    </View>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      width: "100%",
+                      justifyContent: "space-between",
+                      alignContent: "center",
+                    }}
+                  >
+                    <TouchableOpacity
+                      style={styles.editButton}
+                      onPress={() => handleEdit(foodItem, index)}
+                    >
+                      <Text style={styles.buttonText}>Edit</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.deleteButton}
+                      onPress={() => handleDelete(index)}
+                    >
+                      <Text style={styles.buttonText}>Delete</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-
-                <View style={{flexDirection:'row', width:'100%',justifyContent:'space-between', alignContent:'center' }}>
-                <TouchableOpacity
-                  style={styles.editButton}
-                  onPress={() => handleEdit(foodItem, index)}
-                >
-                  <Text style={styles.buttonText}>Edit</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.deleteButton}
-                  onPress={() => handleDelete(index)}
-                >
-                  <Text style={styles.buttonText}>Delete</Text>
-                </TouchableOpacity>
-                </View>
-              </View>
-            )}
-          </View>
-        ))}
+              )}
+            </View>
+          ))
+        ) : (
+          <Text style={styles.noFoodText}>No food items available</Text>
+        )}
       </ScrollView>
-
-      </View>
+    </View>
   );
 }
 
@@ -238,14 +263,14 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     marginTop: 10,
-    width: '45%',
+    width: "45%",
   },
   deleteButton: {
     backgroundColor: "#db254a",
     padding: 10,
     borderRadius: 5,
     marginTop: 10,
-    width: '45%',
+    width: "45%",
   },
   saveButton: {
     backgroundColor: "green",
@@ -270,6 +295,17 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginTop: 10,
-    width: '80%',
+    width: "80%",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
+  },
+  noFoodText: {
+    fontSize: 18,
+    textAlign: "center",
+    marginTop: 20,
   },
 });

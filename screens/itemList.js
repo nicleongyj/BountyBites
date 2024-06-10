@@ -69,7 +69,15 @@ export default function ItemList({navigation, route}) {
             </View>
 
             <View style={styles.bottomContainer}>
+                <View style={{flexDirection:'row', alignItems:'center'}}>
                 <Text style={styles.address}>{address}</Text>
+                <Text style={styles.address}>:</Text>
+                <Text style={styles.address}>Closes at</Text>
+                <Text style={{fontSize: 15,fontWeight: "bold",padding: 10, color:'#e0040f'}}>{restaurant.closingTime}</Text>
+                <Text style={styles.address}></Text>
+
+                </View>
+                
                 <Button mode="contained" onPress={handleLocationPress} labelStyle = {styles.buttonLabel} style={styles.button}>Take me there!</Button>
             </View>
 

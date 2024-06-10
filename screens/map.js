@@ -9,7 +9,7 @@ import { LoginContext } from "../App";
 import UserMarker from "../assets/user.png";
 import { fetchAllRestaurants } from "../firestoreUtils";
 
-export default function Home(navigation) {
+export default function Home({navigation}) {
 
     const [region, setRegion] = useState(null);
     const [restaurantData, setRestaurantData] = useState(null);
@@ -47,10 +47,8 @@ export default function Home(navigation) {
     });
 
     const navigateRestaurant = (restaurant) => {
-        console.log("Navigating to restaurant: " + restaurant.items[0].itemName);
-        
+        navigation.navigate("ItemList", {restaurant: restaurant})
     }
-
 
     if (!region) {
         return (

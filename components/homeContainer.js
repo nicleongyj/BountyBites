@@ -20,18 +20,25 @@ export default function HomeContainer() {
   return (
     <Tab.Navigator
       initialRouteName="Food Nearby"
-      // screenOptions={{
-      //     tabBarActiveTintColor: "#007D38",
-      //     tabBarInactiveTintColor: "#00B14F",
-      //     tabBarStyle: {
-      //         backgroundColor: "#00B14F",
-      //     },
-      // }}
+      screenOptions={{
+        activeTintColor: 'tomato',
+        inactiveTintColor: 'gray',
+          tabBarStyle: {
+            backgroundColor: '#f2f2f2',
+            borderTopWidth: 0,
+            elevation: 5,
+          },
+          labelStyle: {
+            fontSize: 20,
+            margin: 0,
+            padding: 0,
+          },
+      }}
     >
       <Tab.Screen
         name={"Food Nearby"}
         component={HomeStackScreen}
-        options={{ tabBarIcon: () => <Text>🍴</Text>, headerShown:false}}
+        options={{ tabBarIcon: () => <Text>🍖</Text>, headerShown:false}}
       />
       <Tab.Screen
         name={"Map"}

@@ -11,6 +11,7 @@ import {restaurants} from "../sample_data/restaurants"
 import { fetchAllRestaurants } from "../firestoreUtils";
 import * as Location from 'expo-location';
 import waiting from "../assets/waiting.png";
+import RefreshImage from "../assets/refresh.png";
 
 export default function Home({navigation}) {
     const { logout } = useContext(LoginContext);
@@ -196,8 +197,15 @@ export default function Home({navigation}) {
                     <>
                     {/* <ImageBackground source={require("../assets/background.jpg")} style={{flex: 1, resizeMode: "cover", justifyContent: "center"}}> */}
                     <View style={styles.topContainer}>
+                        <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center', width:'100%'}}>
                         
-                        <Text style={styles.title}>Available Food Nearby</Text>
+                            <Text style={styles.title}>Browse Food  🍔</Text>
+                            <Pressable onPress={handleRefresh} style={{alignSelf:'center', position:'absolute', right:10}}>
+                                <Image source={RefreshImage} style={{width: 30, height: 30, alignSelf: 'center',}}></Image>
+                            </Pressable>
+                        
+
+                        </View>
 
                         <View style={styles.searchContainer}>
                             <TextInput
@@ -209,12 +217,12 @@ export default function Home({navigation}) {
                                 onChangeText={(text) => setSearch(text)}
                                 left={<TextInput.Icon icon={() => <Icon name="search" size={20} color="black" />} />}
                                 />
-                            <Button
+                            {/* <Button
                                 mode="contained"
                                 style={styles.filterButton}
                                 labelStyle={styles.filterButtonLabel}
                                 onPress={handleRefresh}
-                            >Refresh</Button>
+                            >Refresh</Button> */}
 
                             <Button
                                 mode="contained"
@@ -232,12 +240,15 @@ export default function Home({navigation}) {
                             <Pressable key={index} onPress={() => handleCardPress(restaurant)}>
                                 <View key={index} style={styles.card}>
                                     <View style={styles.textContainer}>
-                                        <Text style={styles.cardTitle}>{restaurant.restaurantName}</Text>
+                                    <Text style={styles.cardTitle}>
+                                        {restaurant.restaurantName} 
+                                        {restaurant.distance && ` (${restaurant.distance} km)`}
+                                    </Text>
                                         <View style={{paddingLeft:10}}>
-                                            <View style={{flexDirection:"row"}}>
+                                            {/* <View style={{flexDirection:"row"}}>
                                                 <Text style={{fontWeight: "bold"}}>Food Type: </Text>
                                                 <Text>{restaurant.type}</Text>
-                                            </View>
+                                            </View> */}
                                             <View style={{flexDirection:"row"}}>
                                                 <Text style={{fontWeight: "bold"}}>Address: </Text>
                                                 <Text>{restaurant.location}</Text>
@@ -252,7 +263,7 @@ export default function Home({navigation}) {
                                                 <Text style={{fontWeight: "bold"}}>Discount Available: </Text>
                                                 <Text>{restaurant.discount}%</Text>
                                             </View>
-
+{/* 
                                             <View style={{flexDirection:"row"}}>
                                                 <Text style={{fontWeight: "bold"}}>Distance away: </Text>
                                                 { !restaurant.distance ? (
@@ -261,7 +272,7 @@ export default function Home({navigation}) {
                                                     <Text>{restaurant.distance} km</Text>
                                                 )}
 
-                                            </View>
+                                            </View> */}
                                         </View>
                                     </View>
                                     <Image source={{uri: restaurant.link}} style={styles.image} />
@@ -341,7 +352,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        width: "90%",
+        width: "100%",
     },
     cardContainer: {
         flex: 6,
@@ -355,9 +366,10 @@ const styles = StyleSheet.create({
         fontStyle: "normal",
         color: "black",
         fontWeight: "bold",
+        alignSelf: 'center',
     },
     cardTitle: {
-        fontSize: 20,
+        fontSize: 18,
         padding: 10,
         fontStyle: "normal",
         color: "black",
@@ -365,12 +377,12 @@ const styles = StyleSheet.create({
     },
     filterButton: {
         height: 42,
-        width: "30%",
+        width: "25%",
         marginLeft: 10,
         borderRadius: 7,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "black",
+        backgroundColor: "#fc7b03",
     },
     filterButtonLabel: {
         color: "white",
@@ -393,7 +405,7 @@ const styles = StyleSheet.create({
     textBox: {
         backgroundColor: "white",
         height: 42,
-        width: "40%",
+        width: "65%",
         fontSize: 15,
         borderColor: 'rgba(0, 0, 0, 0.5)', 
         borderWidth: 1,     
@@ -427,25 +439,26 @@ const styles = StyleSheet.create({
         alignItems: "center",
         alignContent: "center",
         width: "95%",
-        height: 140,
+        height: 130,
         backgroundColor: "white",
         marginVertical: 10,
         padding: 12,
         borderRadius: 10,
         shadowColor: "#000",
         shadowOffset: {
-            width: 0,
+            width: 3,
             height: 2,
         },
-        shadowOpacity: 0.25,
+        shadowOpacity: 0.30,
         shadowRadius: 4,
-        elevation: 5,
-        borderColor: "black",
-        borderWidth: 1,
+        elevation: 10,
+        // borderColor: "black",
+        // borderWidth: 1,
+
     },
     image: {
-        width: 100,
-        height: 100,
+        width: 110,
+        height: 110,
         borderRadius: 10,
         borderWidth:1,
         borderColor: "black",
@@ -453,7 +466,7 @@ const styles = StyleSheet.create({
     textContainer: {
         alignContent: "center",
         justifyContent: "center",
-        marginBottom: 10,
+        paddingVertical:10
     },
 
 });

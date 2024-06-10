@@ -1,14 +1,16 @@
 import { Text, StyleSheet, Image, ScrollView, Pressable } from "react-native";
 import { Button, TextInput, Portal, Checkbox, Modal, RadioButton, Provider } from "react-native-paper";
 import { View } from "react-native";
-import { useContext, useState} from "react";
+import { useContext, useState, useEffect, useRef} from "react";
 
 
 import { LoginContext } from "../App";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {restaurants} from "../sample_data/restaurants"
-
+import { fetchAllRestaurants } from "../firestoreUtils";
+import * as Location from 'expo-location';
+import waiting from "../assets/waiting.png";
 
 export default function Home({navigation}) {
     const { logout } = useContext(LoginContext);
@@ -19,6 +21,11 @@ export default function Home({navigation}) {
     const [filterValue, setFilterValue] = useState("all");
     const [checkedDistance, setCheckedDistance] = useState(true);
     const [checkedDiscount, setCheckedDiscount] = useState(false);
+    const [restaurantData, setRestaurantData] = useState(null);
+
+    const [userLongitude, setUserLongitude] = useState(null);
+    const [userLatitude, setUserLatitude] = useState(null);
+    const locationFetched = useRef(false);
 
     const handleFilter = () => {
         setVisible(!visible)
@@ -33,128 +40,223 @@ export default function Home({navigation}) {
         navigation.navigate("ItemList", {restaurant: restaurant})
     }
 
-    // Filter 
-    const filteredRestaurants = restaurants.filter(restaurant => {
-        if (filterValue === "restaurant") {
-            return restaurant.type === "Restaurant";
-        } else if (filterValue === "bakery") {
-            return restaurant.type === "Bakery";
-        } else if (filterValue === "supermarket") {
-            return restaurant.type === "Supermarket";
-        }
-        return true; 
-    });
-    
+    useEffect(() => {
+        (async () => {
+            if (!locationFetched.current) {
+                let { status } = await Location.requestForegroundPermissionsAsync();
+                if (status !== 'granted') {
+                    console.log('Permission to access location was denied');
+                    return;
+                }
 
-    // TODO Sort distance
-    const sortedRestaurants = filteredRestaurants.slice().sort((a, b) => {
-        if (checkedDistance) {
-            // distance calculation
-        } else if (checkedDiscount) {
-            return Number(b.discount) - Number(a.discount)
+                let location = await Location.getCurrentPositionAsync({});
+                if (location.coords.latitude !== null) {
+                    setUserLongitude(location.coords.longitude);
+                    setUserLatitude(location.coords.latitude);
+                    console.log("Location set: ", location.coords.latitude, location.coords.longitude)
+                    locationFetched.current = true;
+                }
+            }
+        })();
+    }, []);
+
+    useEffect(() => {   
+        const fetchData = async () => {
+            try {
+                const data = await fetchAllRestaurants();
+                console.log("Fetching restaurants...")             
+                setRestaurantData(data);
+                console.log("Restaurant data fetched")
+                console.log(restaurantData)
+            } catch (error) {
+                console.error("Error fetching restaurant data:", error);
+            }
+        };
+        fetchData();
+    }, );
+
+    useEffect(() => {
+        console.log("User location: ", userLatitude, userLongitude)
+        if(userLatitude && userLongitude) {
+            const updatedRestaurantData = restaurantData.map(restaurant => {
+                const distance = getDistanceFromLatLonInKm(userLatitude, userLongitude, restaurant.latitude, restaurant.longitude);
+                return {...restaurant, distance};
+            });
+            setRestaurantData(updatedRestaurantData);
         }
-        return 0; 
-    });
+    },[userLatitude, userLongitude]);
+
+    function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+        console.log(lat1, lon1, lat2, lon2)
+        var R = 6371; // Radius of the earth in km
+        var dLat = deg2rad(lat2 - lat1);  // Convert latitude difference to radians
+        var dLon = deg2rad(lon2 - lon1);  // Convert longitude difference to radians
+        var a = 
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+            Math.sin(dLon / 2) * Math.sin(dLon / 2); 
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); 
+        var d = R * c; // Distance in km
+        return d.toFixed(2);
+    }
+    
+    function deg2rad(deg) {
+        return deg * (Math.PI / 180);
+    }
+
+    // Filter 
+    let filteredRestaurants = [];
+    if (restaurantData) {
+        filteredRestaurants = restaurantData.filter(restaurant => {
+            if (filterValue === "restaurant") {
+                return restaurant.type === "Restaurant";
+            } else if (filterValue === "bakery") {
+                return restaurant.type === "Bakery";
+            } else if (filterValue === "supermarket") {
+                return restaurant.type === "Supermarket";
+            }
+            return true; 
+        });
+    }
+
+    let sortedRestaurants = [];
+    if (filteredRestaurants) {
+        sortedRestaurants = filteredRestaurants.slice().sort((a, b) => {
+            if (checkedDistance) {
+                return a.distance - b.distance; 
+            } else if (checkedDiscount) {
+                return Number(b.discount) - Number(a.discount);
+            }
+            return 0; 
+        });
+    }
 
     return (
         <Provider>
             {/* <SafeAreaView style={styles.container}> */}
             <View style={styles.container}>
 
-            
-                <View style={styles.topContainer}>
-                    <Text style={styles.title}>Available Food Nearby</Text>
+                { !restaurantData ? ( 
 
-                    <View style={styles.searchContainer}>
-                        <TextInput
-                            mode="flat"
-                            style={styles.textBox}
-                            placeholder="Search for food"
-                            underlineColor="transparent"
-                            activeUnderlineColor="transparent"
-                            left={<TextInput.Icon icon={() => <Icon name="search" size={20} color="black" />} />}
-                            />
-                        <Button
-                            mode="contained"
-                            style={styles.filterButton}
-                            labelStyle={styles.filterButtonLabel}
-                            onPress={handleFilter}
-                        >Filter</Button>
-                        
+                    <View style={styles.loadingText}>
+                        <Image style={{width:150, height:150}} source={waiting}></Image>
+                        <Text style={styles.loadingTextLabel}>Loading bites, please wait...</Text>
                     </View>
-                </View>
 
-                <View style={styles.cardContainer}>
-                    <ScrollView contentContainerStyle={styles.scrollViewContent}>
-                    {sortedRestaurants.map((restaurant, index) => (
-                        <Pressable key={index} onPress={() => handleCardPress(restaurant)}>
-                            <View key={index} style={styles.card}>
-                                <View style={styles.textContainer}>
-                                    <Text style={styles.cardTitle}>{restaurant.name}</Text>
-                                    <View style={{paddingLeft:10}}>
-                                        <View style={{flexDirection:"row"}}>
-                                            <Text style={{fontWeight: "bold"}}>Food Type: </Text>
-                                            <Text>{restaurant.type}</Text>
-                                        </View>
-                                        <View style={{flexDirection:"row"}}>
-                                            <Text style={{fontWeight: "bold"}}>Address: </Text>
-                                            <Text>{restaurant.address}</Text>
-                                        </View>
-                                        <View style={{flexDirection:"row"}}>
-                                            <Text style={{fontWeight: "bold"}}>Food Items Available: </Text>
-                                            <Text>{restaurant.foodItems}</Text>
-                                        </View>
-                                        <View style={{flexDirection:"row"}}>
-                                            <Text style={{fontWeight: "bold"}}>Discount Available: </Text>
-                                            <Text>{restaurant.discount}%</Text>
+
+
+                ) : (
+
+                    <>
+                    <View style={styles.topContainer}>
+                        <Text style={styles.title}>Available Food Nearby</Text>
+
+                        <View style={styles.searchContainer}>
+                            <TextInput
+                                mode="flat"
+                                style={styles.textBox}
+                                placeholder="Search for food"
+                                underlineColor="transparent"
+                                activeUnderlineColor="transparent"
+                                left={<TextInput.Icon icon={() => <Icon name="search" size={20} color="black" />} />}
+                                />
+                            <Button
+                                mode="contained"
+                                style={styles.filterButton}
+                                labelStyle={styles.filterButtonLabel}
+                                onPress={handleFilter}
+                            >Filter</Button>
+                            
+                        </View>
+                    </View>
+
+                    <View style={styles.cardContainer}>
+                        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+                        {sortedRestaurants.map((restaurant, index) => (
+                            <Pressable key={index} onPress={() => handleCardPress(restaurant)}>
+                                <View key={index} style={styles.card}>
+                                    <View style={styles.textContainer}>
+                                        <Text style={styles.cardTitle}>{restaurant.restaurantName}</Text>
+                                        <View style={{paddingLeft:10}}>
+                                            <View style={{flexDirection:"row"}}>
+                                                <Text style={{fontWeight: "bold"}}>Food Type: </Text>
+                                                <Text>{restaurant.type}</Text>
+                                            </View>
+                                            <View style={{flexDirection:"row"}}>
+                                                <Text style={{fontWeight: "bold"}}>Address: </Text>
+                                                <Text>{restaurant.location}</Text>
+                                            </View>
+
+                                            <View style={{flexDirection:"row"}}>
+                                                <Text style={{fontWeight: "bold"}}>Food Items Available: </Text>
+                                                <Text>{restaurant.totalQuantity}</Text>
+                                            </View>
+                   
+                                            <View style={{flexDirection:"row"}}>
+                                                <Text style={{fontWeight: "bold"}}>Discount Available: </Text>
+                                                <Text>{restaurant.discount}%</Text>
+                                            </View>
+
+                                            <View style={{flexDirection:"row"}}>
+                                                <Text style={{fontWeight: "bold"}}>Distance away: </Text>
+                                                { !restaurant.distance ? (
+                                                    <Text> - </Text>
+                                                ) : (
+                                                    <Text>{restaurant.distance} km</Text>
+                                                )}
+
+                                            </View>
                                         </View>
                                     </View>
+                                    <Image source={{uri: restaurant.link}} style={styles.image} />
                                 </View>
-                                <Image source={restaurant.image} style={styles.image} />
-                            </View>
-                        </Pressable>
-                    ))}
-                    </ScrollView>
-                </View>
+                            </Pressable>
+                        ))}
+                        </ScrollView>
+                    </View>
 
-                {/* <Button onPress={handleLogout}>Back to start page</Button> */}
+                    {/* <Button onPress={handleLogout}>Back to start page</Button> */}
 
-                {/* Modal for filter and sort */}
-                <View >
-                    <Portal>
-                        <Modal visible={visible} onDismiss={handleFilter} contentContainerStyle={styles.modalContainer}>
-                            <Text style={styles.modalTitle}>Sort</Text>
-                            <View style={styles.checkboxContainer}>
-                                <Checkbox.Item
-                                    label="Distance (default)"
-                                    status={checkedDistance ? 'checked' : 'unchecked'}
-                                    onPress={() => {
-                                        setCheckedDistance(true);
-                                        setCheckedDiscount(false);
-                                    }}
-                                />
-                                <Checkbox.Item
-                                    label="Discount level"
-                                    status={checkedDiscount ? 'checked' : 'unchecked'}
-                                    onPress={() => {
-                                        setCheckedDistance(false);
-                                        setCheckedDiscount(true);
-                                    }}
-                                />
-                            </View>
-                            <Text style={styles.modalTitle}>Filter</Text>
-                            <RadioButton.Group onValueChange={handleFilterChange} value={filterValue}>
-                                <RadioButton.Item label="All" value="all" />  
-                                <RadioButton.Item label="Restaurant" value="restaurant" />
-                                <RadioButton.Item label="Bakery" value="bakery" />
-                                <RadioButton.Item label="Supermarket" value="supermarket" />
-                            </RadioButton.Group>
-                            <Button mode="contained" onPress={handleFilter} style={styles.button}>
-                                Apply Filters
-                            </Button>
-                        </Modal>
-                    </Portal>
-                </View>
+                    {/* Modal for filter and sort */}
+                    <View >
+                        <Portal>
+                            <Modal visible={visible} onDismiss={handleFilter} contentContainerStyle={styles.modalContainer}>
+                                <Text style={styles.modalTitle}>Sort</Text>
+                                <View style={styles.checkboxContainer}>
+                                    <Checkbox.Item
+                                        label="Distance (default)"
+                                        status={checkedDistance ? 'checked' : 'unchecked'}
+                                        onPress={() => {
+                                            setCheckedDistance(true);
+                                            setCheckedDiscount(false);
+                                        }}
+                                    />
+                                    <Checkbox.Item
+                                        label="Discount level"
+                                        status={checkedDiscount ? 'checked' : 'unchecked'}
+                                        onPress={() => {
+                                            setCheckedDistance(false);
+                                            setCheckedDiscount(true);
+                                        }}
+                                    />
+                                </View>
+                                <Text style={styles.modalTitle}>Filter</Text>
+                                <RadioButton.Group onValueChange={handleFilterChange} value={filterValue}>
+                                    <RadioButton.Item label="All" value="all" />  
+                                    <RadioButton.Item label="Restaurant" value="restaurant" />
+                                    <RadioButton.Item label="Bakery" value="bakery" />
+                                    <RadioButton.Item label="Supermarket" value="supermarket" />
+                                </RadioButton.Group>
+                                <Button mode="contained" onPress={handleFilter} style={styles.button}>
+                                    Apply Filters
+                                </Button>
+                            </Modal>
+                        </Portal>
+                    </View>
+                </>
+
+
+                )}
             
             </View>
             {/* </SafeAreaView> */}
@@ -216,6 +318,19 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: 15,
         fontWeight: "bold",
+    },
+    loadingText: {
+        flex: 1,
+        alignContent: "center",
+        justifyContent: "center",
+        alignItems: "center",
+        fontWeight:'bold',
+    },
+    loadingTextLabel: {
+        fontSize: 20,
+        fontWeight: "bold",
+        textAlign: "center",
+        marginVertical: 20,
     },
     textBox: {
         backgroundColor: "white",

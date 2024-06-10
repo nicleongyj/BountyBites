@@ -17,6 +17,7 @@ export default function Home({navigation}) {
 
     // Filter states
     const [search, setSearch] = useState("");
+    const [searchResults, setSearchResults] = useState([]);
     const [visible, setVisible] = useState(false);
     const [filterValue, setFilterValue] = useState("all");
     const [checkedDistance, setCheckedDistance] = useState(true);
@@ -50,6 +51,7 @@ export default function Home({navigation}) {
         navigation.navigate("ItemList", {restaurant: restaurant})
     }
 
+    // Fetch user location
     useEffect(() => {
         (async () => {
             if (locationFetched.current === false) {
@@ -73,7 +75,7 @@ export default function Home({navigation}) {
         })();
     }, [dataFetched.current]);
 
-    
+    // Fetch restaurant data
     useEffect(() => {   
         if (!dataFetched.current) {
             const fetchData = async () => {
@@ -94,8 +96,8 @@ export default function Home({navigation}) {
 
     }, [dataFetched.current, refresh, locationFetched.current]);
 
+    // Get distance between user and restaurant, if location and restaurant data is available
     const [restaurantWithLocation, setRestaurantWithLocation] = useState(null);
-    //problem
     useEffect(() => {
         console.log("User location: ", userLatitude, userLongitude)
         if(userLatitude && userLongitude && restaurantData) {
@@ -107,24 +109,24 @@ export default function Home({navigation}) {
         }
     }, [userLatitude, userLongitude, restaurantData]);
 
+    // Get distance between two coordinates
     function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
         console.log(lat1, lon1, lat2, lon2)
-        var R = 6371; // Radius of the earth in km
-        var dLat = deg2rad(lat2 - lat1);  // Convert latitude difference to radians
-        var dLon = deg2rad(lon2 - lon1);  // Convert longitude difference to radians
+        var R = 6371;
+        function deg2rad(deg) {
+            return deg * (Math.PI / 180);
+        }
+        var dLat = deg2rad(lat2 - lat1);  
+        var dLon = deg2rad(lon2 - lon1); 
         var a = 
             Math.sin(dLat / 2) * Math.sin(dLat / 2) +
             Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
             Math.sin(dLon / 2) * Math.sin(dLon / 2); 
         var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); 
-        var d = R * c; // Distance in km
+        var d = R * c; 
         return d.toFixed(2);
     }
     
-    function deg2rad(deg) {
-        return deg * (Math.PI / 180);
-    }
-
     // Filter 
     let filteredRestaurants = [];
     if (restaurantWithLocation) {
@@ -140,6 +142,7 @@ export default function Home({navigation}) {
         });
     }
 
+    // Sort
     let sortedRestaurants = [];
     if (filteredRestaurants) {
         sortedRestaurants = filteredRestaurants.slice().sort((a, b) => {
@@ -151,6 +154,20 @@ export default function Home({navigation}) {
             return 0; 
         });
     }
+    
+    // Search 
+    useEffect(() => {
+        if (restaurantData) {
+            const lowerCaseSearch = search.toLowerCase();
+            const filtered = restaurantData.filter(restaurant => 
+                restaurant.restaurantName.toLowerCase().includes(lowerCaseSearch)
+            );
+            setSearchResults(filtered);
+        }
+    }, [search, restaurantData]);
+
+    // Display search results if search is not empty
+    const restaurantsToDisplay = search ? searchResults : sortedRestaurants;
 
     return (
         <Provider>
@@ -187,6 +204,7 @@ export default function Home({navigation}) {
                                 placeholder="Search"
                                 underlineColor="transparent"
                                 activeUnderlineColor="transparent"
+                                onChangeText={(text) => setSearch(text)}
                                 left={<TextInput.Icon icon={() => <Icon name="search" size={20} color="black" />} />}
                                 />
                             <Button
@@ -208,7 +226,7 @@ export default function Home({navigation}) {
 
                     <View style={styles.cardContainer}>
                         <ScrollView contentContainerStyle={styles.scrollViewContent}>
-                        {sortedRestaurants.map((restaurant, index) => (
+                        {restaurantsToDisplay.map((restaurant, index) => (
                             <Pressable key={index} onPress={() => handleCardPress(restaurant)}>
                                 <View key={index} style={styles.card}>
                                     <View style={styles.textContainer}>

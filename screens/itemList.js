@@ -9,8 +9,6 @@ export default function ItemList({navigation, route}) {
     const numberOfItems = restaurant.totalQuantity;
     const food = restaurant.items;
     const address = restaurant.location;
-    
-    
 
     const handleLocationPress = () => {
         const url = Platform.select({

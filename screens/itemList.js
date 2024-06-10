@@ -2,8 +2,6 @@ import React from 'react';
 import { SafeAreaView, View, Text, StyleSheet, Image, ScrollView, Linking, Platform } from 'react-native';
 import { Button } from 'react-native-paper';
 
-import Royce from '../assets/royce.jpg';
-
 export default function ItemList({navigation, route}) {
 
     const { restaurant } = route.params;
@@ -34,38 +32,47 @@ export default function ItemList({navigation, route}) {
             </View>
 
             <View style={styles.cardContainer}>
-                <ScrollView contentContainerStyle={styles.scrollViewContent} scrollEnabled={true}>
-
-                {food.map(({name, price, currentQuantity, discount, link}, index) => {
-                    const newPrice = calculateNewPrice(price, discount);
-                    return (
-                        <View key={index} style={styles.card}>
-                            <Image source={{uri: link}} style={styles.image}/>
-                            <View style={styles.textContainer}>
-                                
-                                <View style={{flexDirection: "row"}}>
+            
+            {food && food.length > 0 ? (
+                <ScrollView
+                    contentContainerStyle={styles.scrollViewContent}
+                    scrollEnabled={true}
+                >
+                    {food.map(({name, price, currentQuantity, discount, link}, index) => {
+                        const newPrice = calculateNewPrice(price, discount);
+                        return (
+                            <View key={index} style={styles.card}>
+                                <Image source={{uri: link}} style={styles.image}/>
+                                <View style={styles.textContainer}>
+                                    <View style={{flexDirection: "row"}}>
+                                        <Text style={styles.discountLabel}>{discount}</Text>
+                                        <Text style={styles.discountLabel}>% off! </Text>
+                                    </View>
                                     
-                                    <Text style={styles.discountLabel}>{discount}</Text>
-                                    <Text style={styles.discountLabel}>% off! </Text>
+                                    <Text style={styles.foodTitle}>{name}</Text>
+
+                                    <View style={{flexDirection: "row"}}>
+                                        <Text style={styles.foodSubtitle}>Quantity available:{" "} </Text>
+                                        <Text style={styles.foodSubtitle}>{currentQuantity}</Text>
+                                    </View>          
                                 </View>
-                                
-                                
-                                <Text style={styles.foodTitle}>{name}</Text>
 
-                                <View style={{flexDirection: "row"}}>
-                                    <Text style={styles.foodSubtitle}>Quantity available: </Text>
-                                    <Text style={styles.foodSubtitle}>{currentQuantity}</Text>
-                                </View>          
+                                <View style={styles.priceContainer}>
+                                    <Text style={styles.oldPrice}>{price.toFixed(2)}</Text>
+                                    <Text style={styles.newPrice}>{newPrice.toFixed(2)}</Text>
+                                </View>
                             </View>
-
-                            <View style={styles.priceContainer}>
-                                <Text style={styles.oldPrice}>{price.toFixed(2)}</Text>
-                                <Text style={styles.newPrice}>{newPrice.toFixed(2)}</Text>
-                            </View>
-                        </View>
-                    );
-                })}
+                            );
+                        }
+                    )}
                 </ScrollView>
+                ) : (
+                    <View style={styles.noOffersContainer}>
+                        <Text style={styles.noOffersText}>
+                        No offers offered by the restaurant currently.
+                        </Text>
+                    </View>
+                )}
             </View>
 
             <View style={styles.bottomContainer}>
@@ -75,9 +82,7 @@ export default function ItemList({navigation, route}) {
                 <Text style={styles.address}>Closes at</Text>
                 <Text style={{fontSize: 15,fontWeight: "bold",padding: 10, color:'#e0040f'}}>{restaurant.closingTime}</Text>
                 <Text style={styles.address}></Text>
-
-                </View>
-                
+            </View>      
                 <Button mode="contained" onPress={handleLocationPress} labelStyle = {styles.buttonLabel} style={styles.button}>Take me there!</Button>
             </View>
 
@@ -198,5 +203,15 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: "bold",
         color: "red",
-    }
+    },
+    noOffersContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    noOffersText: {
+        fontSize: 16,
+        fontWeight: "bold",
+        textAlign: "center",
+    },
 });

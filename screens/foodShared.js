@@ -33,11 +33,10 @@ export default function FoodShared({ navigation }) {
 
   const handleSaveEdit = async () => {
     try {
-      const updatedItems = foodItems.map((item) =>
-        item.id === editingItem.id
+      const updatedItems = foodItems.map((item, index) =>
+        index === editingItem
           ? {
               ...item,
-              ...editValues,
               currentQuantity: parseInt(editValues.currentQuantity),
               discount: parseFloat(editValues.discount),
             }
@@ -55,9 +54,9 @@ export default function FoodShared({ navigation }) {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (index) => {
     try {
-      const updatedItems = foodItems.filter((item) => item.id !== id);
+      const updatedItems = foodItems.filter((_, i) => i !== index);
       setFoodItems(updatedItems);
 
       const docRef = doc(FIREBASE_DB, "food-today", userId);
@@ -77,9 +76,9 @@ export default function FoodShared({ navigation }) {
     <View style={styles.container}>
       <Text style={styles.heading}>Food Shared</Text>
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-        {foodItems.map((foodItem) => (
-          <View key={foodItem.id} style={styles.foodCard}>
-            {editingItem && editingItem.id === foodItem.id ? (
+        {foodItems.map((foodItem, index) => (
+          <View key={index} style={styles.foodCard}>
+            {editingItem === index ? (
               <View>
                 <Text style={styles.foodText}>Food Name: {foodItem.name}</Text>
                 <Text style={styles.foodText}>Price: $ {foodItem.price}</Text>
@@ -144,13 +143,13 @@ export default function FoodShared({ navigation }) {
                 <View style={{flexDirection:'row', width:'100%',justifyContent:'space-between', alignContent:'center' }}>
                 <TouchableOpacity
                   style={styles.editButton}
-                  onPress={() => handleEdit(foodItem)}
+                  onPress={() => handleEdit(foodItem, index)}
                 >
                   <Text style={styles.buttonText}>Edit</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.deleteButton}
-                  onPress={() => handleDelete(foodItem.id)}
+                  onPress={() => handleDelete(index)}
                 >
                   <Text style={styles.buttonText}>Delete</Text>
                 </TouchableOpacity>

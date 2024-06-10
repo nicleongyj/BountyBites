@@ -21,7 +21,10 @@ export default function Home({navigation}) {
     const [filterValue, setFilterValue] = useState("all");
     const [checkedDistance, setCheckedDistance] = useState(true);
     const [checkedDiscount, setCheckedDiscount] = useState(false);
+
     const [restaurantData, setRestaurantData] = useState(null);
+    const [refresh, setRefresh] = useState(false);
+    const dataFetched = useRef(false);
 
     const [userLongitude, setUserLongitude] = useState(null);
     const [userLatitude, setUserLatitude] = useState(null);
@@ -30,6 +33,13 @@ export default function Home({navigation}) {
     const handleFilter = () => {
         setVisible(!visible)
     };
+
+    const handleRefresh = () => {
+        setRefresh(true);
+        dataFetched.current = false;
+        locationFetched.current = false;
+        setRestaurantData(null);
+    }
 
     const handleFilterChange = (value) => {
         setFilterValue(value);
@@ -42,7 +52,9 @@ export default function Home({navigation}) {
 
     useEffect(() => {
         (async () => {
-            if (!locationFetched.current) {
+            if (locationFetched.current === false) {
+                console.log(locationFetched.current, dataFetched.current)
+                console.log("Fetching user location...")
                 let { status } = await Location.requestForegroundPermissionsAsync();
                 if (status !== 'granted') {
                     console.log('Permission to access location was denied');
@@ -51,40 +63,49 @@ export default function Home({navigation}) {
 
                 let location = await Location.getCurrentPositionAsync({});
                 if (location.coords.latitude !== null) {
+                    locationFetched.current = true;
                     setUserLongitude(location.coords.longitude);
                     setUserLatitude(location.coords.latitude);
                     console.log("Location set: ", location.coords.latitude, location.coords.longitude)
-                    locationFetched.current = true;
+
                 }
             }
         })();
-    }, []);
+    }, [dataFetched.current]);
 
+    
     useEffect(() => {   
-        const fetchData = async () => {
-            try {
-                const data = await fetchAllRestaurants();
-                console.log("Fetching restaurants...")             
-                setRestaurantData(data);
-                console.log("Restaurant data fetched")
-                console.log(restaurantData)
-            } catch (error) {
-                console.error("Error fetching restaurant data:", error);
-            }
-        };
-        fetchData();
-    }, );
+        if (!dataFetched.current) {
+            const fetchData = async () => {
+                try {
+                    const data = await fetchAllRestaurants();
+                    console.log("Fetching restaurants...")             
+                    setRestaurantData(data);
+                    console.log("Restaurant data fetched")
+                    console.log(restaurantData)
+                    setRefresh(false);
+                    dataFetched.current = true;
+                } catch (error) {
+                    console.error("Error fetching restaurant data:", error);
+                }
+            };
+            fetchData();
+        }
 
+    }, [dataFetched.current, refresh, locationFetched.current]);
+
+    const [restaurantWithLocation, setRestaurantWithLocation] = useState(null);
+    //problem
     useEffect(() => {
         console.log("User location: ", userLatitude, userLongitude)
-        if(userLatitude && userLongitude) {
+        if(userLatitude && userLongitude && restaurantData) {
             const updatedRestaurantData = restaurantData.map(restaurant => {
                 const distance = getDistanceFromLatLonInKm(userLatitude, userLongitude, restaurant.latitude, restaurant.longitude);
                 return {...restaurant, distance};
             });
-            setRestaurantData(updatedRestaurantData);
+            setRestaurantWithLocation(updatedRestaurantData);
         }
-    },[userLatitude, userLongitude]);
+    }, [userLatitude, userLongitude, restaurantData]);
 
     function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
         console.log(lat1, lon1, lat2, lon2)
@@ -106,8 +127,8 @@ export default function Home({navigation}) {
 
     // Filter 
     let filteredRestaurants = [];
-    if (restaurantData) {
-        filteredRestaurants = restaurantData.filter(restaurant => {
+    if (restaurantWithLocation) {
+        filteredRestaurants = restaurantWithLocation.filter(restaurant => {
             if (filterValue === "restaurant") {
                 return restaurant.type === "Restaurant";
             } else if (filterValue === "bakery") {
@@ -136,7 +157,7 @@ export default function Home({navigation}) {
             {/* <SafeAreaView style={styles.container}> */}
             <View style={styles.container}>
 
-                { !restaurantData ? ( 
+                { !restaurantWithLocation && !refresh ? ( 
 
                     <View style={styles.loadingText}>
                         <Image style={{width:150, height:150}} source={waiting}></Image>
@@ -145,6 +166,14 @@ export default function Home({navigation}) {
 
 
 
+                ) : refresh ? (
+                    
+                    <View style={styles.loadingText}>
+                        {/* <Image style={{width:150, height:150}} source={waiting}></Image> */}
+                        <Text style={styles.loadingTextLabel}>Refreshing page, please wait...</Text>
+                    </View>             
+                
+                
                 ) : (
 
                     <>
@@ -155,11 +184,18 @@ export default function Home({navigation}) {
                             <TextInput
                                 mode="flat"
                                 style={styles.textBox}
-                                placeholder="Search for food"
+                                placeholder="Search"
                                 underlineColor="transparent"
                                 activeUnderlineColor="transparent"
                                 left={<TextInput.Icon icon={() => <Icon name="search" size={20} color="black" />} />}
                                 />
+                            <Button
+                                mode="contained"
+                                style={styles.filterButton}
+                                labelStyle={styles.filterButtonLabel}
+                                onPress={handleRefresh}
+                            >Refresh</Button>
+
                             <Button
                                 mode="contained"
                                 style={styles.filterButton}
@@ -307,7 +343,7 @@ const styles = StyleSheet.create({
     },
     filterButton: {
         height: 42,
-        width: 100,
+        width: "30%",
         marginLeft: 10,
         borderRadius: 7,
         justifyContent: "center",
@@ -335,7 +371,7 @@ const styles = StyleSheet.create({
     textBox: {
         backgroundColor: "white",
         height: 42,
-        width: 300,
+        width: "40%",
         fontSize: 15,
         borderColor: 'rgba(0, 0, 0, 0.5)', 
         borderWidth: 1,     

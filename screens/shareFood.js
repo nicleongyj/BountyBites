@@ -133,6 +133,7 @@ import {
             price: parsedPrice,
             discount: parsedDiscount,
             quantity: parsedQuantity,
+            currentQuantity: parsedQuantity,
             link: link,
         };
     

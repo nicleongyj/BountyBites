@@ -23,8 +23,8 @@ export default function FoodShared({ navigation }) {
     discount: "",
   });
 
-  const handleEdit = (item) => {
-    setEditingItem(item);
+  const handleEdit = (item, index) => {
+    setEditingItem(index);
     setEditValues({
       currentQuantity: item.currentQuantity.toString(),
       discount: item.discount.toString(),
@@ -111,6 +111,8 @@ export default function FoodShared({ navigation }) {
                   <Text style={styles.buttonText}>Cancel</Text>
                 </TouchableOpacity>
               </View>
+            ) : !foodItems ? (
+              <Text style={styles.foodText}>Loading...</Text>
             ) : (
               <View>
                 <View style={styles.outerContainer}>

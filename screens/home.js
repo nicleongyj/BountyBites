@@ -10,6 +10,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {restaurants} from "../sample_data/restaurants"
 import { fetchAllRestaurants } from "../firestoreUtils";
 import * as Location from 'expo-location';
+import waiting from "../assets/waiting.png";
 
 export default function Home({navigation}) {
     const { logout } = useContext(LoginContext);
@@ -137,8 +138,9 @@ export default function Home({navigation}) {
 
                 { !restaurantData ? ( 
 
-                    <View>
-                        <Text>Loading...</Text>
+                    <View style={styles.loadingText}>
+                        <Image style={{width:150, height:150}} source={waiting}></Image>
+                        <Text style={styles.loadingTextLabel}>Loading bites, please wait...</Text>
                     </View>
 
 
@@ -316,6 +318,19 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: 15,
         fontWeight: "bold",
+    },
+    loadingText: {
+        flex: 1,
+        alignContent: "center",
+        justifyContent: "center",
+        alignItems: "center",
+        fontWeight:'bold',
+    },
+    loadingTextLabel: {
+        fontSize: 20,
+        fontWeight: "bold",
+        textAlign: "center",
+        marginVertical: 20,
     },
     textBox: {
         backgroundColor: "white",

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LoginContext } from "../App";
@@ -18,6 +19,7 @@ export default function FoodShared({ navigation }) {
   const { userId } = useContext(LoginContext);
   const [foodItems, setFoodItems] = useState([]);
   const [editingItem, setEditingItem] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [editValues, setEditValues] = useState({
     currentQuantity: "",
     discount: "",
@@ -32,6 +34,7 @@ export default function FoodShared({ navigation }) {
   };
 
   const handleSaveEdit = async () => {
+    setLoading(true);
     try {
       const updatedItems = foodItems.map((item, index) =>
         index === editingItem
@@ -47,9 +50,13 @@ export default function FoodShared({ navigation }) {
       const docRef = doc(FIREBASE_DB, "food-today", userId);
       await updateDoc(docRef, { foodItems: updatedItems });
 
+      setLoading(false);
       setEditingItem(null);
       setEditValues({ currentQuantity: "", discount: "" });
+      alert("Food item updated successfully!");
+      
     } catch (error) {
+      setLoading(false);
       console.error("Error saving food item: ", error);
     }
   };
@@ -82,15 +89,26 @@ export default function FoodShared({ navigation }) {
               <View>
                 <Text style={styles.foodText}>Food Name: {foodItem.name}</Text>
                 <Text style={styles.foodText}>Price: $ {foodItem.price}</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Current Quantity"
-                  value={editValues.currentQuantity}
-                  onChangeText={(text) =>
-                    setEditValues({ ...editValues, currentQuantity: text })
-                  }
-                />
-                <TextInput
+                <View style={{flexDirection:'row', flex:1, alignItems:'center'}}>
+
+                  <Text>Quantity:  </Text>
+
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Current Quantity"
+                    value={editValues.currentQuantity}
+                    onChangeText={(text) =>
+                      setEditValues({ ...editValues, currentQuantity: text })
+                    }
+                  />
+
+                </View>
+
+                <View style={{flexDirection:'row', flex:1, alignItems:'center'}}>
+
+                  <Text>Discount: </Text>
+
+                  <TextInput
                   style={styles.input}
                   placeholder="Discount"
                   value={editValues.discount}
@@ -98,12 +116,22 @@ export default function FoodShared({ navigation }) {
                     setEditValues({ ...editValues, discount: text })
                   }
                 />
-                <TouchableOpacity
-                  style={styles.saveButton}
-                  onPress={handleSaveEdit}
-                >
-                  <Text style={styles.buttonText}>Save</Text>
-                </TouchableOpacity>
+
+                </View>
+
+
+              <TouchableOpacity
+                style={styles.saveButton}
+                onPress={handleSaveEdit}
+                disabled={loading} 
+              >
+                {loading ? (
+                  <ActivityIndicator size="small" color="#fff" /> 
+                ) : (
+                  <Text style={styles.buttonText}>Save</Text> 
+                )}
+              </TouchableOpacity>
+
                 <TouchableOpacity
                   style={styles.cancelButton}
                   onPress={() => setEditingItem(null)}
@@ -206,7 +234,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   editButton: {
-    backgroundColor: "#72ba76",
+    backgroundColor: "#4fc734",
     padding: 10,
     borderRadius: 5,
     marginTop: 10,
@@ -242,5 +270,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginTop: 10,
+    width: '80%',
   },
 });

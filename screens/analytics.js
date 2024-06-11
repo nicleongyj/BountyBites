@@ -15,12 +15,6 @@ export default function Analytics({navigation, route}) {
     const [yearly, setYearly] = useState(null)
 
     const handlePress = (value) => {
-        console.log("Selected: ", value);   
-        if (value === "monthly") {
-            setLoadedMonthly(false);
-        } else if (value === "yearly") {
-            setLoadedYearly(false);
-        }
         setSelected(value);
         setRefresh(true)
     }
@@ -70,7 +64,6 @@ export default function Analytics({navigation, route}) {
                 }
 
                 const results = Object.keys(monthly).filter(day => day !== "counter" && day !== "prevCounter");
-                console.log("Results: ", results);
                 const filteredMonthly = Object.keys(monthly)
                     .filter(key => key !== "counter" && key !== "prevCounter")
                     .reduce((obj, key) => {
@@ -83,9 +76,6 @@ export default function Analytics({navigation, route}) {
                 setTotalFoodSavedMonth(totalFoodSaved);
                 setAverageFoodSavedPerDay(averageFoodSavedPerDay);
                 setDaysWithNoFoodSaved(daysWithNoFoodSaved);
-                console.log("Total food saved: ", totalFoodSaved);
-                console.log("Average food saved per day: ", averageFoodSavedPerDay);
-                console.log("Days with no food saved: ", daysWithNoFoodSaved);
             } catch (error) {
                 console.error("Error calculating monthly data: ", error);
             }
@@ -94,6 +84,43 @@ export default function Analytics({navigation, route}) {
     }, [monthly]);
 
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    const [changeYearly, setChangeYearly] = useState(null);
+    const [totalFoodSavedYear, setTotalFoodSavedYear] = useState(0);
+    const [averageFoodSavedPerMonth, setAverageFoodSavedPerMonth] = useState(0);
+    const [monthWithNoFoodSaved, setMonthWithNoFoodSaved] = useState(null);
+    const [filteredYearly, setFilteredYearly] = useState(null);
+    useEffect(() => {
+        const calculateYearly = async () => {
+            try {
+                if (!yearly) {
+                    console.log("No yearly data");
+                    return;
+                }
+        
+                console.log("calculating yearly data: " + yearly)
+                const totalFoodSavedYear = yearly["counter"];
+    
+                
+                const resultsYearly = Object.keys(yearly).filter(month => month !== "counter");
+                const filteredYearly = Object.keys(yearly)
+                    .filter(key => key !== "counter")
+                    .reduce((obj, key) => {
+                        obj[key] = yearly[key];
+                        return obj;
+                    }, {});
+                setFilteredYearly(filteredYearly);
+                const averageFoodSavedPerMonth = (totalFoodSavedYear / (Object.keys(resultsYearly).length)).toFixed(1);
+                const monthWithNoFoodSaved = Object.keys(yearly).filter(month => yearly[month] === 0);
+                setTotalFoodSavedYear(totalFoodSavedYear);
+                setAverageFoodSavedPerMonth(averageFoodSavedPerMonth);
+                setMonthWithNoFoodSaved(monthWithNoFoodSaved.length);
+            } catch (error) {
+                console.error("Error calculating yearly data: ", error);
+            }
+        }
+        calculateYearly();
+    }, [yearly]);
 
     return (
         <View style={styles.container}>
@@ -156,10 +183,10 @@ export default function Analytics({navigation, route}) {
                             </Text> */}
                         <LineChart
                             data={{
-                                labels: Object.keys(yearly).filter(key => key !== "counter").map(key => monthNames[key - 1]),
+                                labels: Object.keys(filteredYearly),
                                 datasets: [
                                     {
-                                        data: Object.values(monthly)
+                                        data: Object.values(filteredYearly)
                                     }
                                 ]
                             }}
@@ -210,7 +237,7 @@ export default function Analytics({navigation, route}) {
             <View style={styles.midContainer}>
                 
                 { filteredMonthly && selected==="monthly"? (
-                   <View>
+                <View>
                     { averageFoodSavedPerDay < averageThreshold ? (
                     // Needs improvement
                     <>
@@ -233,7 +260,7 @@ export default function Analytics({navigation, route}) {
                     )}
                     { change > 0 ? (
                         <>
-                            <Text style={{fontSize: 14, fontWeight:'bold',marginBottom: 10}}>You have saved {change}% more food this month compared to last month</Text>
+                            <Text style={{fontSize: 14, fontWeight:'bold',marginBottom: 10}}>You have saved {change}% more food this month compared to last month!</Text>
                         </>
                        ) : (
                             <Text style={{fontSize: 15, fontWeight:'bold',marginBottom: 10}}>You have saved {change}% less food this month compared to last month</Text>
@@ -242,7 +269,7 @@ export default function Analytics({navigation, route}) {
                     <>
                        <Text style={styles.subtitle}>Total food saved this month: {totalFoodSavedMonth}</Text>
                         <Text style={styles.subtitle}>Average food saved per day: {averageFoodSavedPerDay}</Text>
-                        <Text style={styles.subtitle}>Days with no food saved: {daysWithNoFoodSaved.length}</Text>
+                        <Text style={styles.subtitle}>Days with no food saved: {monthWithNoFoodSaved}</Text>
                     </>
 
                     <View>
@@ -252,7 +279,46 @@ export default function Analytics({navigation, route}) {
                 </View>
 
                 ) : yearly && selected==="yearly" ? (
-                    <></>
+                    <View>
+                    { averageFoodSavedPerMonth < averageThreshold ? (
+                    // Needs improvement
+                    <>
+                        <Text style={styles.title}>You can do better...</Text>
+                    </> 
+                
+                    ) : averageFoodSavedPerMonth < goodThreshold ? (
+                    // Average
+
+                        <>
+                           <Text style={styles.title}>Keep it up! 👍</Text>
+                        </>
+
+                    ) : (
+                    // Good
+                    <>
+                    <Text style={styles.title}>Earth Saver! 🌍</Text>
+                    </>
+
+                    )}
+                    {/* { change > 0 ? (
+                        <>
+                            <Text style={{fontSize: 14, fontWeight:'bold',marginBottom: 10}}>You have saved {changeYearly}% more food this month compared to last year!</Text>
+                        </>
+                       ) : (
+                            <Text style={{fontSize: 15, fontWeight:'bold',marginBottom: 10}}>You have saved {changeYearly}% less food this month compared to last year</Text>
+                       )
+                    } */}
+                    <>
+                       <Text style={styles.subtitle}>Total food saved this year: {totalFoodSavedYear}</Text>
+                        <Text style={styles.subtitle}>Average food saved per month: {averageFoodSavedPerMonth}</Text>
+                        <Text style={styles.subtitle}>Days with no food saved: {daysWithNoFoodSaved.length}</Text>
+                    </>
+
+                    <View>
+
+
+                    </View>
+                </View>
 
 
 

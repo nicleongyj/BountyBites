@@ -267,10 +267,8 @@ export const retrieveMonthlyAnalytics = async (restaurantId) => {
     if (docSnap.exists()) {
       const data = docSnap.data();
       if (data[year] && data[year][month]) {
-        // Retrieve the monthly counter
         const monthlyCounter = data[year][month].counter || 0;
         const prevMonthlyCounter = data[year][month - 1].counter || 0;
-        // Create a dictionary for the counters of each day in the current month
         const dailyCounters = {};
         const currentMonth = data[year][month] || {};
         for (let day = 1; day <= today.getDate(); day++) {
@@ -278,7 +276,6 @@ export const retrieveMonthlyAnalytics = async (restaurantId) => {
         }
         dailyCounters["counter"] = monthlyCounter
         dailyCounters["prevCounter"] = prevMonthlyCounter
-        console.log(dailyCounters)
         return dailyCounters;
       } else {
         console.log("No analytics data found for this month.");
@@ -307,11 +304,10 @@ export const retrieveYearlyAnalytics = async (restaurantId) => {
       const data = docSnap.data();
       if (data[year]) {
         // Retrieve the yearly counter
-        const yearlyCounter = data[year].counter || 0;
-        console.log("Yearly counter: ", yearlyCounter);
         const monthlyCounters = {};
+        const yearlyCounter = data[year].counter || 0;
         for (let month = 1; month <= 12; month++) {
-          monthlyCounters[month] = data[year][month] || 0;
+          monthlyCounters[month] = data[year][month]?.counter || 0;
         }
         monthlyCounters["counter"] = yearlyCounter
         return monthlyCounters;

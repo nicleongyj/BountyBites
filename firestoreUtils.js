@@ -107,6 +107,7 @@ export const deleteFoodItem = async (index, foodItems, userId) => {
       const updatedItems = foodItems.filter((_, i) => i !== index);
       const docRef = doc(FIREBASE_DB, today, userId);
       await updateDoc(docRef, { foodItems: updatedItems });
+      await updateAnalytics(userId, -1 * foodItems[index].quantity)
       return updatedItems
 
   } catch (error) {
@@ -139,13 +140,14 @@ export const storeFoodData = async (userId, foodData) => {
         foodItems: [foodData],
       });
     }
-
+    await updateAnalytics(userId, foodData.quantity)
     console.log("Food data stored successfully for user: ", userId);
   } catch (error) {
     console.error("Error storing food data: ", error);
     throw error;
   }
 };
+
 
 export const getRestaurantDataFromFoodToday = async () => {
   const restaurantDataArray = []; // Array to store restaurant data
@@ -202,3 +204,123 @@ export const fetchFoodItems = async (userId) => {
   }
 };
 
+
+
+export const updateAnalytics = async (restaurantId, quantity) => {
+  try {
+    console.log("Updating analytics for restaurant: ", restaurantId )
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.getMonth() + 1; // JavaScript months are 0-indexed
+    const year = today.getFullYear();
+
+    const docRef = doc(FIREBASE_DB, "analytics", restaurantId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      // Document exists, update it
+      const data = docSnap.data();
+      if (data[year]) {
+        if (data[year][month]) {
+          if (data[year][month][day]) {
+            // Day field exists, update it
+            await updateDoc(docRef, { [`${year}.${month}.${day}`]: data[year][month][day] + quantity });
+          } else {
+            // Day field doesn't exist, create it
+            await updateDoc(docRef, { [`${year}.${month}.${day}`]: quantity });
+          }
+          // Update the monthly counter
+          await updateDoc(docRef, { [`${year}.${month}.counter`]: (data[year][month].counter || 0) + quantity });
+        } else {
+          // Month field doesn't exist, create it
+          await updateDoc(docRef, { [`${year}.${month}`]: { [day]: quantity, counter: quantity } });
+        }
+        // Update the yearly counter
+        await updateDoc(docRef, { [`${year}.counter`]: (data[year].counter || 0) + quantity });
+      } else {
+        // Year field doesn't exist, create it
+        await setDoc(docRef, { [year]: { [month]: { [day]: quantity, counter: quantity }, counter: quantity } });
+      }
+    } else {
+      // Document doesn't exist, create it
+      await setDoc(docRef, { [year]: { [month]: { [day]: quantity, counter: quantity }, counter: quantity } });
+      console.log("Document created for restaurant: ", restaurantId)
+    }
+
+    console.log("Analytics updated successfully for restaurant: ", restaurantId);
+  } catch (error) {
+    console.error("Error updating analytics: ", error);
+    throw error;
+  }
+};
+
+export const retrieveMonthlyAnalytics = async (restaurantId) => {
+  try {
+    console.log("Retrieving this month's analytics: " + restaurantId)
+    const today = new Date();
+    const month = today.getMonth() + 1; // JavaScript months are 0-indexed
+    const year = today.getFullYear();
+
+    const docRef = doc(FIREBASE_DB, "analytics", restaurantId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      if (data[year] && data[year][month]) {
+        const monthlyCounter = data[year][month].counter || 0;
+        const prevMonthlyCounter = data[year][month - 1].counter || 0;
+        const dailyCounters = {};
+        const currentMonth = data[year][month] || {};
+        for (let day = 1; day <= today.getDate(); day++) {
+          dailyCounters[day] = currentMonth[day] || 0; // Get the value directly
+        }
+        dailyCounters["counter"] = monthlyCounter
+        dailyCounters["prevCounter"] = prevMonthlyCounter
+        return dailyCounters;
+      } else {
+        console.log("No analytics data found for this month.");
+        return null;
+      }
+    } else {
+      console.log("No analytics data found for this restaurant.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error retrieving monthly analytics: ", error);
+    return null; // Return null in case of error
+  }
+};
+
+export const retrieveYearlyAnalytics = async (restaurantId) => {
+  try {
+    console.log("Retrieving this year's analytics")
+    const today = new Date();
+    const year = today.getFullYear();
+
+    const docRef = doc(FIREBASE_DB, "analytics", restaurantId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      if (data[year]) {
+        // Retrieve the yearly counter
+        const monthlyCounters = {};
+        const yearlyCounter = data[year].counter || 0;
+        for (let month = 1; month <= 12; month++) {
+          monthlyCounters[month] = data[year][month]?.counter || 0;
+        }
+        monthlyCounters["counter"] = yearlyCounter
+        return monthlyCounters;
+      } else {
+        console.log("No analytics data found for this year.");
+        return null;
+      }
+    } else {
+      console.log("No analytics data found for this restaurant.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error retrieving yearly analytics: ", error);
+    return null; // Return null in case of error
+  }
+};

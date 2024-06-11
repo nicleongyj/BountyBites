@@ -127,11 +127,18 @@ export default function Home({navigation}) {
         var d = R * c; 
         return d.toFixed(2);
     }
+
+    const currentTime = new Date().getHours().toString() + new Date().getMinutes().toString();
     
     // Filter 
     let filteredRestaurants = [];
     if (restaurantWithLocation) {
+        console.log(currentTime)
         filteredRestaurants = restaurantWithLocation.filter(restaurant => {
+            const closingTime = restaurant.closingTime.split(":").join("");
+            if (closingTime < currentTime) {
+                return false;
+            }
             if (filterValue === "restaurant") {
                 return restaurant.type === "Restaurant";
             } else if (filterValue === "bakery") {

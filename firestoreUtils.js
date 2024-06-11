@@ -117,6 +117,7 @@ export const deleteFoodItem = async (index, foodItems, userId) => {
 
 const getTodayAsString = () => {
   const today = new Date();
+  // today.setDate(today.getDate()-1);
   return `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
 };
 
@@ -200,3 +201,4 @@ export const fetchFoodItems = async (userId) => {
     console.error("Error fetching food items: ", error);
   }
 };
+

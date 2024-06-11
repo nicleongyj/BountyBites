@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Restaurant from "../screens/restaurant";
 import ShareFood from "../screens/shareFood";
 import FoodShared from "../screens/foodShared";
+import Analytics from "../screens/analytics";
 
 // Create a stack navigator
 const MainStack = createNativeStackNavigator();
@@ -25,6 +26,11 @@ export default function MainStackNavigator() {
         name="FoodShared"
         component={FoodShared}
         options={{ title: "Food Shared" }}
+      />
+      <MainStack.Screen
+        name="Analytics"
+        component={Analytics}
+        options={{ title: "Analytics" }}
       />
     </MainStack.Navigator>
   );

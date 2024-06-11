@@ -107,6 +107,7 @@ export const deleteFoodItem = async (index, foodItems, userId) => {
       const updatedItems = foodItems.filter((_, i) => i !== index);
       const docRef = doc(FIREBASE_DB, today, userId);
       await updateDoc(docRef, { foodItems: updatedItems });
+      await updateAnalytics(userId, -1 * foodItems[index].quantity)
       return updatedItems
 
   } catch (error) {
@@ -268,10 +269,7 @@ export const retrieveMonthlyAnalytics = async (restaurantId) => {
       if (data[year] && data[year][month]) {
         // Retrieve the monthly counter
         const monthlyCounter = data[year][month].counter || 0;
-        console.log("Monthly counter: ", monthlyCounter);
-
         const prevMonthlyCounter = data[year][month - 1].counter || 0;
-        console.log("Previous month's counter: ", prevMonthlyCounter);
         // Create a dictionary for the counters of each day in the current month
         const dailyCounters = {};
         const currentMonth = data[year][month] || {};

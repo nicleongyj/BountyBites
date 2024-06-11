@@ -255,10 +255,6 @@ export default function Home({navigation}) {
                                         {restaurant.distance && ` (${restaurant.distance} km)`}
                                     </Text>
                                         <View style={{paddingLeft:10}}>
-                                            {/* <View style={{flexDirection:"row"}}>
-                                                <Text style={{fontWeight: "bold"}}>Food Type: </Text>
-                                                <Text>{restaurant.type}</Text>
-                                            </View> */}
                                             <View style={{flexDirection:"row"}}>
                                                 <Text style={{fontWeight: "bold"}}>Address: </Text>
                                                 <Text>{restaurant.location}</Text>
@@ -273,16 +269,6 @@ export default function Home({navigation}) {
                                                 <Text style={{fontWeight: "bold"}}>Discount Available: </Text>
                                                 <Text>{restaurant.discount}%</Text>
                                             </View>
-{/* 
-                                            <View style={{flexDirection:"row"}}>
-                                                <Text style={{fontWeight: "bold"}}>Distance away: </Text>
-                                                { !restaurant.distance ? (
-                                                    <Text> - </Text>
-                                                ) : (
-                                                    <Text>{restaurant.distance} km</Text>
-                                                )}
-
-                                            </View> */}
                                         </View>
                                     </View>
                                     <Image source={{uri: restaurant.link}} style={styles.image} />

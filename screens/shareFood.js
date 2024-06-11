@@ -9,11 +9,12 @@ import {
   import { SafeAreaView } from "react-native-safe-area-context";
   import { useState, useRef, useEffect, useContext } from "react";
   import { Button } from "react-native-paper";
-  import { ScrollView, ActivityIndicator} from "react-native";
+  import { ScrollView, ActivityIndicator} from "react-native"
   // Camera imports
   import { Camera, CameraView } from "expo-camera";
   import * as ImagePicker from "expo-image-picker";
   import CameraButton from "../assets/camera.png";
+  import GalleryButton from "../assets/gallery.jpg";  
   import { LoginContext } from "../App";
   import { storeFoodData } from "../firestoreUtils";
   import { uploadFoodPhoto } from "../firestorageUtils";
@@ -68,6 +69,22 @@ import {
         }
       }
     };
+
+    const handleGallery = async () => {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+    
+      console.log(result);
+    
+      if (!result.cancelled) {
+          setImage(result.assets[0].uri);
+      }
+
+    }
   
     const renderInput = (label, value, onChangeText, returnKeyType) => (
       <View style={styles.inputContainer}>
@@ -216,9 +233,29 @@ import {
             <CameraView facing={facing} style={{ flex: 1 }} ref={cameraRef}>
               <View style={styles.cameraBottomContainer}>
                 <TouchableOpacity
+                  style={{      backgroundColor: "white",
+                  width: 70,
+                  height: 70,
+                  borderRadius: 50,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginLeft:10,}}
+                  onPress={handleGallery}
+                >
+                  <Image
+                    source={GalleryButton}
+                    style={{
+                      height: 50,
+                      width: 50,
+                      // backgroundColor: "white",
+                      borderRadius: 40,
+                      justifyContent:'center',
+                    }}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
                   style={styles.pictureButton}
                   onPress={takePicture}
-                  testID="shutterButton"
                 >
                   <Image
                     source={CameraButton}
@@ -227,8 +264,25 @@ import {
                       width: 50,
                       backgroundColor: "white",
                       borderRadius: 40,
+                      justifyContent:'flex-start'
                     }}
                   />
+                </TouchableOpacity>
+
+                
+
+                <TouchableOpacity
+                  style={{ 
+                    // backgroundColor: "white",
+                    width: 70,
+                    height: 70,
+                    borderRadius: 50,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                  // onPress={takePicture}
+                >
+
                 </TouchableOpacity>
               </View>
             </CameraView>
@@ -364,7 +418,7 @@ import {
       flex: 1,
       flexDirection: "row",
       alignItems: "flex-end",
-      justifyContent: "space-evenly",
+      justifyContent:"space-between",
       paddingBottom: 30,
     },
   

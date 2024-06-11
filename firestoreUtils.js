@@ -147,6 +147,64 @@ export const storeFoodData = async (userId, foodData) => {
   }
 };
 
+
+export const getRestaurantDataFromFoodToday = async () => {
+  const restaurantDataArray = []; // Array to store restaurant data
+
+  try {
+    // Query the "food-today" collection
+    const foodTodaySnapshot = await getDocs(
+      collection(FIREBASE_DB, "food-today")
+    );
+
+    // Iterate over each document in the "food-today" collection
+    for (const doc of foodTodaySnapshot.docs) {
+      const userId = doc.id; // Get the userId from the document ID
+
+      // Query the "f&b" collection to get the restaurant data
+      const restaurantSnapshot = await getDoc(doc(FIREBASE_DB, "f&b", userId));
+
+      // Check if the restaurant data exists
+      if (restaurantSnapshot.exists()) {
+        const restaurantData = restaurantSnapshot.data();
+        // Add restaurant data to the array as a dictionary with userId as the key
+        restaurantDataArray.push({ [userId]: restaurantData });
+      } else {
+        console.log("No restaurant data found for userId:", userId);
+      }
+    }
+
+    // Log the array of restaurant data
+    console.log("Restaurant Data Array:", restaurantDataArray);
+  } catch (error) {
+    console.error("Error getting restaurant data from food-today:", error);
+  }
+
+  return restaurantDataArray; // Return the array of restaurant data
+};
+
+export const fetchFoodItems = async (userId) => {
+  try {
+    const today = getTodayAsString();
+    const docRef = doc(FIREBASE_DB, today, userId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const foodItemsArray = docSnap.data().foodItems;
+      return foodItemsArray.map((foodItem, index) => ({
+        id: `${userId}-${index}`, // Unique key for each food item
+        ...foodItem,
+      }));
+    } else {
+      console.log("No such document!");
+    }
+  } catch (error) {
+    console.error("Error fetching food items: ", error);
+  }
+};
+
+
+
 export const updateAnalytics = async (restaurantId, quantity) => {
   try {
     console.log("Updating analytics for restaurant: ", restaurantId )
@@ -211,14 +269,18 @@ export const retrieveMonthlyAnalytics = async (restaurantId) => {
         // Retrieve the monthly counter
         const monthlyCounter = data[year][month].counter || 0;
         console.log("Monthly counter: ", monthlyCounter);
+
+        const prevMonthlyCounter = data[year][month - 1].counter || 0;
+        console.log("Previous month's counter: ", prevMonthlyCounter);
         // Create a dictionary for the counters of each day in the current month
         const dailyCounters = {};
-        const currentMonth = data[year][today.getMonth() + 1] || {};
+        const currentMonth = data[year][month] || {};
         for (let day = 1; day <= today.getDate(); day++) {
-          dailyCounters[day] = currentMonth[day]?.counter || 0;
+          dailyCounters[day] = currentMonth[day] || 0; // Get the value directly
         }
-        console.log(dailyCounters)
         dailyCounters["counter"] = monthlyCounter
+        dailyCounters["prevCounter"] = prevMonthlyCounter
+        console.log(dailyCounters)
         return dailyCounters;
       } else {
         console.log("No analytics data found for this month.");
@@ -233,6 +295,7 @@ export const retrieveMonthlyAnalytics = async (restaurantId) => {
     return null; // Return null in case of error
   }
 };
+
 export const retrieveYearlyAnalytics = async (restaurantId) => {
   try {
     console.log("Retrieving this year's analytics")
@@ -250,7 +313,7 @@ export const retrieveYearlyAnalytics = async (restaurantId) => {
         console.log("Yearly counter: ", yearlyCounter);
         const monthlyCounters = {};
         for (let month = 1; month <= 12; month++) {
-          monthlyCounters[month] = data[year][month]?.counter || 0;
+          monthlyCounters[month] = data[year][month] || 0;
         }
         monthlyCounters["counter"] = yearlyCounter
         return monthlyCounters;
@@ -267,59 +330,3 @@ export const retrieveYearlyAnalytics = async (restaurantId) => {
     return null; // Return null in case of error
   }
 };
-
-export const getRestaurantDataFromFoodToday = async () => {
-  const restaurantDataArray = []; // Array to store restaurant data
-
-  try {
-    // Query the "food-today" collection
-    const foodTodaySnapshot = await getDocs(
-      collection(FIREBASE_DB, "food-today")
-    );
-
-    // Iterate over each document in the "food-today" collection
-    for (const doc of foodTodaySnapshot.docs) {
-      const userId = doc.id; // Get the userId from the document ID
-
-      // Query the "f&b" collection to get the restaurant data
-      const restaurantSnapshot = await getDoc(doc(FIREBASE_DB, "f&b", userId));
-
-      // Check if the restaurant data exists
-      if (restaurantSnapshot.exists()) {
-        const restaurantData = restaurantSnapshot.data();
-        // Add restaurant data to the array as a dictionary with userId as the key
-        restaurantDataArray.push({ [userId]: restaurantData });
-      } else {
-        console.log("No restaurant data found for userId:", userId);
-      }
-    }
-
-    // Log the array of restaurant data
-    console.log("Restaurant Data Array:", restaurantDataArray);
-  } catch (error) {
-    console.error("Error getting restaurant data from food-today:", error);
-  }
-
-  return restaurantDataArray; // Return the array of restaurant data
-};
-
-export const fetchFoodItems = async (userId) => {
-  try {
-    const today = getTodayAsString();
-    const docRef = doc(FIREBASE_DB, today, userId);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      const foodItemsArray = docSnap.data().foodItems;
-      return foodItemsArray.map((foodItem, index) => ({
-        id: `${userId}-${index}`, // Unique key for each food item
-        ...foodItem,
-      }));
-    } else {
-      console.log("No such document!");
-    }
-  } catch (error) {
-    console.error("Error fetching food items: ", error);
-  }
-};
-

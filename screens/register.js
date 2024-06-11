@@ -126,7 +126,7 @@ export default function RegisterScreen({ navigation }) {
         {/* <ScrollView contentContainerStyle={styles.scrollView}> */}
         <View style={{flex:1,}}>
 
-            <View style={{flex:2, alignItems:"center"  }}>
+            <View style={{flex:2, alignItems:"center",paddingBottom:15,  }}>
                 <Text style={styles.title}>Create account</Text>
             </View>
 

@@ -76,7 +76,9 @@ export default function Home({navigation}) {
                 />  
 
                 {/* Markers for restaurants */}
-                {restaurantData && restaurantData.map((restaurant, index) => (
+                {restaurantData && restaurantData
+                    .filter(restaurant => restaurant.items && restaurant.items.length>0)
+                    .map((restaurant, index) => (
                 <Marker
                     key={index}
                     coordinate={{

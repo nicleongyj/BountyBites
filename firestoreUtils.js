@@ -41,6 +41,7 @@ export const fetchRestaurantData = async (userId) => {
 export const fetchAllRestaurants = async () => {
   try {
     // Get the collection reference for the restaurants
+    const today = getTodayAsString();
     const collectionRef = collection(FIREBASE_DB, "f&b");
 
     // Get the snapshot of the collection
@@ -100,9 +101,16 @@ export const storeRestaurantData = async (restaurantData) => {
   }
 };
 
+const getTodayAsString = () => {
+  const today = new Date();
+  return `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+};
+
+
 export const storeFoodData = async (userId, foodData) => {
   try {
-    const docRef = doc(FIREBASE_DB, "food-today", userId);
+    const today = getTodayAsString();
+    const docRef = doc(FIREBASE_DB, today, userId);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
@@ -161,7 +169,8 @@ export const getRestaurantDataFromFoodToday = async () => {
 
 export const fetchFoodItems = async (userId) => {
   try {
-    const docRef = doc(FIREBASE_DB, "food-today", userId);
+    const today = getTodayAsString();
+    const docRef = doc(FIREBASE_DB, today, userId);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {

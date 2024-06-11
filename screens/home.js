@@ -168,8 +168,8 @@ export default function Home({navigation}) {
     }, [search, restaurantData]);
 
     // Display search results if search is not empty
-    const restaurantsToDisplay = search ? searchResults : sortedRestaurants;
-
+    const restaurantsToDisplay = (search ? searchResults : sortedRestaurants).filter(restaurant => restaurant.totalQuantity > 0);
+    
     return (
         <Provider>
             <SafeAreaView style={styles.container}>

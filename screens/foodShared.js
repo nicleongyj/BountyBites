@@ -13,7 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LoginContext } from "../App";
 import { FIREBASE_DB } from "../FirebaseConfig";
 import { useState, useEffect, useContext } from "react";
-import { fetchFoodItems } from "../firestoreUtils";
+import { fetchFoodItems, deleteFoodItem } from "../firestoreUtils";
 
 export default function FoodShared({ navigation }) {
   const { userId } = useContext(LoginContext);
@@ -62,15 +62,15 @@ export default function FoodShared({ navigation }) {
 
   const handleDelete = async (index) => {
     try {
-      const updatedItems = foodItems.filter((_, i) => i !== index);
+      const updatedItems = await deleteFoodItem(index, foodItems, userId);
       setFoodItems(updatedItems);
-
-      const docRef = doc(FIREBASE_DB, "food-today", userId);
-      await updateDoc(docRef, { foodItems: updatedItems });
+      alert("Food item deleted successfully!");
     } catch (error) {
       console.error("Error deleting food item: ", error);
     }
   };
+
+
 
   useEffect(() => {
     if (userId) {
@@ -96,7 +96,7 @@ export default function FoodShared({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Food Shared</Text>
+      <Text style={styles.heading}>Today's Food</Text>
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
         {foodItems.length > 0 ? (
           foodItems.map((foodItem, index) => (

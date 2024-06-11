@@ -112,7 +112,6 @@ export default function Home({navigation}) {
 
     // Get distance between two coordinates
     function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-        console.log(lat1, lon1, lat2, lon2)
         var R = 6371;
         function deg2rad(deg) {
             return deg * (Math.PI / 180);
@@ -133,7 +132,6 @@ export default function Home({navigation}) {
     // Filter 
     let filteredRestaurants = [];
     if (restaurantWithLocation) {
-        console.log(currentTime)
         filteredRestaurants = restaurantWithLocation.filter(restaurant => {
             const closingTime = restaurant.closingTime.split(":").join("");
             if (closingTime < currentTime) {
@@ -175,7 +173,8 @@ export default function Home({navigation}) {
     }, [search, restaurantData]);
 
     // Display search results if search is not empty
-    const restaurantsToDisplay = (search ? searchResults : sortedRestaurants).filter(restaurant => restaurant.totalQuantity > 0);
+    const results = (search ? searchResults : sortedRestaurants).filter(restaurant => restaurant.totalQuantity > 0);
+    restaurantsToDisplay = results.length > 0 ? results : [];
     
     return (
         <Provider>
@@ -224,12 +223,6 @@ export default function Home({navigation}) {
                                 onChangeText={(text) => setSearch(text)}
                                 left={<TextInput.Icon icon={() => <Icon name="search" size={20} color="black" />} />}
                                 />
-                            {/* <Button
-                                mode="contained"
-                                style={styles.filterButton}
-                                labelStyle={styles.filterButtonLabel}
-                                onPress={handleRefresh}
-                            >Refresh</Button> */}
 
                             <Button
                                 mode="contained"
@@ -242,6 +235,16 @@ export default function Home({navigation}) {
                     </View>
 
                     <View style={styles.cardContainer}>
+                            
+                        { restaurantsToDisplay.length === 0 ? (
+
+                            <View style={styles.noFoodContainer}>
+                                <Text style={styles.noFoodText}>No bites at the moment... 😔</Text>
+                            </View>
+
+                        ) : (
+
+
                         <ScrollView contentContainerStyle={styles.scrollViewContent}>
                         {restaurantsToDisplay.map((restaurant, index) => (
                             <Pressable key={index} onPress={() => handleCardPress(restaurant)}>
@@ -287,6 +290,7 @@ export default function Home({navigation}) {
                             </Pressable>
                         ))}
                         </ScrollView>
+                        )}
                     </View>
 
                     {/* <Button onPress={handleLogout}>Back to start page</Button> */}
@@ -367,6 +371,11 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         // backgroundColor: "white",
       },
+    noFoodContainer: { 
+        flex:1,
+        justifyContent: "center",
+        alignContent:'center'
+    },
     title: {
         fontSize: 23,
         padding: 10,
@@ -459,9 +468,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.30,
         shadowRadius: 4,
         elevation: 10,
-        // borderColor: "black",
-        // borderWidth: 1,
-
     },
     image: {
         width: 110,
@@ -473,7 +479,14 @@ const styles = StyleSheet.create({
     textContainer: {
         alignContent: "center",
         justifyContent: "center",
-        paddingVertical:10
+        paddingVertical:10,
+        fontSize: 18,
+        fontWeight: "bold",
     },
-
+    noFoodText: {
+        fontSize: 16,
+        textAlign: "center",
+        marginTop: 20,
+        fontWeight: "bold",
+      },
 });

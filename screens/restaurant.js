@@ -140,18 +140,19 @@ export default function Restaurant({ navigation }) {
       </Button>
       <Button
         mode="contained"
-        onPress={handleViewAnalytics}
-        style={styles.button}
-      >
-        View Analytics
-      </Button>
-      <Button
-        mode="contained"
         onPress={handleViewFoodShared}
         style={styles.button}
       >
-        View Food Shared
+        View Today's Food
       </Button>
+      <Button
+        mode="contained"
+        onPress={handleViewAnalytics}
+        style={styles.analyticsButton}
+      >
+        View Analytics
+      </Button>
+
       <Button
         mode="contained"
         onPress={handleLogout}
@@ -242,6 +243,12 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     backgroundColor: "#6200ee", // Primary button color
   },
+  analyticsButton : {
+    marginTop: 10,
+    width: "80%",
+    alignSelf: "center",
+    backgroundColor: "black", // Primary button color
+  },  
   logoutButton: {
     marginTop: 10,
     width: "80%",

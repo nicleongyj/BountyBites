@@ -101,6 +101,20 @@ export const storeRestaurantData = async (restaurantData) => {
   }
 };
 
+export const deleteFoodItem = async (index, foodItems, userId) => { 
+  try {
+      const today = getTodayAsString();
+      const updatedItems = foodItems.filter((_, i) => i !== index);
+      const docRef = doc(FIREBASE_DB, today, userId);
+      await updateDoc(docRef, { foodItems: updatedItems });
+      return updatedItems
+
+  } catch (error) {
+      console.error("Error deleting food item: ", error);
+      throw error
+  }
+};
+
 const getTodayAsString = () => {
   const today = new Date();
   return `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;

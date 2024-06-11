@@ -54,32 +54,41 @@ export default function Analytics({navigation, route}) {
 
     useEffect(() => {
         const calculateMonthly = async () => {
-            console.log("calculating monthly data: " + monthly)
-            const totalFoodSaved = monthly["counter"];
-            const prevMonth = monthly["prevCounter"];
+            try {
+                if (!monthly) {
+                    console.log("No monthly data");
+                    return;
+                }
+        
+                console.log("calculating monthly data: " + monthly)
+                const totalFoodSaved = monthly["counter"];
+                const prevMonth = monthly["prevCounter"];
 
-            if (prevMonth) {
-                const change = ((totalFoodSaved - prevMonth) / prevMonth * 100).toFixed(1);
-                setChange(change);
+                if (prevMonth) {
+                    const change = ((totalFoodSaved - prevMonth) / prevMonth * 100).toFixed(1);
+                    setChange(change);
+                }
+
+                const results = Object.keys(monthly).filter(day => day !== "counter" && day !== "prevCounter");
+                console.log("Results: ", results);
+                const filteredMonthly = Object.keys(monthly)
+                    .filter(key => key !== "counter" && key !== "prevCounter")
+                    .reduce((obj, key) => {
+                        obj[key] = monthly[key];
+                        return obj;
+                    }, {});
+                setFilteredMonthly(filteredMonthly);
+                const averageFoodSavedPerDay = (totalFoodSaved / (Object.keys(results).length)).toFixed(1);
+                const daysWithNoFoodSaved = Object.keys(monthly).filter(day => monthly[day] === 0);
+                setTotalFoodSavedMonth(totalFoodSaved);
+                setAverageFoodSavedPerDay(averageFoodSavedPerDay);
+                setDaysWithNoFoodSaved(daysWithNoFoodSaved);
+                console.log("Total food saved: ", totalFoodSaved);
+                console.log("Average food saved per day: ", averageFoodSavedPerDay);
+                console.log("Days with no food saved: ", daysWithNoFoodSaved);
+            } catch (error) {
+                console.error("Error calculating monthly data: ", error);
             }
-
-            const results = Object.keys(monthly).filter(day => day !== "counter" && day !== "prevCounter");
-            console.log("Results: ", results);
-            const filteredMonthly = Object.keys(monthly)
-                .filter(key => key !== "counter" && key !== "prevCounter")
-                .reduce((obj, key) => {
-                    obj[key] = monthly[key];
-                    return obj;
-                }, {});
-            setFilteredMonthly(filteredMonthly);
-            const averageFoodSavedPerDay = (totalFoodSaved / (Object.keys(results).length)).toFixed(1);
-            const daysWithNoFoodSaved = Object.keys(monthly).filter(day => monthly[day] === 0);
-            setTotalFoodSavedMonth(totalFoodSaved);
-            setAverageFoodSavedPerDay(averageFoodSavedPerDay);
-            setDaysWithNoFoodSaved(daysWithNoFoodSaved);
-            console.log("Total food saved: ", totalFoodSaved);
-            console.log("Average food saved per day: ", averageFoodSavedPerDay);
-            console.log("Days with no food saved: ", daysWithNoFoodSaved);
         }
         calculateMonthly();
     }, [monthly]);
@@ -95,7 +104,7 @@ export default function Analytics({navigation, route}) {
 
                 
 
-                { monthly && selected==="monthly"? (
+                { filteredMonthly && selected==="monthly"? (
 
                     <View>
                           <Text style={styles.title}>
@@ -200,7 +209,7 @@ export default function Analytics({navigation, route}) {
 
             <View style={styles.midContainer}>
                 
-                { monthly && selected==="monthly"? (
+                { filteredMonthly && selected==="monthly"? (
                    <View>
                     { averageFoodSavedPerDay < averageThreshold ? (
                     // Needs improvement

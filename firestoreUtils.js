@@ -218,7 +218,8 @@ export const retrieveMonthlyAnalytics = async (restaurantId) => {
           dailyCounters[day] = currentMonth[day]?.counter || 0;
         }
         console.log(dailyCounters)
-        return monthlyCounter, dailyCounters;
+        dailyCounters["counter"] = monthlyCounter
+        return dailyCounters;
       } else {
         console.log("No analytics data found for this month.");
         return null;
@@ -251,7 +252,8 @@ export const retrieveYearlyAnalytics = async (restaurantId) => {
         for (let month = 1; month <= 12; month++) {
           monthlyCounters[month] = data[year][month]?.counter || 0;
         }
-        return yearlyCounter, monthlyCounters;
+        monthlyCounters["counter"] = yearlyCounter
+        return monthlyCounters;
       } else {
         console.log("No analytics data found for this year.");
         return null;

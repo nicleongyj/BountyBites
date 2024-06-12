@@ -52,7 +52,7 @@ export default function Restaurant({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
-        <Text style={styles.heading}>Restaurant Information</Text>
+        <Text style={styles.heading}>Restaurant Information 👨‍🍳</Text>
       </View>
 
       <View style={styles.middleContainer}>

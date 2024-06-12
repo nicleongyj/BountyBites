@@ -209,7 +209,7 @@ export default function Home({ navigation }) {
 
         {!restaurantWithLocation && !refresh ? (
           <View style={styles.loadingText}>
-            <Image style={{ width: 150, height: 150 }} source={waiting}></Image>
+            {/* <Image style={{ width: 150, height: 150 }} source={waiting}></Image> */}
             <Text style={styles.loadingTextLabel}>
               Loading bites, please wait...
             </Text>

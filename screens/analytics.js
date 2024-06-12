@@ -210,7 +210,7 @@ export default function Analytics({navigation, route}) {
 
     return (
         <ScrollView style={styles.container}>
-            <KeyboardAwareScrollView style={{flex:1}} behavior='padding'>
+            <KeyboardAwareScrollView style={{flex:1}} contentContainerStyle={{alignItems:'center'}} behavior='padding'>
 
             <View style={styles.topContainer}>
 
@@ -560,6 +560,7 @@ const styles = StyleSheet.create({
         borderColor:'black',
         borderWidth:2,
         borderRadius:20,
+        alignSelf:'center'
     },  
     analyticsContainer: {
         flex:6,

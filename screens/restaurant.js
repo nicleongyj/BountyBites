@@ -110,31 +110,40 @@ export default function Restaurant({ navigation }) {
 
       <View style={styles.bottomContainer}></View>
 
-      <Button mode="contained" onPress={handleShareFood} style={styles.button}>
-        Share Food
-      </Button>
-      <Button
-        mode="contained"
-        onPress={handleViewFoodShared}
-        style={styles.button}
-      >
-        View Today's Food
-      </Button>
-      <Button
-        mode="contained"
-        onPress={handleViewAnalytics}
-        style={styles.analyticsButton}
-      >
-        View Analytics
-      </Button>
+      <View style={styles.buttonRow}>
+        <Button
+          mode="contained"
+          onPress={handleShareFood}
+          style={styles.restaurantButton}
+        >
+          Share Food
+        </Button>
+        <Button
+          mode="contained"
+          onPress={handleViewFoodShared}
+          style={styles.restaurantButton}
+        >
+          Manage Food
+        </Button>
+      </View>
 
-      <Button
-        mode="contained"
-        onPress={handleLogout}
-        style={styles.logoutButton}
-      >
-        Log Out
-      </Button>
+      <View style={styles.buttonRow}>
+        <Button
+          mode="contained"
+          onPress={handleViewAnalytics}
+          style={styles.analyticsButton}
+        >
+          View Analytics
+        </Button>
+
+        <Button
+          mode="contained"
+          onPress={handleLogout}
+          style={styles.logoutButton}
+        >
+          Log Out
+        </Button>
+      </View>
 
       {/* Share Food Modal */}
       <ShareFoodModal
@@ -212,21 +221,55 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    marginTop: 10,
+    marginVertical: 10,
     width: "80%",
     alignSelf: "center",
     backgroundColor: "#6200ee", // Primary button color
   },
-  analyticsButton: {
-    marginTop: 10,
-    width: "80%",
+  restaurantButton: {
+    marginVertical: 10,
+    width: "45%",
     alignSelf: "center",
-    backgroundColor: "black", // Primary button color
+    backgroundColor: "#6200ee", // Primary button color
+    borderRadius: 5,
+  },
+  analyticsButton: {
+    marginVertical: 10,
+    width: "45%",
+    alignSelf: "center",
+    backgroundColor: "#048a09", // Teal color for analytics button
+    borderRadius: 5,
   },
   logoutButton: {
-    marginTop: 10,
-    width: "80%",
+    marginVertical: 10,
+    width: "45%",
     alignSelf: "center",
-    backgroundColor: "#d9534f", // Red color for the logout button
+    backgroundColor: "#d32f2f", // Red color for the logout button
+    borderRadius: 5,
+  },
+  icon: {
+    marginRight: 10,
+  },
+  modalContainer: {
+    backgroundColor: "white",
+    padding: 20,
+    margin: 20,
+    borderRadius: 10,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  modalButton: {
+    marginVertical: 10,
+    width: "50%",
+    alignSelf: "center",
+    backgroundColor: "#6200ee", // Primary button color
+  },
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
   },
 });

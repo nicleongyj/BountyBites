@@ -185,7 +185,7 @@ import {
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
               <View style={styles.midContainer}>
                 {renderInput("Name:", name, setName, "next")}
-                {renderInput("Price ($):", price, setPrice, "next")}
+                {renderInput("Original Price ($):", price, setPrice, "next")}
                 {renderInput("Discount (%):", discount, setDiscount, "next")}
                 {renderInput("Quantity:", quantity, setQuantity, "next")}
               </View>

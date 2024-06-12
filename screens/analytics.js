@@ -1,10 +1,13 @@
 
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import React, {useState, useRef, useEffect} from 'react';
 import { updateAnalytics, retrieveMonthlyAnalytics, retrieveYearlyAnalytics } from '../firestoreUtils';
-import { Button, Switch } from 'react-native-paper';
+import { Button, Switch, TextInput } from 'react-native-paper';
 import { BarChart, LineChart } from 'react-native-chart-kit';
-import { FetchAPI, FetchCompletions, getRestaurantTipsMonthly } from "../openaiConfig"
+import { FetchCompletions, getRestaurantTipsMonthly, getRestauranTipsYearly, promptGPT } from "../openaiConfig"
+import { aiImage } from '../assets/ai.jpg';
+import {logo} from '../assets/logo.png';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 export default function Analytics({navigation, route}) {
     const { userId, restaurantData } = route.params;
@@ -14,12 +17,73 @@ export default function Analytics({navigation, route}) {
     const [monthly, setMonthly] = useState(null)
     const [ loadedYearly, setLoadedYearly ] = useState(false)
     const [yearly, setYearly] = useState(null)
-    const [monthylAnalysis, setMonthlyAnalysis] = useState(null)
+    const [monthlyAnalysis, setMonthlyAnalysis] = useState(null)
     const [monthlyTips, setMonthlyTips] = useState(null)
     const [yearlyAnalysis, setYearlyAnalysis] = useState(null)
     const [yearlyTips, setYearlyTips] = useState(null)
+    const [fetchedMonthlyTips, setFetchedMonthlyTips] = useState(false)
+    const [fetchedYearlyTips, setFetchedYearlyTips] = useState(false)
+    const [prompt, setPrompt] = useState(null)
+    const [response, setResponse] = useState(null)
 
-    const handleFetch = async () => {
+    useEffect(() => {
+        const fetchTips = async () => {
+            if (selected === "monthly") {
+                if (!filteredMonthly && fetchedMonthlyTips) {
+                    return;
+                }
+                console.log("Fetching monthly tips")
+                const data = {
+                    dailyData: monthly,
+                    restaurantType: restaurantData.type,
+                    averageFoodSavedPerDay: averageFoodSavedPerDay,
+                    percentageChangeFromPreviousMonth: change,
+                    totalFoodSavedPerMonth: totalFoodSavedMonth,
+                    daysWithNoFoodSaved: daysWithNoFoodSaved,
+                };
+                // const response = await getRestaurantTipsMonthly(data);
+                const [analysis, tips] = response.split('\n');
+                const cleanedAnalysis = analysis.replace('Analysis: ', '');
+                const cleanedTips = tips.replace('Tips: ', '');
+                console.log(cleanedAnalysis)
+                console.log(cleanedTips)
+                setMonthlyAnalysis(cleanedAnalysis)
+                setMonthlyTips(cleanedTips)
+                setFetchedMonthlyTips(true)
+            } else if (selected === "yearly") {
+                if (!filteredYearly && fetchedYearlyTips) {
+                    return;
+                }
+                console.log("Fetching yearly tips")
+                const data = {
+                    monthlyData: yearly,
+                    restaurantType: restaurantData.type,
+                    averageFoodSavedPerMonth: averageFoodSavedPerMonth,
+                    // percentageChangeFromPreviousMonth: change,
+                    totalFoodSavedYear: totalFoodSavedYear,
+                    monthWithNoFoodSaved: monthWithNoFoodSaved,
+                };
+                console.log(data)
+                // const response = await getRestaurantTipsYearly(data);
+                const [analysis, tips] = response.split('\n');
+                const cleanedAnalysis = analysis.replace('Analysis: ', '');
+                const cleanedTips = tips.replace('Tips: ', '');
+                console.log(cleanedAnalysis)
+                console.log(cleanedTips)
+                setYearlyAnalysis(cleanedAnalysis)
+                setYearlyTips(cleanedTips)
+                setFetchedYearlyTips(true)
+            }
+        }
+
+        fetchTips()
+    }, [monthly, yearly])
+
+    const handleSend = async () => {
+        if (!prompt || prompt==="") {
+            return;
+        }
+        console.log("sending prompt: " + prompt)
         const data = {
             dailyData: monthly,
             restaurantType: restaurantData.type,
@@ -27,13 +91,12 @@ export default function Analytics({navigation, route}) {
             percentageChangeFromPreviousMonth: change,
             totalFoodSavedPerMonth: totalFoodSavedMonth,
             daysWithNoFoodSaved: daysWithNoFoodSaved,
-          };
-        const response = await getRestaurantTipsMonthly(data);
-        const [analysis, tips] = response.split('\n');
-        console.log(analysis)
-        console.log(tips)
-        // setMonthlyAnalysis(analysis)
-        // setMonthlyTips(tips)
+            userPrompt: prompt
+        };
+        setPrompt("");
+        const response = await promptGPT(data);
+        console.log(response)
+        setResponse(response)
         
     }
 
@@ -60,6 +123,7 @@ export default function Analytics({navigation, route}) {
         }
         fetchData();
     }, [refresh]);
+
 
     const [change, setChange] = useState(null);
     const [totalFoodSavedMonth, setTotalFoodSavedMonth] = useState(0);
@@ -145,9 +209,8 @@ export default function Analytics({navigation, route}) {
     }, [yearly]);
 
     return (
-        <View style={styles.container}>
-
-
+        <ScrollView style={styles.container}>
+            <KeyboardAwareScrollView style={{flex:1}} behavior='padding'>
 
             <View style={styles.topContainer}>
 
@@ -159,6 +222,7 @@ export default function Analytics({navigation, route}) {
                           <Text style={styles.title}>
                                 Monthly report - June
                             </Text>
+                            
                             {/* <Text style={styles.title}>
                                 Monthly report - {monthNames[new Date().getMonth()]}
                             </Text> */}
@@ -195,7 +259,7 @@ export default function Analytics({navigation, route}) {
 
 
 
-                ) : yearly && selected==="yearly" ? (
+                ) : filteredYearly && selected==="yearly" ? (
                     <View style={{flex:1}}>
                           <Text style={styles.title}>
                                 Yearly report - 2024
@@ -255,11 +319,14 @@ export default function Analytics({navigation, route}) {
                     Yearly
                 </Button>
             </View>
+        
+            <View style={styles.analyticsContainer}>
 
             <View style={styles.midContainer}>
+                <>
                 
                 { filteredMonthly && selected==="monthly"? (
-                <View>
+                <View style={styles.dataContainer}>
                     { averageFoodSavedPerDay < averageThreshold ? (
                     // Needs improvement
                     <>
@@ -300,8 +367,8 @@ export default function Analytics({navigation, route}) {
                     </View>
                 </View>
 
-                ) : yearly && selected==="yearly" ? (
-                    <View>
+                ) : filteredYearly && selected==="yearly" ? (
+                <View style={styles.dataContainer}>
                     { averageFoodSavedPerMonth < averageThreshold ? (
                     // Needs improvement
                     <>
@@ -336,10 +403,6 @@ export default function Analytics({navigation, route}) {
                         <Text style={styles.subtitle}>Days with no food saved: {monthWithNoFoodSaved.length}</Text>
                     </>
 
-                    <View>
-
-
-                    </View>
                 </View>
 
 
@@ -350,41 +413,110 @@ export default function Analytics({navigation, route}) {
                 )
 
                 }
-            </View>
-            <View style={styles.bottomContainer}>
-                <Text>hello</Text>
-                <Button mode='contained' onPress={handleFetch}>Response</Button>
+                </>
+                
+                { filteredMonthly && selected==="monthly" ? (
 
-            </View>
-        </View>
+                    <View style={styles.bottomContainer}>
+                        <View style={styles.tipContainer}>
+                            <Text style={{fontSize: 23,marginBottom: 10, fontWeight:'bold'}}>Personalised analysis:</Text>
+                                <View style={{flex:1, flexDirection:'row', width:'85%'}}>
+                                    <Text style={{fontSize: 15,fontWeight: 'bold', marginBottom: 10}}>Analysis:</Text>
+                                    <Text style={styles.subtitle}>{monthlyAnalysis}</Text>    
+                                </View>
+                                <View style={{flex:1, flexDirection:'row', width:'85%'}}>
+                                    <Text style={{fontSize: 15,fontWeight: 'bold', marginBottom: 10}}>Tips:        </Text>
+                                    <Text style={styles.subtitle}>{monthlyTips}</Text>
+                                </View>
+                        </View>
+                    </View>
+
+                ) : filteredYearly && selected==="yearly" ? (
+                    <View style={styles.bottomContainer}>
+                        <View style={styles.tipContainer}>
+                            <Text style={{fontSize: 23,marginBottom: 10, fontWeight:'bold'}}>Personalised analysis:</Text>
+                                <View style={{flex:1, flexDirection:'row', width:'85%'}}>
+                                    <Text style={{fontSize: 15,fontWeight: 'bold', marginBottom: 10}}>Analysis:</Text>
+                                    <Text style={styles.subtitle}>{yearlyAnalysis}</Text>    
+                                </View>
+                                <View style={{flex:1, flexDirection:'row', width:'85%'}}>
+                                    <Text style={{fontSize: 15,fontWeight: 'bold', marginBottom: 10}}>Tips:        </Text>
+                                    <Text style={styles.subtitle}>{yearlyTips}</Text>
+                                </View>
+                        </View>
+                    </View>
+
+                ): (
+                    <Text style={styles.title}>AI is currently analysing your data...</Text>
+                )}
+                <View style={styles.chatbotContainer}>
+                        
+                        <View style={styles.chatbotHeader}>
+                            <Text style={{fontSize: 20,fontWeight: 'bold',paddingTop:5, color:'white', paddingBottom:10,}}>Welcome to BitesAI</Text>
+                            <Text style={{fontSize: 15,fontWeight: 'bold',marginBottom: 10, color:'white', lineHeight:20}}>I can answer climate change related questions or anything about food waste!</Text>
+                        </View>
+                        <View style={styles.responseContainer}>
+                            
+                            <View style={{flexDirection:'column'}}>
+
+
+                                { response &&
+                                <>
+                                <Text style={{fontWeight:'bold', fontSize:16, color:'white'}}>BitesAI: </Text>
+                                <Text style={{fontSize:15, color:'white', lineHeight:25, marginVertical:10,}}>{response}</Text>
+                                </>
+                                }   
+                            </View>
+                        </View>
+
+                        <View style={styles.promptContainer}>
+                            <TextInput 
+                            style={styles.input}
+                            placeholder='Ask me a question'
+                            value={prompt}
+                            onChangeText={setPrompt}
+                            ></TextInput>
+                            <Button style={styles.sendButton} onPress={handleSend} labelStyle={{color:'black', alignSelf:'center'}}>Send</Button>
+                        </View>
+
+
+                     </View>
+                
+
+                    </View>
+                </View>
+
+            </KeyboardAwareScrollView>
+
+        </ScrollView>
     )   
 }
 
 const styles = StyleSheet.create({
     container : { 
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        // justifyContent: 'center',
+        // alignItems: 'center',
         backgroundColor:'white'
     },
     buttonContainer: {
         // flex:1,
         flexDirection: 'row',
-        justifyContent: "center",
-        paddingTop:20,
+        justifyContent: "space-evenly",
+        paddingTop:0,
         width: '100%',
         paddingHorizontal: 10,
-        marginBottom: 20,
-        paddingBottom: 20,
+        // marginBottom: 20,
+        paddingBottom: 10,
         // backgroundColor: "black",
-        borderBottomColor: "black",
-        borderBottomWidth: 1,
+        // borderBottomColor: "black",
+        // borderBottomWidth: 1,
     },
     title: {
-        fontSize: 27,
+        fontSize: 23,
         fontWeight: 'bold',
         marginBottom: 10,
-        textAlign: "center"
+        // textAlign: "center"
     },
     subtitle: {
         fontSize: 15,
@@ -403,21 +535,60 @@ const styles = StyleSheet.create({
         paddingTop: 20,
 
     },
+    dataContainer: { 
+        flex:2,
+        width: "100%",
+        borderBottomColor: "black",
+        borderBottomWidth: 1,
+    },
     midContainer: {
-        flex: 3,
+        flex: 1,
         // paddingVertical: 20,
+        flexGrow: 1,
         width: "100%",
         padding:10,
-        alignItems: "center",
+        // backgroundColor: "black",
+ 
+    },
+    chatbotContainer: {
+        flexGrow:1,
+        width: "95%",
+        paddingTop:10,
+        justifyContent: 'center',
+        alignItems:'center',
+        backgroundColor: '#494959',
+        borderColor:'black',
+        borderWidth:2,
+        borderRadius:20,
+    },  
+    analyticsContainer: {
+        flex:6,
+        width:'100%'
+    },  
+    tipContainer: {
+        flex:1,
+        borderColor: "black",
+        // borderWidth: 1,
+        // borderRadius: 10,
+        width: "100%",
+    },
+    responseContainer: {
+        alignItems: 'center',
+        width:"90%",
+    },
+    chatbotHeader: {
+        alignItems: 'center',
+        width:"90%",
+        // backgroundColor:'grey',
+        borderRadius:30,
     },
     bottomContainer: {
-        flex: 3,
+        flexGrow: 1,
         width: "100%",
         justifyContent: "center",
         alignItems: "center",
         alignContent: "center",
-        backgroundColor: "white",
-
+    
     },
     button: {
         backgroundColor: "black",
@@ -432,18 +603,44 @@ const styles = StyleSheet.create({
     buttonSelected: {
         backgroundColor: "black",
         color: "white",
-        
+        marginleft:5,
         
     },
     buttonUnselected: {
         backgroundColor: "grey",
         color: "black",
+        marginleft:5,
         
     },
-      buttonLabel: {
+    buttonLabel: {
         color: "white",
         fontSize: 15,
         fontWeight: "bold",
       },
+
+    promptContainer: {
+        flex:1,
+        justifyContent:'flex-end',
+        alignItems:'center',
+        paddingBottom: 20,
+        flexDirection:'row',
+        alignContent:'center',
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: "gray",
+        padding: 10,
+        marginTop: 10,
+        width: 300,
+        height:20,
+        backgroundColor: "white",
+        marginRight:10,
+    },
+    sendButton: {
+        alignSelf:'center',
+        backgroundColor:'white',
+        marginTop:10,
+    }
+
 
 });

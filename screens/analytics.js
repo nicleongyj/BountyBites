@@ -4,15 +4,38 @@ import React, {useState, useRef, useEffect} from 'react';
 import { updateAnalytics, retrieveMonthlyAnalytics, retrieveYearlyAnalytics } from '../firestoreUtils';
 import { Button, Switch } from 'react-native-paper';
 import { BarChart, LineChart } from 'react-native-chart-kit';
+import { FetchAPI, FetchCompletions, getRestaurantTipsMonthly } from "../openaiConfig"
 
 export default function Analytics({navigation, route}) {
-    const { userId } = route.params;
+    const { userId, restaurantData } = route.params;
     const [selected, setSelected] = useState("monthly")
     const [ refresh, setRefresh] = useState(true)
     const [ loadedMonthly, setLoadedMonthly ] = useState(false)
     const [monthly, setMonthly] = useState(null)
     const [ loadedYearly, setLoadedYearly ] = useState(false)
     const [yearly, setYearly] = useState(null)
+    const [monthylAnalysis, setMonthlyAnalysis] = useState(null)
+    const [monthlyTips, setMonthlyTips] = useState(null)
+    const [yearlyAnalysis, setYearlyAnalysis] = useState(null)
+    const [yearlyTips, setYearlyTips] = useState(null)
+
+    const handleFetch = async () => {
+        const data = {
+            dailyData: monthly,
+            restaurantType: restaurantData.type,
+            averageFoodSavedPerDay: averageFoodSavedPerDay,
+            percentageChangeFromPreviousMonth: change,
+            totalFoodSavedPerMonth: totalFoodSavedMonth,
+            daysWithNoFoodSaved: daysWithNoFoodSaved,
+          };
+        const response = await getRestaurantTipsMonthly(data);
+        const [analysis, tips] = response.split('\n');
+        console.log(analysis)
+        console.log(tips)
+        // setMonthlyAnalysis(analysis)
+        // setMonthlyTips(tips)
+        
+    }
 
     const handlePress = (value) => {
         setSelected(value);
@@ -72,8 +95,7 @@ export default function Analytics({navigation, route}) {
                     }, {});
                 setFilteredMonthly(filteredMonthly);
                 const averageFoodSavedPerDay = (totalFoodSaved / (Object.keys(results).length)).toFixed(1);
-                const daysWithNoFoodSaved = Object.keys(monthly).filter(day => monthly[day] === 0);
-                setTotalFoodSavedMonth(totalFoodSaved);
+                const daysWithNoFoodSaved = Object.keys(filteredMonthly).filter(day => filteredMonthly[day] === 0).length;                setTotalFoodSavedMonth(totalFoodSaved);
                 setAverageFoodSavedPerDay(averageFoodSavedPerDay);
                 setDaysWithNoFoodSaved(daysWithNoFoodSaved);
             } catch (error) {
@@ -269,7 +291,7 @@ export default function Analytics({navigation, route}) {
                     <>
                        <Text style={styles.subtitle}>Total food saved this month: {totalFoodSavedMonth}</Text>
                         <Text style={styles.subtitle}>Average food saved per day: {averageFoodSavedPerDay}</Text>
-                        <Text style={styles.subtitle}>Days with no food saved: {monthWithNoFoodSaved}</Text>
+                        <Text style={styles.subtitle}>Days with no food saved: {daysWithNoFoodSaved}</Text>
                     </>
 
                     <View>
@@ -311,7 +333,7 @@ export default function Analytics({navigation, route}) {
                     <>
                        <Text style={styles.subtitle}>Total food saved this year: {totalFoodSavedYear}</Text>
                         <Text style={styles.subtitle}>Average food saved per month: {averageFoodSavedPerMonth}</Text>
-                        <Text style={styles.subtitle}>Days with no food saved: {daysWithNoFoodSaved.length}</Text>
+                        <Text style={styles.subtitle}>Days with no food saved: {monthWithNoFoodSaved.length}</Text>
                     </>
 
                     <View>
@@ -328,10 +350,10 @@ export default function Analytics({navigation, route}) {
                 )
 
                 }
-
-
-
-
+            </View>
+            <View style={styles.bottomContainer}>
+                <Text>hello</Text>
+                <Button mode='contained' onPress={handleFetch}>Response</Button>
 
             </View>
         </View>
@@ -382,11 +404,19 @@ const styles = StyleSheet.create({
 
     },
     midContainer: {
-        flex: 5,
+        flex: 3,
         // paddingVertical: 20,
         width: "100%",
         padding:10,
         alignItems: "center",
+    },
+    bottomContainer: {
+        flex: 3,
+        width: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center",
+        backgroundColor: "white",
 
     },
     button: {

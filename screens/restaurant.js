@@ -54,87 +54,62 @@ export default function Restaurant({ navigation }) {
       <View style={styles.topContainer}>
         <Text style={styles.heading}>Restaurant Information</Text>
       </View>
-        
-      
-      
+
       <View style={styles.middleContainer}>
         {restaurantData ? (
           <View style={styles.infoContainer}>
-
-            <View style={{    marginBottom: 20, flexDirection: "row", alignSelf:'center' }}>
+            <View
+              style={{
+                marginBottom: 20,
+                flexDirection: "row",
+                alignSelf: "center",
+              }}
+            >
               <Image
                 source={{ uri: restaurantData.link }}
                 style={{ width: 100, height: 100, alignSelf: "center" }}
               />
             </View>
 
-
             <View style={styles.textContainer}>
-              <Text style={styles.textTitle}>
-                  Name:   
-                </Text>
+              <Text style={styles.textTitle}>Name:</Text>
               <Text style={styles.infoText}>
                 {restaurantData.restaurantName}
               </Text>
             </View>
 
             <View style={styles.textContainer}>
-              <Text style={styles.textTitle}>
-                  Username:   
-                </Text>
-              <Text style={styles.infoText}>
-                {restaurantData.username}
-              </Text>
+              <Text style={styles.textTitle}>Username:</Text>
+              <Text style={styles.infoText}>{restaurantData.username}</Text>
             </View>
 
             <View style={styles.textContainer}>
-              <Text style={styles.textTitle}>
-                  Location:   
-                </Text>
-              <Text style={styles.infoText}>
-                {restaurantData.location}
-              </Text>
+              <Text style={styles.textTitle}>Location:</Text>
+              <Text style={styles.infoText}>{restaurantData.location}</Text>
             </View>
 
             <View style={styles.textContainer}>
-              <Text style={styles.textTitle}>
-                  Longitude:   
-                </Text>
-              <Text style={styles.infoText}>
-                {restaurantData.longitude}
-              </Text>
+              <Text style={styles.textTitle}>Longitude:</Text>
+              <Text style={styles.infoText}>{restaurantData.longitude}</Text>
             </View>
 
             <View style={styles.textContainer}>
-              <Text style={styles.textTitle}>
-                  Latitude:   
-                </Text>
-              <Text style={styles.infoText}>
-                {restaurantData.latitude}
-              </Text>
+              <Text style={styles.textTitle}>Latitude:</Text>
+              <Text style={styles.infoText}>{restaurantData.latitude}</Text>
             </View>
 
             <View style={styles.textContainer}>
-              <Text style={styles.textTitle}>
-                  Closing time:   
-                </Text>
-              <Text style={styles.infoText}>
-                {restaurantData.closingTime}
-              </Text>
+              <Text style={styles.textTitle}>Closing time:</Text>
+              <Text style={styles.infoText}>{restaurantData.closingTime}</Text>
             </View>
-
           </View>
         ) : (
           <Text style={styles.noDataText}>No restaurant data found</Text>
         )}
       </View>
 
-      <View style={styles.bottomContainer}>
+      <View style={styles.bottomContainer}></View>
 
-
-      </View> 
-
-      
       <Button mode="contained" onPress={handleShareFood} style={styles.button}>
         Share Food
       </Button>
@@ -185,24 +160,23 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
-    borderColor: "black",
+    borderColor: "transparent",
     borderWidth: 1,
     borderRadius: 10,
     alignContent: "center",
     marginBottom: 20,
-    backgroundColor: "azure",
-
-  },  
+  },
   middleContainer: {
     flex: 4,
-  },  
+    paddingBottom: 20,
+  },
   bottomContainer: {
     flex: 2,
-  },  
+  },
   textContainer: {
     marginBottom: 20,
     // flex:1,
-    flexDirection: "row", 
+    flexDirection: "row",
   },
   heading: {
     fontSize: 24,
@@ -236,19 +210,19 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
   },
-  
+
   button: {
     marginTop: 10,
     width: "80%",
     alignSelf: "center",
     backgroundColor: "#6200ee", // Primary button color
   },
-  analyticsButton : {
+  analyticsButton: {
     marginTop: 10,
     width: "80%",
     alignSelf: "center",
     backgroundColor: "black", // Primary button color
-  },  
+  },
   logoutButton: {
     marginTop: 10,
     width: "80%",

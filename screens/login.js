@@ -4,10 +4,8 @@ import {
   StyleSheet,
   Image,
   TextInput,
-  Alert,
-  KeyboardAvoidingView,
   ActivityIndicator,
-  Pressable,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "react-native-paper";
@@ -54,8 +52,6 @@ export default function LoginScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.container}>
-        {/* <ImageBackground source={background} resizeMode='Stretch' style={{flex:1}} > */}
-
         <View style={styles.logoContainer}>
           <Text style={styles.title}>Bounty Bites</Text>
           <Text style={styles.subTitle}>
@@ -76,6 +72,8 @@ export default function LoginScreen({ navigation }) {
               onChangeText={setUsername}
               placeholder="Email"
               placeholderTextColor={"gray"}
+              keyboardType="email-address"
+              autoFocus={true}
             />
           </View>
 
@@ -89,6 +87,7 @@ export default function LoginScreen({ navigation }) {
               onChangeText={setPassword}
               placeholder="Password"
               placeholderTextColor={"grey"}
+              secureTextEntry={true}
             />
           </View>
 
@@ -101,11 +100,13 @@ export default function LoginScreen({ navigation }) {
             >
               Log In
             </Button>
-            {loading ? <ActivityIndicator color="black" /> : null}
+            {loading ? (
+              <ActivityIndicator style={styles.loader} color="black" />
+            ) : null}
           </View>
+
           <View style={styles.registerContainer}>
-            <Text>Dont have an account? </Text>
-            {/*<Text>Contact royce@bountybites.com to register your restaurant!</Text> */}
+            <Text>Don't have an account? </Text>
             <Button
               mode="contained"
               onPress={() => navigation.navigate("Register Screen")}
@@ -117,16 +118,14 @@ export default function LoginScreen({ navigation }) {
           </View>
 
           <View style={styles.tncContainer}>
-            <Pressable onPress={termsConditionHandler}>
+            <TouchableOpacity onPress={termsConditionHandler}>
               <Text style={styles.text1}>By continuing, you agree to our</Text>
               <Text style={styles.text2}>
                 Terms of Service and Privacy Policy
               </Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
         </View>
-
-        {/* </ImageBackground> */}
       </View>
     </SafeAreaView>
   );
@@ -137,10 +136,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     justifyContent: "center",
-    backgroundColor: "azure",
     backgroundColor: "white",
   },
-
   logoContainer: {
     flex: 2,
     paddingTop: "10%",
@@ -167,17 +164,16 @@ const styles = StyleSheet.create({
   textContainer: {
     flex: 3,
     flexDirection: "column",
-    // justifyContent: "center",
     alignItems: "center",
   },
-
   inputContainer: {
     marginTop: "5%",
     flexDirection: "row",
     alignItems: "center",
   },
   buttonContainer: {
-    flex: 1,
+    flex: 2,
+    flexDirection: "column",
     marginTop: "5%",
     flexDirection: "column",
     alignItems: "center",
@@ -205,14 +201,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   button: {
+    marginTop: 10,
+    width: 260,
+    alignSelf: "center",
     backgroundColor: "black",
-    width: 350,
-    height: 42,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 10,
-    marginTop: 20,
-    marginBottom: 10,
   },
   buttonLabel: {
     color: "white",
@@ -245,5 +237,8 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     fontWeight: "bold",
+  },
+  loader: {
+    marginTop: 10,
   },
 });

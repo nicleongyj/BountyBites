@@ -41,7 +41,7 @@ export default function Restaurant({ navigation }) {
 
   const handleViewAnalytics = () => {
     // Navigate to the Analytics screen
-    navigation.navigate("Analytics", { userId: userId });
+    navigation.navigate("Analytics", { userId: userId, restaurantData: restaurantData});
   };
 
   const handleViewFoodShared = () => {

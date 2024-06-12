@@ -179,57 +179,56 @@ export default function ShareFood({ navigation }) {
           <View style={styles.topContainer}>
             <Text style={styles.title}>Add a food item</Text>
           </View>
-          <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-            <View style={styles.midContainer}>
-              {renderInput("Name:", name, setName, "next")}
-              {renderInput("Price ($):", price, setPrice, "next")}
-              {renderInput("Discount (%):", discount, setDiscount, "next")}
-              {renderInput("Quantity:", quantity, setQuantity, "next")}
-            </View>
-
-            <View style={styles.cameraContainer}>
-              <Text style={styles.inputLabel}>Food Image</Text>
-              <View style={styles.imageContainer}>
-                <TouchableOpacity
-                  style={styles.cameraButton}
-                  onPress={enableCamera}
-                >
-                  <Text style={styles.cameraText}>
-                    {image == null ? "Take an Image" : "View image"}
-                  </Text>
-                </TouchableOpacity>
-
-                {image != null && (
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <Text style={{ fontWeight: "bold", marginLeft: 50 }}>
-                      Image:{" "}
-                    </Text>
-                    <Image
-                      source={{ uri: image }}
-                      style={{ height: 60, width: 60 }}
-                    />
-                  </View>
-                )}
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+              <View style={styles.midContainer}>
+                {renderInput("Name:", name, setName, "next")}
+                {renderInput("Original Price ($):", price, setPrice, "next")}
+                {renderInput("Discount (%):", discount, setDiscount, "next")}
+                {renderInput("Quantity:", quantity, setQuantity, "next")}
               </View>
-            </View>
-
-            <View style={styles.bottomContainer}>
-              <Button
-                mode="contained"
-                style={styles.submitButton}
-                onPress={handleShare}
-                disabled={submitting}
-              >
-                Share
-              </Button>
-              {submitting ? <ActivityIndicator color="black" /> : null}
-            </View>
-          </ScrollView>
-        </SafeAreaView>
-      ) : startCamera && !image ? (
-        <View style={{ flex: 1 }}>
-          <CameraView facing={facing} style={{ flex: 1 }} ref={cameraRef}>
-            <View style={styles.cameraBottomContainer}>
+  
+              <View style={styles.cameraContainer}>
+                <Text style={styles.inputLabel}>Add a picture</Text>
+                <View style={{ alignItems: "center" }}>
+                  <TouchableOpacity
+                    style={styles.cameraButton}
+                    onPress={enableCamera}
+                  >
+                    <Text style={styles.cameraText}>
+                      {image == null ? "Take a picture" : "View image"}
+                    </Text>
+                  </TouchableOpacity>
+  
+                  {image != null && (
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                      <Text style={{ fontWeight: "bold" }}>Image: </Text>
+                      <Image
+                        source={{ uri: image }}
+                        style={{ height: 60, width: 60 }}
+                      />
+                    </View>
+                  )}
+                </View>
+              </View>
+  
+              <View style={styles.bottomContainer}>
+                <Button
+                  mode="contained"
+                  style={styles.submitButton}
+                  onPress={handleShare}
+                  disabled={submitting}
+                >
+                  Share
+                </Button>
+                {submitting ? <ActivityIndicator color="black" /> : null}
+                
+              </View>
+            </ScrollView>
+          </SafeAreaView>
+        ) : startCamera && !image ? (
+          <View style={{ flex: 1 }}>
+            <CameraView facing={facing} style={{ flex: 1 }} ref={cameraRef}>
+              <View style={styles.cameraBottomContainer}>
               <TouchableOpacity
                 style={{
                   backgroundColor: "white",

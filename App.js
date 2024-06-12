@@ -28,7 +28,8 @@ export default function App() {
   const login = () => setIsLoggedIn(true);
   const logout = () => {
     setIsLoggedIn(false);
-    setUserId(null); // Clear userId on logout
+    setUserId(null);
+    setIsRestaurant(false);
   };
   const setRestaurant = () => setIsRestaurant(true);
 

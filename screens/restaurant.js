@@ -186,6 +186,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     // flex:1,
     flexDirection: "row",
+    justifyContent: "space-between",
   },
   heading: {
     fontSize: 24,
@@ -203,7 +204,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 5,
     color: "black",
-    textAlign: "center",
+    textAlign: "right",
+    width: "60%",
   },
   textTitle: {
     fontWeight: "bold",

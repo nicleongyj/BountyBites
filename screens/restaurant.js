@@ -52,114 +52,98 @@ export default function Restaurant({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
-        <Text style={styles.heading}>Restaurant Information</Text>
+        <Text style={styles.heading}>Restaurant Information 👨‍🍳</Text>
       </View>
-        
-      
-      
+
       <View style={styles.middleContainer}>
         {restaurantData ? (
           <View style={styles.infoContainer}>
-
-            <View style={{    marginBottom: 20, flexDirection: "row", alignSelf:'center' }}>
+            <View
+              style={{
+                marginBottom: 20,
+                flexDirection: "row",
+                alignSelf: "center",
+              }}
+            >
               <Image
                 source={{ uri: restaurantData.link }}
                 style={{ width: 100, height: 100, alignSelf: "center" }}
               />
             </View>
 
-
             <View style={styles.textContainer}>
-              <Text style={styles.textTitle}>
-                  Name:   
-                </Text>
+              <Text style={styles.textTitle}>Name:</Text>
               <Text style={styles.infoText}>
                 {restaurantData.restaurantName}
               </Text>
             </View>
 
             <View style={styles.textContainer}>
-              <Text style={styles.textTitle}>
-                  Username:   
-                </Text>
-              <Text style={styles.infoText}>
-                {restaurantData.username}
-              </Text>
+              <Text style={styles.textTitle}>Username:</Text>
+              <Text style={styles.infoText}>{restaurantData.username}</Text>
             </View>
 
             <View style={styles.textContainer}>
-              <Text style={styles.textTitle}>
-                  Location:   
-                </Text>
-              <Text style={styles.infoText}>
-                {restaurantData.location}
-              </Text>
+              <Text style={styles.textTitle}>Location:</Text>
+              <Text style={styles.infoText}>{restaurantData.location}</Text>
             </View>
 
             <View style={styles.textContainer}>
-              <Text style={styles.textTitle}>
-                  Longitude:   
-                </Text>
-              <Text style={styles.infoText}>
-                {restaurantData.longitude}
-              </Text>
+              <Text style={styles.textTitle}>Longitude:</Text>
+              <Text style={styles.infoText}>{restaurantData.longitude}</Text>
             </View>
 
             <View style={styles.textContainer}>
-              <Text style={styles.textTitle}>
-                  Latitude:   
-                </Text>
-              <Text style={styles.infoText}>
-                {restaurantData.latitude}
-              </Text>
+              <Text style={styles.textTitle}>Latitude:</Text>
+              <Text style={styles.infoText}>{restaurantData.latitude}</Text>
             </View>
 
             <View style={styles.textContainer}>
-              <Text style={styles.textTitle}>
-                  Closing time:   
-                </Text>
-              <Text style={styles.infoText}>
-                {restaurantData.closingTime}
-              </Text>
+              <Text style={styles.textTitle}>Closing time:</Text>
+              <Text style={styles.infoText}>{restaurantData.closingTime}</Text>
             </View>
-
           </View>
         ) : (
           <Text style={styles.noDataText}>No restaurant data found</Text>
         )}
       </View>
 
-      <View style={styles.bottomContainer}>
+      <View style={styles.bottomContainer}></View>
 
+      <View style={styles.buttonRow}>
+        <Button
+          mode="contained"
+          onPress={handleShareFood}
+          style={styles.restaurantButton}
+        >
+          Share Food
+        </Button>
+        <Button
+          mode="contained"
+          onPress={handleViewFoodShared}
+          style={styles.restaurantButton}
+        >
+          Manage Food
+        </Button>
+      </View>
 
-      </View> 
+      <View style={styles.buttonRow}>
+        <Button
+          mode="contained"
+          onPress={handleViewAnalytics}
+          style={styles.analyticsButton}
+        >
+          View Analytics
+        </Button>
 
-      
-      <Button mode="contained" onPress={handleShareFood} style={styles.button}>
-        Share Food
-      </Button>
-      <Button
-        mode="contained"
-        onPress={handleViewFoodShared}
-        style={styles.button}
-      >
-        View Today's Food
-      </Button>
-      <Button
-        mode="contained"
-        onPress={handleViewAnalytics}
-        style={styles.analyticsButton}
-      >
-        View Analytics
-      </Button>
-
-      <Button
-        mode="contained"
-        onPress={handleLogout}
-        style={styles.logoutButton}
-      >
-        Log Out
-      </Button>
+        <Button
+          mode="contained"
+          onPress={handleLogout}
+          style={styles.logoutButton}
+        >
+          Log Out
+        </Button>
+      </View>
 
       {/* Share Food Modal */}
       <ShareFoodModal
@@ -185,24 +169,24 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
-    borderColor: "black",
+    borderColor: "transparent",
     borderWidth: 1,
     borderRadius: 10,
     alignContent: "center",
     marginBottom: 20,
-    backgroundColor: "azure",
-
-  },  
+  },
   middleContainer: {
     flex: 4,
-  },  
+    paddingBottom: 20,
+  },
   bottomContainer: {
     flex: 2,
-  },  
+  },
   textContainer: {
     marginBottom: 20,
     // flex:1,
-    flexDirection: "row", 
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   heading: {
     fontSize: 24,
@@ -220,7 +204,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 5,
     color: "black",
-    textAlign: "center",
+    textAlign: "right",
+    width: "60%",
   },
   textTitle: {
     fontWeight: "bold",
@@ -236,23 +221,57 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
   },
-  
+
   button: {
-    marginTop: 10,
+    marginVertical: 10,
     width: "80%",
     alignSelf: "center",
     backgroundColor: "#6200ee", // Primary button color
   },
-  analyticsButton : {
-    marginTop: 10,
-    width: "80%",
+  restaurantButton: {
+    marginVertical: 10,
+    width: "45%",
     alignSelf: "center",
-    backgroundColor: "black", // Primary button color
-  },  
+    backgroundColor: "#6200ee", // Primary button color
+    borderRadius: 5,
+  },
+  analyticsButton: {
+    marginVertical: 10,
+    width: "45%",
+    alignSelf: "center",
+    backgroundColor: "#048a09", // Teal color for analytics button
+    borderRadius: 5,
+  },
   logoutButton: {
-    marginTop: 10,
-    width: "80%",
+    marginVertical: 10,
+    width: "45%",
     alignSelf: "center",
-    backgroundColor: "#d9534f", // Red color for the logout button
+    backgroundColor: "#d32f2f", // Red color for the logout button
+    borderRadius: 5,
+  },
+  icon: {
+    marginRight: 10,
+  },
+  modalContainer: {
+    backgroundColor: "white",
+    padding: 20,
+    margin: 20,
+    borderRadius: 10,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  modalButton: {
+    marginVertical: 10,
+    width: "50%",
+    alignSelf: "center",
+    backgroundColor: "#6200ee", // Primary button color
+  },
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
   },
 });

@@ -7,7 +7,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   TouchableOpacity,
-  Image
+  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, TextInput } from "react-native-paper";
@@ -17,7 +17,7 @@ import { LoginContext, RestaurantContext } from "../App";
 import { storeRestaurantData } from "../firestoreUtils";
 import * as Location from "expo-location";
 import DropDownPicker from "react-native-dropdown-picker";
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from "expo-image-picker";
 import { uploadRestaurantPhoto } from "../firestorageUtils";
 
 export default function RegisterScreen({ navigation }) {
@@ -33,6 +33,10 @@ export default function RegisterScreen({ navigation }) {
 
   const auth = FIREBASE_AUTH;
 
+  const termsConditionHandler = () => {
+    navigation.navigate("Terms and Condition Screen");
+  };
+
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -40,11 +44,11 @@ export default function RegisterScreen({ navigation }) {
       aspect: [4, 3],
       quality: 1,
     });
-  
+
     console.log(result);
-  
+
     if (!result.cancelled) {
-        setImage(result.assets[0].uri);
+      setImage(result.assets[0].uri);
     }
   };
 
@@ -65,7 +69,7 @@ export default function RegisterScreen({ navigation }) {
         setLoading(false);
         return;
       }
-      console.log("coordinates" + latitude + ", " + longitude)
+      console.log("coordinates" + latitude + ", " + longitude);
       const response = await createUserWithEmailAndPassword(
         auth,
         username,
@@ -101,21 +105,20 @@ export default function RegisterScreen({ navigation }) {
 
   const geocodeAddress = async () => {
     try {
-        console.log("Geocoding address:", location)
-        const geoencodedLocation = await Location.geocodeAsync(location);
-        console.log("Geocoded location:", geoencodedLocation);
-        return geoencodedLocation[0]
+      console.log("Geocoding address:", location);
+      const geoencodedLocation = await Location.geocodeAsync(location);
+      console.log("Geocoded location:", geoencodedLocation);
+      return geoencodedLocation[0];
     } catch (error) {
-        console.error("Error geocoding address:", error);
-        alert("Error geocoding address: " + error.message);
+      console.error("Error geocoding address:", error);
+      alert("Error geocoding address: " + error.message);
     }
-  }
+  };
 
   const [foodType, setFoodType] = useState([
-    { label : 'Restaurant', value: 'Restaurant' },
-    { label : 'Bakery', value: 'Bakery' },
-    { label : 'Supermarket', value: 'Supermarket' },
-
+    { label: "Restaurant", value: "Restaurant" },
+    { label: "Bakery", value: "Bakery" },
+    { label: "Supermarket", value: "Supermarket" },
   ]);
   const [type, setType] = useState("Select a food type");
   const [open, setOpen] = useState(false);
@@ -124,22 +127,32 @@ export default function RegisterScreen({ navigation }) {
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
         {/* <ScrollView contentContainerStyle={styles.scrollView}> */}
-        <View style={{flex:1,}}>
+        <View style={{ flex: 1 }}>
+          <View style={{ flex: 2, alignItems: "center", paddingBottom: 15 }}>
+            <Text style={styles.title}>Create account</Text>
+          </View>
 
-            <View style={{flex:2, alignItems:"center",paddingBottom:15,  }}>
-                <Text style={styles.title}>Create account</Text>
-            </View>
-
-        <View style={{ flex:2, alignItems: "center",zIndex:111, paddingBottom:20}}>
+          <View
+            style={{
+              flex: 2,
+              alignItems: "center",
+              zIndex: 111,
+              paddingBottom: 20,
+            }}
+          >
             <DropDownPicker
               open={open}
               setOpen={setOpen}
               items={foodType}
               value={type}
               setValue={setType}
-              containerStyle={{ height: 40, width: 320, zIndex: 1000}}
-              style={{     backgroundColor: 'white',borderColor: 'rgba(0, 0, 0, 0.5)', borderWidth: 1}}
-              dropDownContainerStyle={{ backgroundColor: '#fafafa' }}
+              containerStyle={{ height: 40, width: 320, zIndex: 1000 }}
+              style={{
+                backgroundColor: "white",
+                borderColor: "rgba(0, 0, 0, 0.5)",
+                borderWidth: 1,
+              }}
+              dropDownContainerStyle={{ backgroundColor: "#fafafa" }}
               defaultValue={type}
               onChangeValue={(value) => setType(value)}
             />
@@ -198,8 +211,6 @@ export default function RegisterScreen({ navigation }) {
             />
           </View>
 
-    
-
           <View style={styles.inputContainer}>
             <TextInput
               autoCapitalize="none"
@@ -211,9 +222,7 @@ export default function RegisterScreen({ navigation }) {
               placeholder="Address or Postal Code"
               placeholderTextColor={"grey"}
             />
-           
           </View>
-
 
           {/* <View style={styles.coordinates}>
 
@@ -253,33 +262,49 @@ export default function RegisterScreen({ navigation }) {
 
           <View style={styles.coordinates}>
             {/* <Text style={{fontSize:15, fontWeight:'bold'}}t>Pick restaurant image:</Text> */}
-            <View style={{ alignItems: "center", flexDirection:'row' , paddingLeft:'10%'}}>
-                <View style={{flex:1, alignItems:'center', alignContent:'center'}}>
-                  <TouchableOpacity
-                    style={styles.cameraButton}
-                    onPress={pickImage}
-                  >
-                    <Text style={styles.cameraText}>
-                      {image == null ? "Choose a picture" : "Change image"}
-                    </Text>
-                  </TouchableOpacity>
-                  </View>
+            <View
+              style={{
+                alignItems: "center",
+                flexDirection: "row",
+                paddingLeft: "10%",
+              }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                  alignContent: "center",
+                }}
+              >
+                <TouchableOpacity
+                  style={styles.cameraButton}
+                  onPress={pickImage}
+                >
+                  <Text style={styles.cameraText}>
+                    {image == null ? "Choose an Image" : "Change image"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
 
-
-                    <View style={{flex:1, alignItems:'center', alignContent:'center', flexDirection:'row'}}>
-                      
-                      {image != null && (
-                        <>
-                        <Text style={{ fontWeight: "bold" }}>Image: </Text>
-                      <Image
-                        source={{ uri: image }}
-                        style={{ height: 60, width: 60 }}
-                      />
-                      </>
-                    )}
-                    </View>
-            
-                </View>
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                  alignContent: "right",
+                  flexDirection: "row",
+                }}
+              >
+                {image != null && (
+                  <>
+                    <Text style={{ fontWeight: "bold" }}>Image: </Text>
+                    <Image
+                      source={{ uri: image }}
+                      style={{ height: 60, width: 60 }}
+                    />
+                  </>
+                )}
+              </View>
+            </View>
           </View>
 
           <View style={styles.buttonContainer}>
@@ -294,14 +319,15 @@ export default function RegisterScreen({ navigation }) {
             {loading ? <ActivityIndicator color="black" /> : null}
           </View>
 
-          <View style={styles.mainButtonContainer}>
-            <Text style={styles.text1}>By continuing you agree to our</Text>
-            <Text style={styles.text2}>
-              Terms of Service and Privacy Policy
-            </Text>
+          <View style={styles.tncContainer}>
+            <TouchableOpacity onPress={termsConditionHandler}>
+              <Text style={styles.text1}>By continuing, you agree to our</Text>
+              <Text style={styles.text2}>
+                Terms of Service and Privacy Policy
+              </Text>
+            </TouchableOpacity>
           </View>
-
-          </View>
+        </View>
         {/* </ScrollView> */}
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -346,19 +372,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   inputContainer: {
-    flex:3,
+    flex: 3,
     marginTop: "5%",
     alignItems: "center",
-    zIndex:1
+    zIndex: 1,
   },
   coordinates: {
     flex: 1,
     paddingTop: "10%",
-    flexDirection:'row',
+    flexDirection: "row",
     alignContent: "center",
     justifyContent: "center",
     alignItems: "center",
-
   },
   titleContainer: {
     flex: 1,
@@ -395,14 +420,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   button: {
+    marginTop: 10,
+    width: 260,
+    alignSelf: "center",
     backgroundColor: "black",
-    width: 350,
-    height: 42,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 10,
-    marginTop: 20,
-    marginBottom: 10,
   },
   buttonLabel: {
     color: "white",
@@ -418,7 +439,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginTop: 10,
     // marginBottom: 10,
-
   },
   locationButtonLabel: {
     color: "white",
@@ -429,11 +449,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: "black",
     fontSize: 12,
+    textAlign: "center",
   },
   text2: {
     color: "black",
     fontSize: 12,
     fontWeight: "bold",
+    textAlign: "center",
   },
   cameraButton: {
     width: 130,
@@ -450,5 +472,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
+  tncContainer: {
+    flex: 2,
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    alignContent: "center",
+  },
 });
-

@@ -33,6 +33,10 @@ export default function RegisterScreen({ navigation }) {
 
   const auth = FIREBASE_AUTH;
 
+  const termsConditionHandler = () => {
+    navigation.navigate("Terms and Condition Screen");
+  };
+
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -315,11 +319,13 @@ export default function RegisterScreen({ navigation }) {
             {loading ? <ActivityIndicator color="black" /> : null}
           </View>
 
-          <View style={styles.mainButtonContainer}>
-            <Text style={styles.text1}>By continuing you agree to our</Text>
-            <Text style={styles.text2}>
-              Terms of Service and Privacy Policy
-            </Text>
+          <View style={styles.tncContainer}>
+            <TouchableOpacity onPress={termsConditionHandler}>
+              <Text style={styles.text1}>By continuing, you agree to our</Text>
+              <Text style={styles.text2}>
+                Terms of Service and Privacy Policy
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
         {/* </ScrollView> */}
@@ -443,11 +449,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: "black",
     fontSize: 12,
+    textAlign: "center",
   },
   text2: {
     color: "black",
     fontSize: 12,
     fontWeight: "bold",
+    textAlign: "center",
   },
   cameraButton: {
     width: 130,
@@ -463,5 +471,12 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
     textAlign: "center",
+  },
+  tncContainer: {
+    flex: 2,
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    alignContent: "center",
   },
 });

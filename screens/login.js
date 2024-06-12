@@ -232,11 +232,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: "black",
     fontSize: 12,
+    textAlign: "center",
   },
   text2: {
     color: "black",
     fontSize: 12,
     fontWeight: "bold",
+    textAlign: "center",
   },
   loader: {
     marginTop: 10,

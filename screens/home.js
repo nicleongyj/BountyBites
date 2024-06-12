@@ -27,6 +27,8 @@ import * as Location from "expo-location";
 import waiting from "../assets/waiting.png";
 import RefreshImage from "../assets/refresh.png";
 
+const SearchIcon = () => <Icon name="search" size={20} color="black" />;
+
 export default function Home({ navigation }) {
   const { logout } = useContext(LoginContext);
 
@@ -257,13 +259,7 @@ export default function Home({ navigation }) {
                   underlineColor="transparent"
                   activeUnderlineColor="transparent"
                   onChangeText={(text) => setSearch(text)}
-                  left={
-                    <TextInput.Icon
-                      icon={() => (
-                        <Icon name="search" size={20} color="black" />
-                      )}
-                    />
-                  }
+                  left={<SearchIcon />} // Use the SearchIcon component here
                 />
 
                 <Button

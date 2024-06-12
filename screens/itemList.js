@@ -86,21 +86,21 @@ export default function ItemList({ navigation, route }) {
       </View>
 
       <View style={styles.bottomContainer}>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <View style={{ flexDirection: "column", alignItems: "center" }}>
           <Text style={styles.address}>{address}</Text>
-          <Text style={styles.address}>:</Text>
-          <Text style={styles.address}>Closes at</Text>
-          <Text
-            style={{
-              fontSize: 15,
-              fontWeight: "bold",
-              padding: 10,
-              color: "#e0040f",
-            }}
-          >
-            {restaurant.closingTime}
-          </Text>
-          <Text style={styles.address}></Text>
+          <View style={{ flexDirection: "row" }}>
+            <Text style={styles.address}>Closes at</Text>
+            <Text
+              style={{
+                fontSize: 15,
+                fontWeight: "bold",
+                padding: 10,
+                color: "#e0040f",
+              }}
+            >
+              {restaurant.closingTime}
+            </Text>
+          </View>
         </View>
         <Button
           mode="contained"
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   bottomContainer: {
-    flex: 2,
+    flex: 4,
     alignItems: "center",
     borderTopColor: "black",
     borderTopWidth: 1,

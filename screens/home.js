@@ -41,6 +41,8 @@ export default function Home({ navigation }) {
   const [userLatitude, setUserLatitude] = useState(null);
   const locationFetched = useRef(false);
 
+  const SearchIcon = () => <Icon name="search" size={20} color="black" />;
+
   const handleFilter = () => {
     setVisible(!visible);
   };
@@ -248,13 +250,7 @@ export default function Home({ navigation }) {
                   underlineColor="transparent"
                   activeUnderlineColor="transparent"
                   onChangeText={(text) => setSearch(text)}
-                  left={
-                    <TextInput.Icon
-                      icon={() => (
-                        <Icon name="search" size={20} color="black" />
-                      )}
-                    />
-                  }
+                  left={<SearchIcon />} 
                 />
 
                 <Button

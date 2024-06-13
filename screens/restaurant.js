@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image } from "react-native";
 import { Button } from "react-native-paper";
 import { LoginContext } from "../App";
 import { fetchRestaurantData } from "../firestoreUtils";
-import ShareFoodModal from "./ShareFoodModal";
+import ShareFoodModal from "./shareFoodModal";
 
 export default function Restaurant({ navigation }) {
   const { logout } = useContext(LoginContext);

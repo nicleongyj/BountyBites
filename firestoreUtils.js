@@ -50,6 +50,7 @@ export const fetchAllRestaurants = async () => {
       collectionSnap.docs.map(async (doc) => {
         const restaurant = doc.data();
         const items = await fetchFoodItems(doc.id);
+        console.log(items);
 
         // Calculate the maximum discount for the restaurant
         let discount = 0;
@@ -104,7 +105,7 @@ export const deleteFoodItem = async (index, foodItems, userId) => {
   try {
     const today = getTodayAsString();
     const updatedItems = foodItems.filter((_, i) => i !== index);
-    const docRef = doc(FIREBASE_DB, today, userId);
+    const docRef = doc(FIREBASE_DB, "2024-6-12", userId);
     await updateDoc(docRef, { foodItems: updatedItems });
     await updateAnalytics(userId, -1 * foodItems[index].quantity);
     return updatedItems;
@@ -123,7 +124,7 @@ export const getTodayAsString = () => {
 export const storeFoodData = async (userId, foodData) => {
   try {
     const today = getTodayAsString();
-    const docRef = doc(FIREBASE_DB, today, userId);
+    const docRef = doc(FIREBASE_DB, "2024-6-12", userId);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
@@ -183,7 +184,7 @@ export const getRestaurantDataFromFoodToday = async () => {
 export const fetchFoodItems = async (userId) => {
   try {
     const today = getTodayAsString();
-    const docRef = doc(FIREBASE_DB, today, userId);
+    const docRef = doc(FIREBASE_DB, "2024-6-12", userId);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {

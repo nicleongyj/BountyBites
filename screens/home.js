@@ -160,9 +160,9 @@ export default function Home({ navigation }) {
   if (restaurantWithLocation) {
     filteredRestaurants = restaurantWithLocation.filter((restaurant) => {
       const closingTime = restaurant.closingTime.split(":").join("");
-      if (closingTime < currentTime) {
-        return false;
-      }
+      // if (closingTime < currentTime) {
+      //   return false;
+      // }
       if (filterValue === "restaurant") {
         return restaurant.type === "Restaurant";
       } else if (filterValue === "bakery") {

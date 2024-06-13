@@ -51,7 +51,7 @@ export default function FoodShared({ navigation }) {
       );
       setFoodItems(updatedItems);
       const today = getTodayAsString();
-      const docRef = doc(FIREBASE_DB, today, userId);
+      const docRef = doc(FIREBASE_DB, "2024-6-12", userId);
       await updateDoc(docRef, { foodItems: updatedItems });
 
       setLoading(false);

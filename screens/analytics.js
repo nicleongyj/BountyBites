@@ -41,7 +41,7 @@ export default function Analytics({navigation, route}) {
                     totalFoodSavedPerMonth: totalFoodSavedMonth,
                     daysWithNoFoodSaved: daysWithNoFoodSaved,
                 };
-                // const response = await getRestaurantTipsMonthly(data);
+                const response = await getRestaurantTipsMonthly(data);
                 const [analysis, tips] = response.split('\n');
                 const cleanedAnalysis = analysis.replace('Analysis: ', '');
                 const cleanedTips = tips.replace('Tips: ', '');
@@ -64,7 +64,7 @@ export default function Analytics({navigation, route}) {
                     monthWithNoFoodSaved: monthWithNoFoodSaved,
                 };
                 console.log(data)
-                // const response = await getRestaurantTipsYearly(data);
+                const response = await getRestaurantTipsYearly(data);
                 const [analysis, tips] = response.split('\n');
                 const cleanedAnalysis = analysis.replace('Analysis: ', '');
                 const cleanedTips = tips.replace('Tips: ', '');

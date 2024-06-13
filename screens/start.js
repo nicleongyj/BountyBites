@@ -25,8 +25,6 @@ export default function Start({navigation, route}) {
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* <View style = {styles.container}> */}
-
                 <View style={styles.logoContainer}>
                     <Image source={logo} style={styles.logo}/> 
                     <Text style={styles.subTitle}>Save your wallet while saving the earth!</Text>
@@ -44,8 +42,6 @@ export default function Start({navigation, route}) {
                         <Text style={styles.text2}>Terms of Service and Privacy Policy</Text>
                     </Pressable>
                 </View>
-                
-            {/* </View> */}
         </SafeAreaView>
     );
 

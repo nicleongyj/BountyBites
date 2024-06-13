@@ -1,4 +1,4 @@
-import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import {
   Text,
   View,
@@ -9,7 +9,6 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { LoginContext } from "../App";
 import { FIREBASE_DB } from "../FirebaseConfig";
 import { useState, useEffect, useContext } from "react";

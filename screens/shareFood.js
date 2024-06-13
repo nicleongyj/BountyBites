@@ -10,7 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useState, useRef, useEffect, useContext } from "react";
 import { Button } from "react-native-paper";
 import { ScrollView, ActivityIndicator } from "react-native";
-// Camera imports
+
 import { Camera, CameraView } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import CameraButton from "../assets/camera.png";
@@ -98,6 +98,7 @@ export default function ShareFood({ navigation }) {
     </View>
   );
 
+  // Submission of food details
   const handleShare = async () => {
     setSubmitting(true);
     console.log("1");
@@ -155,9 +156,7 @@ export default function ShareFood({ navigation }) {
     try {
       await storeFoodData(userId, foodData);
 
-      // Alert the user that the food has been shared successfully
       alert("Food item shared successfully!");
-      // Clear input fields after sharing
       setName("");
       setPrice("");
       setDiscount("");
@@ -165,8 +164,7 @@ export default function ShareFood({ navigation }) {
       setImage(null);
       setSubmitting(false);
     } catch (error) {
-      console.error("Error storing food data: ", error);
-      alert("Failed to share food item. Error: " + error.message); // Log error message
+      alert("Failed to share food item. Error: " + error.message); 
       setSubmitting(false);
       throw error;
     }
@@ -246,7 +244,6 @@ export default function ShareFood({ navigation }) {
                   style={{
                     height: 50,
                     width: 50,
-                    // backgroundColor: "white",
                     borderRadius: 40,
                     justifyContent: "center",
                   }}
@@ -270,14 +267,12 @@ export default function ShareFood({ navigation }) {
 
               <TouchableOpacity
                 style={{
-                  // backgroundColor: "white",
                   width: 70,
                   height: 70,
                   borderRadius: 50,
                   justifyContent: "center",
                   alignItems: "center",
                 }}
-                // onPress={takePicture}
               ></TouchableOpacity>
             </View>
           </CameraView>
@@ -351,7 +346,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     flexDirection: "column",
     alignItems: "center",
-    // padding: 10,
   },
   bottomContainer: {
     flex: 1,

@@ -1,8 +1,6 @@
 import { FIREBASE_STORAGE } from "./FirebaseConfig";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-
-
 const uriToBlob = async (uri) => {
     const response = await fetch(uri);
     const blob = await response.blob();
@@ -31,16 +29,9 @@ export const uploadFoodPhoto = async (image) => {
 
 export const uploadRestaurantPhoto = async (image, userId) => {
     try {
-        console.log("Uploading photo...");
-        
-        // Convert the URI to Blob
         const blob = await uriToBlob(image);
-        
-        // Create a reference to the storage
         const storageRef = ref(FIREBASE_STORAGE, `restaurantLogos/${userId}`);
-                
         const snapshot = await uploadBytes(storageRef, blob);
-        
         const downloadURL = await getDownloadURL(storageRef);
         return downloadURL;
     } catch (error) {
@@ -52,11 +43,7 @@ export const uploadRestaurantPhoto = async (image, userId) => {
 export const fetchRestaurantLogo = async (userId) => {
     try {
         console.log("Fetching restaurant logo...");
-
-        // Create a reference to the storage
         const storageRef = ref(FIREBASE_STORAGE, `restaurantLogos/${userId}`);
-
-        // Get the download URL
         const downloadURL = await getDownloadURL(storageRef);
         console.log("Logo fetched successfully: ", downloadURL)
         return downloadURL;

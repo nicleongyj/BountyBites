@@ -5,10 +5,8 @@ import ShareFood from "../screens/shareFood";
 import FoodShared from "../screens/foodShared";
 import Analytics from "../screens/analytics";
 
-// Create a stack navigator
 const MainStack = createNativeStackNavigator();
 
-// Define the navigation stack
 export default function MainStackNavigator() {
   return (
     <MainStack.Navigator initialRouteName="Restaurant">

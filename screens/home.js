@@ -4,7 +4,6 @@ import {
   Image,
   ScrollView,
   Pressable,
-  ImageBackground,
 } from "react-native";
 import {
   Button,
@@ -21,16 +20,12 @@ import { useContext, useState, useEffect, useRef } from "react";
 import { LoginContext } from "../App";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { restaurants } from "../sample_data/restaurants";
 import { fetchAllRestaurants } from "../firestoreUtils";
 import * as Location from "expo-location";
-import waiting from "../assets/waiting.png";
 import RefreshImage from "../assets/refresh.png";
 
 export default function Home({ navigation }) {
   const { logout } = useContext(LoginContext);
-
-  // Filter states
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [visible, setVisible] = useState(false);
@@ -205,25 +200,21 @@ export default function Home({ navigation }) {
   return (
     <Provider>
       <SafeAreaView style={styles.container}>
-        {/* <View style={styles.container}> */}
 
         {!restaurantWithLocation && !refresh ? (
           <View style={styles.loadingText}>
-            {/* <Image style={{ width: 150, height: 150 }} source={waiting}></Image> */}
             <Text style={styles.loadingTextLabel}>
               Loading bites, please wait...
             </Text>
           </View>
         ) : refresh ? (
           <View style={styles.loadingText}>
-            {/* <Image style={{width:150, height:150}} source={waiting}></Image> */}
             <Text style={styles.loadingTextLabel}>
               Refreshing page, please wait...
             </Text>
           </View>
         ) : (
           <>
-            {/* <ImageBackground source={require("../assets/background.jpg")} style={{flex: 1, resizeMode: "cover", justifyContent: "center"}}> */}
             <View style={styles.topContainer}>
               <View
                 style={{
@@ -334,8 +325,6 @@ export default function Home({ navigation }) {
               )}
             </View>
 
-            {/* <Button onPress={handleLogout}>Back to start page</Button> */}
-
             {/* Modal for filter and sort */}
             <View>
               <Portal>
@@ -383,10 +372,8 @@ export default function Home({ navigation }) {
                 </Modal>
               </Portal>
             </View>
-            {/* </ImageBackground> */}
           </>
         )}
-        {/* </View> */}
       </SafeAreaView>
     </Provider>
   );
@@ -416,7 +403,6 @@ const styles = StyleSheet.create({
     flex: 6,
     alignItems: "center",
     flexDirection: "column",
-    // backgroundColor: "white",
   },
   noFoodContainer: {
     flex: 1,

@@ -27,21 +27,9 @@ const ShareFoodModal = ({ visible, closeModal, restaurantData }) => {
   const { userId } = useContext(LoginContext);
 
   // Camera states
-  const [hasPermission, setHasPermission] = useState(null);
   const [startCamera, setStartCamera] = useState(false);
   const [image, setImage] = useState(null);
   const cameraRef = useRef(null);
-
-  // if (!hasPermission) {
-  //   return (
-  //     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-  //       <Text style={{ alignSelf: "center" }}>No access to camera</Text>
-  //       <Text style={{ alignSelf: "center" }}>
-  //         Allow Expo to access your camera in your settings
-  //       </Text>
-  //     </View>
-  //   );
-  // }
 
   const enableCamera = () => {
     setStartCamera(true);
@@ -134,7 +122,7 @@ const ShareFoodModal = ({ visible, closeModal, restaurantData }) => {
 
     try {
       await storeFoodData(userId, foodData);
-      closeModal(); // Close the modal after sharing
+      closeModal(); 
     } catch (error) {
       Alert.alert("Error", "Failed to share food item.");
     }

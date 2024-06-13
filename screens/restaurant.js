@@ -1,7 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { Button } from "react-native-paper";
-import { useNavigation } from "@react-navigation/native"; // Import useNavigation hook
 import { LoginContext } from "../App";
 import { fetchRestaurantData } from "../firestoreUtils";
 import ShareFoodModal from "./ShareFoodModal";
@@ -9,7 +8,7 @@ import ShareFoodModal from "./ShareFoodModal";
 export default function Restaurant({ navigation }) {
   const { logout } = useContext(LoginContext);
   const [restaurantData, setRestaurantData] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false); // State for modal visibility
+  const [modalVisible, setModalVisible] = useState(false); 
   const { userId } = useContext(LoginContext);
   useEffect(() => {
     const fetchData = async () => {
@@ -29,23 +28,18 @@ export default function Restaurant({ navigation }) {
   };
 
   const handleShareFood = () => {
-    // Show the Share Food modal
-    // setModalVisible(true);
     navigation.navigate("ShareFood");
   };
 
   const closeModal = () => {
-    // Close the modal
     setModalVisible(false);
   };
 
   const handleViewAnalytics = () => {
-    // Navigate to the Analytics screen
     navigation.navigate("Analytics", { userId: userId, restaurantData: restaurantData});
   };
 
   const handleViewFoodShared = () => {
-    // Navigate to the screen that shows the food shared currently
     navigation.navigate("FoodShared");
   };
 
@@ -145,7 +139,6 @@ export default function Restaurant({ navigation }) {
         </Button>
       </View>
 
-      {/* Share Food Modal */}
       <ShareFoodModal
         visible={modalVisible}
         closeModal={closeModal}
@@ -184,7 +177,6 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     marginBottom: 20,
-    // flex:1,
     flexDirection: "row",
     justifyContent: "space-between",
   },
@@ -226,27 +218,27 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     width: "80%",
     alignSelf: "center",
-    backgroundColor: "#6200ee", // Primary button color
+    backgroundColor: "#6200ee", 
   },
   restaurantButton: {
     marginVertical: 10,
     width: "45%",
     alignSelf: "center",
-    backgroundColor: "#6200ee", // Primary button color
+    backgroundColor: "#6200ee", 
     borderRadius: 5,
   },
   analyticsButton: {
     marginVertical: 10,
     width: "45%",
     alignSelf: "center",
-    backgroundColor: "#048a09", // Teal color for analytics button
+    backgroundColor: "#048a09", 
     borderRadius: 5,
   },
   logoutButton: {
     marginVertical: 10,
     width: "45%",
     alignSelf: "center",
-    backgroundColor: "#d32f2f", // Red color for the logout button
+    backgroundColor: "#d32f2f",
     borderRadius: 5,
   },
   icon: {
@@ -267,7 +259,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     width: "50%",
     alignSelf: "center",
-    backgroundColor: "#6200ee", // Primary button color
+    backgroundColor: "#6200ee", 
   },
   buttonRow: {
     flexDirection: "row",

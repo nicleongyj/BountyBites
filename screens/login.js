@@ -12,7 +12,6 @@ import { Button } from "react-native-paper";
 import { useState, useContext } from "react";
 
 import logo from "../assets/logo.png";
-
 import { FIREBASE_AUTH } from "../FirebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { LoginContext, RestaurantContext } from "../App";

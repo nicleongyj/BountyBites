@@ -146,7 +146,6 @@ const styles = StyleSheet.create({
   },
   card: {
     flexDirection: "row",
-    // alignItems: "center",
     width: "95%",
     height: 140,
     backgroundColor: "white",
@@ -169,7 +168,6 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   textContainer: {
-    // alignContent: "center",
     justifyContent: "flex-start",
     paddingLeft: 10,
     paddingTop: 10,

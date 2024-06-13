@@ -1,6 +1,4 @@
 import { Pressable, View, Text, StyleSheet } from "react-native";
-
-
 export default function LoginButton({onPress, text}) {
     return (
 
@@ -37,7 +35,6 @@ const styles = StyleSheet.create({
         shadowRadius: 8,
         justifyContent: "flex-end",
       },
-      // Dedicated style for ios
       pressed: {
         opacity: 0.75,
       },
@@ -55,7 +52,6 @@ const styles = StyleSheet.create({
       },
       innerContainer: {
         flex: 0,
-        // padding: 16,
         justifyContent: "center",
         alignItems: "center",
         color: "black",

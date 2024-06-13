@@ -11,10 +11,8 @@ import StartScreen from "./screens/start.js";
 import RegisterScreen from "./screens/register.js";
 import TermsScreen from "./screens/termsConditions";
 
-// Contexts
 export const LoginContext = createContext();
 export const RestaurantContext = createContext();
-
 
 export default function App() {
   LogBox.ignoreLogs(['Require cycle:']); 
@@ -23,7 +21,7 @@ export default function App() {
 
   const [isRestaurant, setIsRestaurant] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userId, setUserId] = useState(null); // Add userId state
+  const [userId, setUserId] = useState(null); 
 
   const login = () => setIsLoggedIn(true);
   const logout = () => {

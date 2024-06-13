@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   ActivityIndicator,
-  ScrollView,
   KeyboardAvoidingView,
   TouchableOpacity,
   Image,
@@ -53,11 +52,11 @@ export default function RegisterScreen({ navigation }) {
   };
 
   const signUp = async () => {
-    // if (username === "" || password === "" || location === "" || restaurantName === "" || image === null) {
-    //     alert("Please fill in all fields");
-    //     setLoading(false);
-    //     return;
-    //   }
+      if (username === "" || password === "" || location === "" || restaurantName === "" || image === null) {
+          alert("Please fill in all fields");
+          setLoading(false);
+          return;
+        }
 
     try {
       setLoading(true);
@@ -126,7 +125,6 @@ export default function RegisterScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
-        {/* <ScrollView contentContainerStyle={styles.scrollView}> */}
         <View style={{ flex: 1 }}>
           <View style={{ flex: 2, alignItems: "center", paddingBottom: 15 }}>
             <Text style={styles.title}>Create account</Text>
@@ -222,46 +220,9 @@ export default function RegisterScreen({ navigation }) {
               placeholder="Address or Postal Code"
               placeholderTextColor={"grey"}
             />
-          </View>
+          </View>      
 
-          {/* <View style={styles.coordinates}>
-
- 
-            <View style={styles.inputContainer}>
-                <TextInput
-                autoCapitalize="none"
-                mode="flat"
-                textColor="black"
-                style={styles.coordinateBox}
-                value={latitude}
-                onChangeText={setLatitude}
-                placeholder="Latitude"
-                placeholderTextColor={"grey"}
-                />
-            </View>
-
-            <View style={styles.inputContainer}>
-                <TextInput
-                autoCapitalize="none"
-                mode="flat"
-                textColor="black"
-                style={styles.coordinateBox}
-                value={longitude}
-                onChangeText={setLongitude}
-                placeholder={"Longitude"}
-                placeholderTextColor={"grey"}
-                />
-            </View>
-
-            <View style={{flex:5,alignItems: "center", justifyContent:'center'}}>
-                <Button mode="contained" onPress={() => geocodeAddress(location)} style={styles.locationButton} labelStyle={styles.locationButtonLabel}>Get coordinates</Button>
-            </View>
-
-
-          </View> */}
-
-          <View style={styles.coordinates}>
-            {/* <Text style={{fontSize:15, fontWeight:'bold'}}t>Pick restaurant image:</Text> */}
+          <View style={styles.coordinates}>      
             <View
               style={{
                 alignItems: "center",
@@ -328,7 +289,6 @@ export default function RegisterScreen({ navigation }) {
             </TouchableOpacity>
           </View>
         </View>
-        {/* </ScrollView> */}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -438,7 +398,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 20,
     marginTop: 10,
-    // marginBottom: 10,
   },
   locationButtonLabel: {
     color: "white",

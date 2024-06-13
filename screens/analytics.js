@@ -1,12 +1,10 @@
 
-import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
-import React, {useState, useRef, useEffect} from 'react';
-import { updateAnalytics, retrieveMonthlyAnalytics, retrieveYearlyAnalytics } from '../firestoreUtils';
-import { Button, Switch, TextInput } from 'react-native-paper';
-import { BarChart, LineChart } from 'react-native-chart-kit';
-import { FetchCompletions, getRestaurantTipsMonthly, getRestauranTipsYearly, promptGPT } from "../openaiConfig"
-import { aiImage } from '../assets/ai.jpg';
-import {logo} from '../assets/logo.png';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import { retrieveMonthlyAnalytics, retrieveYearlyAnalytics } from '../firestoreUtils';
+import { Button, TextInput } from 'react-native-paper';
+import { LineChart } from 'react-native-chart-kit';
+import { getRestaurantTipsMonthly, getRestaurantTipsYearly, promptGPT } from "../openaiConfig"
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 export default function Analytics({navigation, route}) {
@@ -45,8 +43,6 @@ export default function Analytics({navigation, route}) {
                 const [analysis, tips] = response.split('\n');
                 const cleanedAnalysis = analysis.replace('Analysis: ', '');
                 const cleanedTips = tips.replace('Tips: ', '');
-                console.log(cleanedAnalysis)
-                console.log(cleanedTips)
                 setMonthlyAnalysis(cleanedAnalysis)
                 setMonthlyTips(cleanedTips)
                 setFetchedMonthlyTips(true)
@@ -59,7 +55,6 @@ export default function Analytics({navigation, route}) {
                     monthlyData: yearly,
                     restaurantType: restaurantData.type,
                     averageFoodSavedPerMonth: averageFoodSavedPerMonth,
-                    // percentageChangeFromPreviousMonth: change,
                     totalFoodSavedYear: totalFoodSavedYear,
                     monthWithNoFoodSaved: monthWithNoFoodSaved,
                 };
@@ -68,8 +63,6 @@ export default function Analytics({navigation, route}) {
                 const [analysis, tips] = response.split('\n');
                 const cleanedAnalysis = analysis.replace('Analysis: ', '');
                 const cleanedTips = tips.replace('Tips: ', '');
-                console.log(cleanedAnalysis)
-                console.log(cleanedTips)
                 setYearlyAnalysis(cleanedAnalysis)
                 setYearlyTips(cleanedTips)
                 setFetchedYearlyTips(true)
@@ -140,8 +133,6 @@ export default function Analytics({navigation, route}) {
                     console.log("No monthly data");
                     return;
                 }
-        
-                console.log("calculating monthly data: " + monthly)
                 const totalFoodSaved = monthly["counter"];
                 const prevMonth = monthly["prevCounter"];
 
@@ -169,9 +160,6 @@ export default function Analytics({navigation, route}) {
         calculateMonthly();
     }, [monthly]);
 
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-    const [changeYearly, setChangeYearly] = useState(null);
     const [totalFoodSavedYear, setTotalFoodSavedYear] = useState(0);
     const [averageFoodSavedPerMonth, setAverageFoodSavedPerMonth] = useState(0);
     const [monthWithNoFoodSaved, setMonthWithNoFoodSaved] = useState(null);
@@ -183,11 +171,7 @@ export default function Analytics({navigation, route}) {
                     console.log("No yearly data");
                     return;
                 }
-        
-                console.log("calculating yearly data: " + yearly)
                 const totalFoodSavedYear = yearly["counter"];
-    
-                
                 const resultsYearly = Object.keys(yearly).filter(month => month !== "counter");
                 const filteredYearly = Object.keys(yearly)
                     .filter(key => key !== "counter")
@@ -214,18 +198,12 @@ export default function Analytics({navigation, route}) {
 
             <View style={styles.topContainer}>
 
-                
-
                 { filteredMonthly && selected==="monthly"? (
 
-                    <View>
-                          <Text style={styles.title}>
-                                Monthly report - June
-                            </Text>
-                            
-                            {/* <Text style={styles.title}>
+                    <View>                            
+                            <Text style={styles.title}>
                                 Monthly report - {monthNames[new Date().getMonth()]}
-                            </Text> */}
+                            </Text>
                         <LineChart
                             data={{
                                 labels: Object.keys(filteredMonthly),
@@ -256,17 +234,11 @@ export default function Analytics({navigation, route}) {
                     
                     </View>
 
-
-
-
                 ) : filteredYearly && selected==="yearly" ? (
                     <View style={{flex:1}}>
                           <Text style={styles.title}>
                                 Yearly report - 2024
                             </Text>
-                            {/* <Text style={styles.title}>
-                                Yearly report - {monthNames[new Date().getYear()]}
-                            </Text> */}
                         <LineChart
                             data={{
                                 labels: Object.keys(filteredYearly),
@@ -328,24 +300,17 @@ export default function Analytics({navigation, route}) {
                 { filteredMonthly && selected==="monthly"? (
                 <View style={styles.dataContainer}>
                     { averageFoodSavedPerDay < averageThreshold ? (
-                    // Needs improvement
-                    <>
-                        <Text style={styles.title}>You can do better...</Text>
-                    </> 
-                
-                    ) : averageFoodSavedPerDay < goodThreshold ? (
-                    // Average
-
                         <>
-                           <Text style={styles.title}>Keep it up! 👍</Text>
+                            <Text style={styles.title}>You can do better...</Text>
+                        </> 
+                    ) : averageFoodSavedPerDay < goodThreshold ? (
+                        <>
+                            <Text style={styles.title}>Keep it up! 👍</Text>
                         </>
-
                     ) : (
-                    // Good
-                    <>
-                    <Text style={styles.title}>Earth Saver! 🌍</Text>
-                    </>
-
+                        <>
+                        <Text style={styles.title}>Earth Saver! 🌍</Text>
+                        </>
                     )}
                     { change > 0 ? (
                         <>
@@ -360,43 +325,23 @@ export default function Analytics({navigation, route}) {
                         <Text style={styles.subtitle}>Average food saved per day: {averageFoodSavedPerDay}</Text>
                         <Text style={styles.subtitle}>Days with no food saved: {daysWithNoFoodSaved}</Text>
                     </>
-
-                    <View>
-
-
-                    </View>
                 </View>
 
                 ) : filteredYearly && selected==="yearly" ? (
                 <View style={styles.dataContainer}>
                     { averageFoodSavedPerMonth < averageThreshold ? (
-                    // Needs improvement
-                    <>
-                        <Text style={styles.title}>You can do better...</Text>
-                    </> 
-                
+                        <>
+                            <Text style={styles.title}>You can do better...</Text>
+                        </> 
                     ) : averageFoodSavedPerMonth < goodThreshold ? (
-                    // Average
-
                         <>
                            <Text style={styles.title}>Keep it up! 👍</Text>
                         </>
-
                     ) : (
-                    // Good
-                    <>
-                    <Text style={styles.title}>Earth Saver! 🌍</Text>
-                    </>
-
-                    )}
-                    {/* { change > 0 ? (
                         <>
-                            <Text style={{fontSize: 14, fontWeight:'bold',marginBottom: 10}}>You have saved {changeYearly}% more food this month compared to last year!</Text>
+                        <Text style={styles.title}>Earth Saver! 🌍</Text>
                         </>
-                       ) : (
-                            <Text style={{fontSize: 15, fontWeight:'bold',marginBottom: 10}}>You have saved {changeYearly}% less food this month compared to last year</Text>
-                       )
-                    } */}
+                    )}
                     <>
                        <Text style={styles.subtitle}>Total food saved this year: {totalFoodSavedYear}</Text>
                         <Text style={styles.subtitle}>Average food saved per month: {averageFoodSavedPerMonth}</Text>
@@ -404,12 +349,8 @@ export default function Analytics({navigation, route}) {
                     </>
 
                 </View>
-
-
-
                 ) : (
                     <></>
-                    // <Text>Loading data</Text>
                 )
 
                 }
@@ -449,7 +390,7 @@ export default function Analytics({navigation, route}) {
                 ): (
                     <Text style={styles.title}>AI is currently analysing your data...</Text>
                 )}
-                <View style={styles.chatbotContainer}>
+                    <View style={styles.chatbotContainer}>
                         
                         <View style={styles.chatbotHeader}>
                             <Text style={{fontSize: 20,fontWeight: 'bold',paddingTop:5, color:'white', paddingBottom:10,}}>Welcome to BitesAI</Text>
@@ -458,8 +399,6 @@ export default function Analytics({navigation, route}) {
                         <View style={styles.responseContainer}>
                             
                             <View style={{flexDirection:'column'}}>
-
-
                                 { response &&
                                 <>
                                 <Text style={{fontWeight:'bold', fontSize:16, color:'white'}}>BitesAI: </Text>
@@ -480,7 +419,7 @@ export default function Analytics({navigation, route}) {
                         </View>
 
 
-                     </View>
+                    </View>
                 
 
                     </View>
@@ -495,32 +434,23 @@ export default function Analytics({navigation, route}) {
 const styles = StyleSheet.create({
     container : { 
         flex: 1,
-        // justifyContent: 'center',
-        // alignItems: 'center',
         backgroundColor:'white'
     },
     buttonContainer: {
-        // flex:1,
         flexDirection: 'row',
         justifyContent: "space-evenly",
         paddingTop:0,
         width: '100%',
         paddingHorizontal: 10,
-        // marginBottom: 20,
         paddingBottom: 10,
-        // backgroundColor: "black",
-        // borderBottomColor: "black",
-        // borderBottomWidth: 1,
     },
     title: {
         fontSize: 23,
         fontWeight: 'bold',
         marginBottom: 10,
-        // textAlign: "center"
     },
     subtitle: {
         fontSize: 15,
-        // fontWeight: 'bold',
         marginBottom: 10
     },
 
@@ -543,12 +473,9 @@ const styles = StyleSheet.create({
     },
     midContainer: {
         flex: 1,
-        // paddingVertical: 20,
         flexGrow: 1,
         width: "100%",
         padding:10,
-        // backgroundColor: "black",
- 
     },
     chatbotContainer: {
         flexGrow:1,
@@ -569,8 +496,6 @@ const styles = StyleSheet.create({
     tipContainer: {
         flex:1,
         borderColor: "black",
-        // borderWidth: 1,
-        // borderRadius: 10,
         width: "100%",
     },
     responseContainer: {
@@ -580,7 +505,6 @@ const styles = StyleSheet.create({
     chatbotHeader: {
         alignItems: 'center',
         width:"90%",
-        // backgroundColor:'grey',
         borderRadius:30,
     },
     bottomContainer: {
@@ -588,8 +512,7 @@ const styles = StyleSheet.create({
         width: "100%",
         justifyContent: "center",
         alignItems: "center",
-        alignContent: "center",
-    
+        alignContent: "center",    
     },
     button: {
         backgroundColor: "black",
@@ -642,6 +565,4 @@ const styles = StyleSheet.create({
         backgroundColor:'white',
         marginTop:10,
     }
-
-
 });

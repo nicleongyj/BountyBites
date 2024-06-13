@@ -1,11 +1,10 @@
 import { Text, StyleSheet } from "react-native";
 import { Button } from "react-native-paper";
 import { View } from "react-native";
-import { useContext, useState, useEffect} from "react";
+import { useState, useEffect} from "react";
 import MapView, { Callout, Marker } from "react-native-maps";
 import * as Location from 'expo-location';
 
-import { LoginContext } from "../App";
 import UserMarker from "../assets/user.png";
 import { fetchAllRestaurants } from "../firestoreUtils";
 
@@ -14,6 +13,7 @@ export default function Home({navigation}) {
     const [region, setRegion] = useState(null);
     const [restaurantData, setRestaurantData] = useState(null);
 
+    // Request location permission and set region to user's location
     useEffect(() => {
         (async () => {
             let { status } = await Location.requestForegroundPermissionsAsync();
@@ -32,11 +32,11 @@ export default function Home({navigation}) {
         })();
     }, []);
 
+    // Fetch restaurant data
     useEffect(() => {   
         const fetchData = async () => {
             try {
                 const data = await fetchAllRestaurants();
-                // console.log(JSON.stringify(data, null, 2));              
                 setRestaurantData(data);
             } catch (error) {
                 console.error("Error fetching restaurant data:", error);
@@ -101,25 +101,15 @@ export default function Home({navigation}) {
                 </Marker>
                 ))}
 
-                </MapView>
-
-            
-
-            
+                </MapView>        
         </View>
-        
-        
-
     );
-    
-
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: "column",
-        // justifyContent: "center",
         backgroundColor: "azure",
         backgroundColor: "white",
     },
@@ -153,7 +143,6 @@ const styles = StyleSheet.create({
     calloutView: {
         width: 160,
         height: 100,
-        // alignItems: "center",
         borderRadius: 30,
     },
     cardView: {

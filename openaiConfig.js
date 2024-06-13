@@ -37,12 +37,7 @@ export const getRestaurantTipsMonthly = async (data) => {
     totalFoodSavedPerMonth,
     daysWithNoFoodSaved,
   } = data;
-
-//   const prompt = `You are an AI assistant that helps restaurants answer food wastage questions and climate change questions, reject any other forms of questions. Prompt from user: ${data}`;
-
   const prompt = `
-  
-
   You are an AI assistant that analyses the restaurant data on food savings. Here is the information about the restaurant:
 
   Restaurant Type: ${restaurantType}
@@ -76,18 +71,14 @@ export const getRestaurantTipsMonthly = async (data) => {
 };
 
 
-export const getRestauranTipsYearly = async (data) => {
+export const getRestaurantTipsYearly = async (data) => {
     const {
         monthlyData,
         restaurantType,
         averageFoodSavedPerMonth,
-        // percentageChangeFromPreviousMonth: change,
         totalFoodSavedYear,
         monthWithNoFoodSaved,
-    } = data;
-  
-  //   const prompt = `You are an AI assistant that helps restaurants answer food wastage questions and climate change questions, reject any other forms of questions. Prompt from user: ${data}`;
-  
+    } = data;  
     const prompt = `
     
   
@@ -130,15 +121,12 @@ export const promptGPT = async (data) => {
         monthlyData,
         restaurantType,
         averageFoodSavedPerMonth,
-        // percentageChangeFromPreviousMonth: change,
         totalFoodSavedYear,
         monthWithNoFoodSaved,
         userPrompt,
     } = data;
     
     const prompt = `
-    
-  
     You are an AI assistant that helps restaurants answer food wastage questions and climate change questions, reject any other forms of questions. 
     You are also allowed to answer an questions related to the restaurants food wastage data below:
   

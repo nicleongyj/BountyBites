@@ -1,17 +1,12 @@
 import { useContext } from "react";
 import { Text } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import HomeScreen from "../screens/home.js";
 import MapScreen from "../screens/map.js";
-import RestaurantScreen from "../screens/restaurant.js";
 import HomeStackScreen from "./homeStackScreen";
 import restaurantStackScreen from "./restaurantStackScreen";
 
 import { RestaurantContext } from "../App.js";
-import { restaurants } from "../sample_data/restaurants.js";
-
 const Tab = createBottomTabNavigator();
 
 export default function HomeContainer() {

@@ -3,7 +3,7 @@ BountyBites is an innovative mobile application designed to tackle food wastage 
 
 Built within 4 days for **DSTA BrainHack 2024 CODE_EXP**. Finalist team for uni category.
 
-View our demo video here: [BountyBites Demo](https://www.youtube.com/watch?v=IIygiI8FV4w)
+View our demo video here: [BountyBites Demo](https://youtu.be/V9rSy495h0M)
 
 
 ## Tech Stack

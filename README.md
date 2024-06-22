@@ -5,7 +5,6 @@ Built within 4 days for **DSTA BrainHack 2024 CODE_EXP**. Finalist team for uni 
 
 View our demo video here: [BountyBites Demo](https://youtu.be/V9rSy495h0M)
 
-
 ## Tech Stack
 - React Native, NodeJS
 - Firebase (Firestore, Authentication, Storage)
@@ -36,7 +35,7 @@ View our demo video here: [BountyBites Demo](https://youtu.be/V9rSy495h0M)
   </div>
 
 ## Future Works
-- Utilises AI to analyse restaurants food wastage patterns and provide personalised insights on how to reduce food wastage
+- Utilises AI and Machine Learning to analyse restaurants' food wastage patterns and provide personalised insights and food production predictions for restaurants 
 - User feedback system to improve service and user experience
 - Collaborate with delivery services for last-mile food distribution
 - Partner with local charities and food banks for greater outreach
